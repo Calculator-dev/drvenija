@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/components/cart-provider";
 import { CartDrawer } from "@/components/cart-drawer";
-import { buildPath, siteName, type Locale } from "@/lib/products";
+import { alternateLocalePath, buildPath, siteName, type Locale } from "@/lib/products";
 import { cn } from "@/lib/utils";
 
 const navByLocale = {
@@ -33,11 +34,6 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { totalItems, setOpen, shippingPolicy } = useCart();
   const navLinks = navByLocale[locale];
-  const isEnglishRoute = pathname.startsWith("/en");
-  const languageHref = isEnglishRoute
-    ? pathname.replace(/^\/en/, "") || "/"
-    : `/en${pathname === "/" ? "" : pathname}`;
-  const languageLabel = locale === "bs" ? "EN" : "BS";
   const localePrefix = locale === "en" ? "/en" : "";
   const shopHref = `${localePrefix}/shop`;
 
@@ -74,8 +70,6 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             </div>
             <HeaderActions
               locale={locale}
-              languageHref={languageHref}
-              languageLabel={languageLabel}
               totalItems={totalItems}
               onCartOpen={() => setOpen(true)}
               className="shrink-0"
@@ -84,8 +78,6 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
           <HeaderActions
             locale={locale}
-            languageHref={languageHref}
-            languageLabel={languageLabel}
             totalItems={totalItems}
             onCartOpen={() => setOpen(true)}
             className="md:hidden"
@@ -238,15 +230,11 @@ function SearchForm({
 
 function HeaderActions({
   locale,
-  languageHref,
-  languageLabel,
   totalItems,
   onCartOpen,
   className,
 }: {
   locale: Locale;
-  languageHref: string;
-  languageLabel: string;
   totalItems: number;
   onCartOpen: () => void;
   className?: string;
@@ -255,13 +243,10 @@ function HeaderActions({
     <div
       className={cn("flex items-center justify-end gap-1 sm:gap-2", className)}
     >
-      <Link
-        href={languageHref}
-        hrefLang={locale === "bs" ? "en" : "bs"}
-        className="inline-flex h-10 items-center justify-center px-2 text-xs font-medium tracking-[0.16em] text-foreground transition-opacity hover:opacity-60 sm:px-3"
-      >
-        {languageLabel}
-      </Link>
+      {/* The query string is only known client-side; static pages render the plain path first. */}
+      <Suspense fallback={<LanguageLink locale={locale} />}>
+        <LanguageLinkWithQuery locale={locale} />
+      </Suspense>
       <button
         type="button"
         onClick={onCartOpen}
@@ -280,5 +265,22 @@ function HeaderActions({
         )}
       </button>
     </div>
+  );
+}
+
+function LanguageLinkWithQuery({ locale }: { locale: Locale }) {
+  return <LanguageLink locale={locale} search={useSearchParams().toString()} />;
+}
+
+function LanguageLink({ locale, search }: { locale: Locale; search?: string }) {
+  const pathname = usePathname();
+  return (
+    <Link
+      href={alternateLocalePath(pathname, search)}
+      hrefLang={locale === "bs" ? "en" : "bs"}
+      className="inline-flex h-10 items-center justify-center px-2 text-xs font-medium tracking-[0.16em] text-foreground transition-opacity hover:opacity-60 sm:px-3"
+    >
+      {locale === "bs" ? "EN" : "BS"}
+    </Link>
   );
 }

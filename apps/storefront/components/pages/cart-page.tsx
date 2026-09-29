@@ -13,7 +13,7 @@ export function CartPage({ locale }: { locale: Locale }) {
   const productPrefix = locale === "en" ? "/en/product" : "/product"
 
   return (
-    <main className="mx-auto w-full max-w-[1500px] px-4 pb-16 pt-10 sm:px-6 md:pb-24 md:pt-14">
+    <div className="mx-auto w-full max-w-[1500px] px-4 pb-16 pt-10 sm:px-6 md:pb-24 md:pt-14">
       <div className="flex items-end justify-between gap-4 border-b border-border pb-6 md:pb-8">
         <div>
           <p className="text-[10px] uppercase tracking-[0.26em] text-muted-foreground">
@@ -106,7 +106,7 @@ export function CartPage({ locale }: { locale: Locale }) {
           </aside>
         </div>
       )}
-    </main>
+    </div>
   )
 }
 

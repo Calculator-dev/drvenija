@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useSearchParams } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { ChevronDown, Grid2X2, List, SlidersHorizontal, X } from "lucide-react"
 import { useMemo, useState } from "react"
 import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedCategory, type LocalizedProduct, type Material, type ProductType } from "@/lib/products"
@@ -43,13 +43,29 @@ function CollectionProductCard({ locale, product, view }: { locale: Locale; prod
 
 export function ShopClient({ locale, products, categories }: { locale: Locale; products: LocalizedProduct[]; categories: LocalizedCategory[] }) {
   const isBs = locale === "bs"
+  const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
+  // Filters live in the URL so header links, back/forward and shared links all agree.
   const requestedMaterial = searchParams.get("material")
   const requestedType = searchParams.get("type")
+  const requestedCategory = searchParams.get("category")
   const query = searchParams.get("q")?.trim().toLocaleLowerCase(locale) ?? ""
-  const [material, setMaterial] = useState<"all" | Material>(requestedMaterial === "plexiglass" || requestedMaterial === "mediapan" || requestedMaterial === "mixed" ? requestedMaterial : "all")
-  const [categoryId, setCategoryId] = useState("all")
-  const [productType, setProductType] = useState<"all" | ProductType>(requestedType === "standard" || requestedType === "custom" ? requestedType : "all")
+  const material: "all" | Material = requestedMaterial === "plexiglass" || requestedMaterial === "mediapan" || requestedMaterial === "mixed" ? requestedMaterial : "all"
+  const productType: "all" | ProductType = requestedType === "standard" || requestedType === "custom" ? requestedType : "all"
+  const categoryId = categories.some(category => category.id === requestedCategory) ? requestedCategory! : "all"
+  const setFilters = (changes: Record<string, string>) => {
+    const next = new URLSearchParams(searchParams.toString())
+    for (const [key, value] of Object.entries(changes)) {
+      if (value === "all") next.delete(key)
+      else next.set(key, value)
+    }
+    const search = next.toString()
+    router.replace(search ? `${pathname}?${search}` : pathname, { scroll: false })
+  }
+  const setMaterial = (value: "all" | Material) => setFilters({ material: value })
+  const setCategoryId = (value: string) => setFilters({ category: value })
+  const setProductType = (value: "all" | ProductType) => setFilters({ type: value })
   const [sort, setSort] = useState<SortKey>("featured")
   const [view, setView] = useState<ViewMode>("grid")
   const [filtersOpen, setFiltersOpen] = useState(false)
@@ -76,11 +92,7 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
   const countByCategory = (id: string) => products.filter((product) => product.categoryId === id).length
   const activeFilterCount = Number(material !== "all") + Number(categoryId !== "all") + Number(productType !== "all")
 
-  const resetFilters = () => {
-    setMaterial("all")
-    setCategoryId("all")
-    setProductType("all")
-  }
+  const resetFilters = () => setFilters({ material: "all", category: "all", type: "all" })
 
   const filterPanel = (
     <div className="divide-y divide-border/60">

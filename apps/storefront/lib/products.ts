@@ -134,6 +134,19 @@ export function displayPrice(product: Product) {
 }
 
 export const locales: Locale[] = ["bs", "en"]
+
+/** English pages live under /en; everything else is Bosnian. */
+export function localeFromPath(pathname: string): Locale {
+  return /^\/en(\/|$)/.test(pathname) ? "en" : "bs"
+}
+
+/** The same page in the other language, keeping the query string. */
+export function alternateLocalePath(pathname: string, search = "") {
+  const target = localeFromPath(pathname) === "en"
+    ? pathname.replace(/^\/en(?=\/|$)/, "") || "/"
+    : `/en${pathname === "/" ? "" : pathname}`
+  return search ? `${target}?${search}` : target
+}
 export const defaultLocale: Locale = "bs"
 
 export const siteName = "Drvenija"
