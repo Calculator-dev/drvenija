@@ -9,6 +9,7 @@ const translation = z.object({
 });
 const localized = z.object({ bs: short, en: short });
 const variantInput = z.object({
+  id: z.string().uuid().optional(),
   sku: z
     .string()
     .trim()
@@ -69,6 +70,18 @@ export const productInput = z
       value.variants.length,
     {
       message: "Variant SKUs must be unique",
+      path: ["variants"],
+    },
+  )
+  .refine(
+    (value) => {
+      const ids = value.variants.flatMap((variant) =>
+        variant.id ? [variant.id] : [],
+      );
+      return new Set(ids).size === ids.length;
+    },
+    {
+      message: "Variant IDs must be unique",
       path: ["variants"],
     },
   );

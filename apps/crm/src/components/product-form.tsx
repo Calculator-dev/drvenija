@@ -37,12 +37,16 @@ function Field({
 }
 
 type VariantDraft = {
+  key: string;
+  id?: string;
   sku: string;
   dimensions: string;
   price: string;
   priceFrom: string;
   active: boolean;
 };
+const uuidPattern =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function variantDrafts(product?: ProductDetails): VariantDraft[] {
   const fromApi = product?.variants?.length
     ? product.variants
@@ -58,6 +62,10 @@ function variantDrafts(product?: ProductDetails): VariantDraft[] {
         } satisfies ProductVariant,
       ];
   return fromApi.map((variant) => ({
+    key: crypto.randomUUID(),
+    // The API reports a synthetic "<product>-default" variant for legacy products; only
+    // real row IDs are sent back so the server updates them in place.
+    id: uuidPattern.test(variant.id) ? variant.id : undefined,
     sku: variant.sku,
     dimensions: variant.dimensions,
     price: String(variant.price),
@@ -126,6 +134,7 @@ export function ProductForm({
       type: text("type"),
       material: text("material"),
       variants: variants.map((variant, index) => ({
+        ...(variant.id ? { id: variant.id } : {}),
         sku: variant.sku.trim(),
         dimensions: (index === 0 ? mainDimensions : variant.dimensions).trim(),
         price: Number(variant.price),
@@ -144,7 +153,14 @@ export function ProductForm({
   function addVariant() {
     setVariants((current) => [
       ...current,
-      { sku: "", dimensions: "", price: "", priceFrom: "", active: true },
+      {
+        key: crypto.randomUUID(),
+        sku: "",
+        dimensions: "",
+        price: "",
+        priceFrom: "",
+        active: true,
+      },
     ]);
   }
   function updateVariant(index: number, patch: Partial<VariantDraft>) {
@@ -424,7 +440,7 @@ export function ProductForm({
               <div className="space-y-4">
                 {variants.map((variant, index) => (
                   <div
-                    key={`${index}-${variant.sku}`}
+                    key={variant.key}
                     className="space-y-4 rounded-lg border border-border/70 p-4"
                   >
                     <div className="flex items-center justify-between gap-2">

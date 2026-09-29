@@ -77,14 +77,18 @@ test("product creation saves complete data, supports new categories, and handles
         }),
       }),
       insert: (table) => ({
-        values: (values) => ({
-          returning: async () => {
+        values: (values) => {
+          const write = async () => {
             if ((table === products || table === productVariants) && conflict)
               throw { cause: { code: "23505" } };
             writes.push({ table, values });
             return [values];
-          },
-        }),
+          };
+          return {
+            returning: write,
+            then: (resolve, reject) => write().then(resolve, reject),
+          };
+        },
       }),
       delete: () => ({ where: async () => {} }),
     });
@@ -179,6 +183,10 @@ test("editing loads a product, saves changes, preserves slugs, and handles missi
   let missing = false;
   let duplicate = false;
   let updated;
+  const keptVariant = "0b3f4f5e-9f55-4e0e-9d57-8f1d6a3a2c11";
+  const removedVariant = "3c9a2d8e-1b7f-4a6c-8e2d-5f4b3a2c1d10";
+  let currentVariants = [];
+  let variantWrites = [];
   db.select = () => ({
     from: () => ({
       where: () => ({
@@ -196,24 +204,38 @@ test("editing loads a product, saves changes, preserves slugs, and handles missi
               table === products
                 ? { for: async () => (missing ? [] : [existing]) }
                 : Promise.resolve([{ id: categoryId }]),
+            for: async () => {
+              assert.equal(table, productVariants);
+              return currentVariants.map((variantId) => ({ id: variantId }));
+            },
           }),
         }),
       }),
       update: (table) => ({
         set: (values) => ({
-          where: () => ({
-            returning: async () => {
-              assert.equal(table, products);
-              if (duplicate) throw { cause: { code: "23505" } };
-              updated = values;
-              return [values];
-            },
-          }),
+          where: () =>
+            table === products
+              ? {
+                  returning: async () => {
+                    if (duplicate) throw { cause: { code: "23505" } };
+                    updated = values;
+                    return [values];
+                  },
+                }
+              : Promise.resolve(variantWrites.push({ op: "update", values })),
         }),
       }),
-      delete: () => ({ where: async () => {} }),
-      insert: () => ({
-        values: (values) => ({ returning: async () => [values] }),
+      delete: (table) => ({
+        where: async () => {
+          assert.equal(table, productVariants);
+          variantWrites.push({ op: "delete" });
+        },
+      }),
+      insert: (table) => ({
+        values: (values) => {
+          if (table === productVariants) variantWrites.push({ op: "insert", values });
+          return { returning: async () => [values] };
+        },
       }),
     });
   try {
@@ -234,6 +256,38 @@ test("editing loads a product, saves changes, preserves slugs, and handles missi
     assert.equal(updated.translations.bs.slug, "existing-bs-url");
     assert.equal(updated.translations.en.slug, "existing-en-url");
     assert.ok(updated.updatedAt instanceof Date);
+
+    currentVariants = [keptVariant, removedVariant];
+    variantWrites = [];
+    const stable = await app.inject({
+      method: "PUT",
+      url: `/products/${id}`,
+      payload: {
+        ...payload,
+        variants: [
+          { ...payload.variants[0], id: keptVariant, price: 90 },
+          { ...payload.variants[0], sku: "drv-new-01-40", dimensions: "40 x 40 cm" },
+        ],
+      },
+    });
+    assert.equal(stable.statusCode, 200);
+    assert.deepEqual(variantWrites.map((write) => write.op), ["delete", "update", "update", "insert"]);
+    assert.equal(variantWrites[1].values.sku, keptVariant);
+    assert.equal(variantWrites[2].values.id, keptVariant);
+    assert.equal(variantWrites[2].values.price, 90);
+    assert.equal(variantWrites[3].values[0].sku, "DRV-NEW-01-40");
+    assert.notEqual(variantWrites[3].values[0].id, keptVariant);
+    const foreign = await app.inject({
+      method: "PUT",
+      url: `/products/${id}`,
+      payload: {
+        ...payload,
+        variants: [{ ...payload.variants[0], id: "9d1e2f3a-4b5c-4d6e-8f70-812345678901" }],
+      },
+    });
+    assert.equal(foreign.statusCode, 400);
+    currentVariants = [];
+
     duplicate = true;
     assert.equal(
       (await app.inject({ method: "PUT", url: `/products/${id}`, payload }))

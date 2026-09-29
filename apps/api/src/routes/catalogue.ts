@@ -179,26 +179,52 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
             .returning();
           saved = created;
         }
-        await tx
-          .delete(productVariants)
-          .where(eq(productVariants.productId, id));
-        await tx
-          .insert(productVariants)
-          .values(
-            variants.map((variant, index) => ({
-              id: randomUUID(),
-              productId: id,
-              sku: variant.sku,
-              dimensions: variant.dimensions,
-              price: variant.price,
-              priceFrom: variant.priceFrom ?? null,
-              sortOrder: index,
-              isDefault: index === 0,
-              active: variant.active,
-              updatedAt: now,
-            })),
-          )
-          .returning({ id: productVariants.id });
+        // Keep variant IDs stable so carts and links that reference them survive edits.
+        const current = productId
+          ? await tx
+              .select({ id: productVariants.id })
+              .from(productVariants)
+              .where(eq(productVariants.productId, id))
+              .for("update")
+          : [];
+        const currentIds = new Set(current.map((variant) => variant.id));
+        if (variants.some((variant) => variant.id && !currentIds.has(variant.id)))
+          throw app.httpErrors.badRequest(
+            "A variant no longer exists. Reload the product and try again.",
+          );
+        const keptIds = new Set(variants.flatMap((variant) => (variant.id ? [variant.id] : [])));
+        const removedIds = [...currentIds].filter((variantId) => !keptIds.has(variantId));
+        if (removedIds.length)
+          await tx
+            .delete(productVariants)
+            .where(inArray(productVariants.id, removedIds));
+        // Park kept SKUs on their unique IDs first so swapping SKUs between variants
+        // doesn't trip the unique constraint mid-update.
+        for (const variantId of keptIds)
+          await tx
+            .update(productVariants)
+            .set({ sku: variantId })
+            .where(eq(productVariants.id, variantId));
+        const rows = variants.map((variant, index) => ({
+          id: variant.id ?? randomUUID(),
+          productId: id,
+          sku: variant.sku,
+          dimensions: variant.dimensions,
+          price: variant.price,
+          priceFrom: variant.priceFrom ?? null,
+          sortOrder: index,
+          isDefault: index === 0,
+          active: variant.active,
+          updatedAt: now,
+        }));
+        for (const row of rows.filter((row) => keptIds.has(row.id)))
+          await tx
+            .update(productVariants)
+            .set(row)
+            .where(eq(productVariants.id, row.id));
+        const added = rows.filter((row) => !keptIds.has(row.id));
+        if (added.length)
+          await tx.insert(productVariants).values(added);
         if (images !== undefined) {
           const assets = images.length
             ? await tx
