@@ -25,7 +25,7 @@ export function ProductPageLayout({ locale, product, related }: { locale: Locale
 
   return (
     <article>
-      <div className="mx-auto max-w-[1500px] px-4 pb-16 pt-7 md:px-6 md:pb-24 md:pt-8">
+      <div className="mx-auto max-w-375 px-4 pb-16 pt-7 md:px-6 md:pb-24 md:pt-8">
         <nav aria-label={t("breadcrumb")} className="flex min-w-0 items-center gap-2 overflow-hidden text-xs text-muted-foreground">
           <Link href={buildPath(locale)} className="shrink-0 transition-colors hover:text-foreground">{common("home")}</Link>
           <span aria-hidden="true">›</span>
@@ -48,7 +48,7 @@ export function ProductPageLayout({ locale, product, related }: { locale: Locale
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-[1500px] px-4 py-16 md:px-6 md:py-24">
+      <section className="mx-auto max-w-375 px-4 py-16 md:px-6 md:py-24">
         <Reveal className="text-center">
           <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">{t("highlights.eyebrow")}</p>
           <h2 className="mt-4 text-4xl font-bold tracking-[-0.035em] md:text-5xl">{t("highlights.title")}</h2>
@@ -67,8 +67,8 @@ export function ProductPageLayout({ locale, product, related }: { locale: Locale
       </section>
 
       <section className="bg-[#f0ece5]">
-        <div className="mx-auto grid max-w-[1500px] md:grid-cols-2">
-          <div className="relative min-h-[420px] md:min-h-[680px]">
+        <div className="mx-auto grid max-w-375 md:grid-cols-2">
+          <div className="relative min-h-105 md:min-h-170">
             <Image unoptimized={isSvg(editorialImage.url)} src={editorialImage.url} alt={editorialImage.alt[locale]} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />
           </div>
           <Reveal className="flex items-center px-7 py-16 md:px-14 lg:px-20">
@@ -98,7 +98,7 @@ export function ProductPageLayout({ locale, product, related }: { locale: Locale
 
       {related.length > 0 && (
         <section className="border-t border-border/60 bg-stone-50 py-16 md:py-24">
-          <div className="mx-auto max-w-[1500px] px-4 md:px-6">
+          <div className="mx-auto max-w-375 px-4 md:px-6">
             <h2 className="text-4xl font-bold tracking-[-0.035em] md:text-5xl">{t("related")}</h2>
             <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((item) => <ProductCard key={item.id} locale={locale} product={item} />)}

@@ -19,7 +19,7 @@ export function ProductCard({
 
   return (
     <Link href={href} className="group block">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-muted">
+      <div className="relative aspect-4/5 overflow-hidden rounded-sm bg-muted">
         <Image
           unoptimized={isSvg(product.primaryImage.url)}
           src={product.primaryImage.url}

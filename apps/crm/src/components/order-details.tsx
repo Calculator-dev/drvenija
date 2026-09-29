@@ -68,7 +68,7 @@ export function OrderDetails({ id, onBack }: { id: string; onBack: () => void })
         <Card className="p-6">
           <h3 className="font-serif text-2xl">Proizvodi</h3>
           <div className="mt-5 overflow-x-auto">
-            <table className="w-full min-w-[560px] text-left text-sm">
+            <table className="w-full min-w-140 text-left text-sm">
               <thead className="text-muted-foreground"><tr><th className="pb-3 font-medium">Proizvod</th><th className="pb-3 font-medium">Količina</th><th className="pb-3 text-right font-medium">Cijena</th><th className="pb-3 text-right font-medium">Ukupno</th></tr></thead>
               <tbody>{order.items.map(item => <tr key={item.id} className="border-t border-border">
                 <td className="py-4"><p className="font-medium">{item.name}</p><p className="mt-1 text-xs text-muted-foreground">{item.sku}</p>{item.personalization && <p className="mt-2 text-xs">Personalizacija: {item.personalization}</p>}</td>
@@ -115,5 +115,5 @@ export function OrderDetails({ id, onBack }: { id: string; onBack: () => void })
 }
 
 function Detail({ label, value }: { label: string; value: string }) {
-  return <div><dt className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{label}</dt><dd className="mt-1 break-words">{value}</dd></div>
+  return <div><dt className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{label}</dt><dd className="mt-1 wrap-break-word">{value}</dd></div>
 }

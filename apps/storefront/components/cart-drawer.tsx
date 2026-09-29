@@ -20,7 +20,7 @@ export function CartDrawer({ locale }: { locale: Locale }) {
   return (
     <div
       className={cn(
-        "fixed inset-0 z-[70] transition-opacity",
+        "fixed inset-0 z-70 transition-opacity",
         isOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
       )}
       inert={!isOpen}
@@ -47,7 +47,7 @@ export function CartDrawer({ locale }: { locale: Locale }) {
               {t("viewCart")}
             </Link>
           </div>
-          <button type="button" className="ml-3 flex h-10 w-10 flex-shrink-0 items-center justify-center" onClick={() => setOpen(false)} aria-label={t("closeCart")}>
+          <button type="button" className="ml-3 flex h-10 w-10 shrink-0 items-center justify-center" onClick={() => setOpen(false)} aria-label={t("closeCart")}>
             <X className="h-5 w-5" strokeWidth={1.5} aria-hidden />
           </button>
         </div>
@@ -64,7 +64,7 @@ export function CartDrawer({ locale }: { locale: Locale }) {
             <ul className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
               {items.map((item) => (
                 <li key={item.lineId} className="flex gap-3 border-b border-border/50 pb-4">
-                  <div className="relative h-24 w-20 flex-shrink-0 overflow-hidden rounded-sm bg-muted">
+                  <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-sm bg-muted">
                     <Image unoptimized={isSvg(item.image)} src={item.image} alt={item.name} fill sizes="80px" className="object-cover" />
                   </div>
                   <div className="min-w-0 flex-1">

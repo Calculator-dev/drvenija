@@ -35,10 +35,10 @@ export async function HomePage({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <section className="relative isolate min-h-[620px] overflow-hidden bg-neutral-950 md:min-h-[760px]">
+      <section className="relative isolate min-h-155 overflow-hidden bg-neutral-950 md:min-h-190">
         <Image src="/images/hero-lifestyle.jpg" alt={t("hero.imageAlt")} fill priority sizes="100vw" className="object-cover object-center" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/25 to-black/55" />
-        <div className="relative mx-auto flex min-h-[620px] max-w-7xl items-end px-4 pb-16 pt-28 md:min-h-[760px] md:items-center md:px-6 md:pb-24">
+        <div className="absolute inset-0 bg-linear-to-r from-black/75 via-black/25 to-black/55" />
+        <div className="relative mx-auto flex min-h-155 max-w-7xl items-end px-4 pb-16 pt-28 md:min-h-190 md:items-center md:px-6 md:pb-24">
           <Reveal className="max-w-xl text-white" y={18}>
             <p className="mb-5 text-xs font-medium uppercase tracking-[0.3em] text-white/75">{t("hero.eyebrow")}</p>
             <h1 className="font-serif text-4xl leading-[0.98] tracking-[-0.035em] min-[390px]:text-5xl sm:text-6xl md:text-7xl">{t("hero.title")}</h1>
@@ -53,7 +53,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1500px] px-4 py-16 md:px-6 md:py-24">
+      <section className="mx-auto max-w-375 px-4 py-16 md:px-6 md:py-24">
         <Reveal><h2 className="text-center font-serif text-4xl tracking-tight md:text-5xl">{t("categories.title")}</h2></Reveal>
         <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 md:gap-x-5 lg:grid-cols-5">
           {categoryTiles.map((tile, index) => (
@@ -69,12 +69,12 @@ export async function HomePage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1500px] px-4 pb-16 md:px-6 md:pb-24">
+      <section className="mx-auto max-w-375 px-4 pb-16 md:px-6 md:pb-24">
         <Reveal>
-          <div className="relative min-h-[560px] overflow-hidden bg-stone-900 md:min-h-[650px]">
+          <div className="relative min-h-140 overflow-hidden bg-stone-900 md:min-h-162.5">
             <Image src="/images/product-business-sign.jpg" alt={t("customStudio.imageAlt")} fill sizes="100vw" className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
-            <div className="relative flex min-h-[560px] max-w-xl flex-col justify-center p-7 text-white md:min-h-[650px] md:p-16">
+            <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/20 to-transparent" />
+            <div className="relative flex min-h-140 max-w-xl flex-col justify-center p-7 text-white md:min-h-162.5 md:p-16">
               <p className="text-xs uppercase tracking-[0.28em] text-white/70">Custom studio</p>
               <h2 className="mt-5 font-serif text-5xl leading-[1.02] md:text-6xl">{t("customStudio.title")}</h2>
               <p className="mt-6 max-w-md text-base leading-7 text-white/80">{t("customStudio.description")}</p>
@@ -86,7 +86,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
 
       {products.length > 0 && (
         <section className="border-y border-border/60 bg-stone-50 py-16 md:py-24">
-          <div className="mx-auto max-w-[1500px] px-4 md:px-6">
+          <div className="mx-auto max-w-375 px-4 md:px-6">
             <Reveal className="flex items-end justify-between gap-6">
               <div><p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Webshop</p><h2 className="mt-3 font-serif text-4xl tracking-tight md:text-5xl">{t("products.title")}</h2></div>
               <Link href={shopHref} className="hidden items-center gap-2 border-b border-foreground pb-1 text-sm font-medium sm:flex">{t("products.viewAll")} <ArrowRight className="h-4 w-4" /></Link>
@@ -99,7 +99,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
         </section>
       )}
 
-      <section className="mx-auto max-w-[1500px] px-4 py-16 md:px-6 md:py-24">
+      <section className="mx-auto max-w-375 px-4 py-16 md:px-6 md:py-24">
         <Reveal className="mx-auto max-w-3xl text-center">
           <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">{t("showcase.eyebrow")}</p>
           <h2 className="mt-4 font-serif text-4xl leading-tight tracking-tight md:text-5xl">{t("showcase.title")}</h2>
@@ -107,9 +107,9 @@ export async function HomePage({ locale }: { locale: Locale }) {
         <div className="mt-10 grid gap-3 md:grid-cols-2 md:gap-5">
           {showcaseTiles.map((tile, index) => (
             <Reveal key={tile.key} delay={(index % 2) * 0.06}>
-              <div className="group relative aspect-[4/3] overflow-hidden bg-muted">
+              <div className="group relative aspect-4/3 overflow-hidden bg-muted">
                 <Image src={tile.image} alt={t(`showcase.tiles.${tile.key}`)} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.025]" />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-6 pt-20 text-white"><p className="font-serif text-2xl md:text-3xl">{t(`showcase.tiles.${tile.key}`)}</p></div>
+                <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 to-transparent p-6 pt-20 text-white"><p className="font-serif text-2xl md:text-3xl">{t(`showcase.tiles.${tile.key}`)}</p></div>
               </div>
             </Reveal>
           ))}
@@ -117,8 +117,8 @@ export async function HomePage({ locale }: { locale: Locale }) {
       </section>
 
       <section className="bg-[#efe9df]">
-        <div className="mx-auto grid max-w-[1500px] md:grid-cols-2">
-          <div className="relative min-h-[430px] md:min-h-[620px]"><Image src="/images/hero-monogram.jpg" alt={t("craft.imageAlt")} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" /></div>
+        <div className="mx-auto grid max-w-375 md:grid-cols-2">
+          <div className="relative min-h-107.5 md:min-h-155"><Image src="/images/hero-monogram.jpg" alt={t("craft.imageAlt")} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" /></div>
           <Reveal className="flex items-center px-7 py-16 md:px-16 md:py-20">
             <div className="max-w-lg">
               <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">{t("craft.eyebrow")}</p>

@@ -16,7 +16,7 @@ export function CartPage({ locale }: { locale: Locale }) {
   const common = useTranslations("common")
 
   return (
-    <div className="mx-auto w-full max-w-[1500px] px-4 pb-16 pt-10 sm:px-6 md:pb-24 md:pt-14">
+    <div className="mx-auto w-full max-w-375 px-4 pb-16 pt-10 sm:px-6 md:pb-24 md:pt-14">
       <div className="flex items-end justify-between gap-4 border-b border-border pb-6 md:pb-8">
         <div>
           <p className="text-[10px] uppercase tracking-[0.26em] text-muted-foreground">
@@ -32,7 +32,7 @@ export function CartPage({ locale }: { locale: Locale }) {
       </div>
 
       {items.length === 0 ? (
-        <section className="flex min-h-[430px] flex-col items-center justify-center text-center">
+        <section className="flex min-h-107.5 flex-col items-center justify-center text-center">
           <h2 className="font-serif text-3xl sm:text-4xl">{t("emptyTitle")}</h2>
           <p className="mt-3 max-w-md text-sm leading-7 text-muted-foreground">
             {t("pageEmptyDescription")}
@@ -53,7 +53,7 @@ export function CartPage({ locale }: { locale: Locale }) {
             <ul>
               {items.map((item) => (
                 <li key={item.lineId} className="grid grid-cols-[96px_minmax(0,1fr)] gap-4 border-b border-border py-6 sm:grid-cols-[130px_minmax(0,1fr)] md:grid-cols-[130px_minmax(0,1fr)_150px_130px] md:items-center md:gap-6">
-                  <Link href={`${productPrefix}/${item.slug}`} className="relative aspect-[4/5] overflow-hidden bg-muted">
+                  <Link href={`${productPrefix}/${item.slug}`} className="relative aspect-4/5 overflow-hidden bg-muted">
                     <Image unoptimized={isSvg(item.image)} src={item.image} alt={item.name} fill sizes="(max-width: 640px) 96px, 130px" className="object-cover transition-transform duration-500 hover:scale-105" />
                   </Link>
 

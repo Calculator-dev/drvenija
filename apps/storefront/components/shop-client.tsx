@@ -22,7 +22,7 @@ function CollectionProductCard({ locale, product, view }: { locale: Locale; prod
     // In the grid, cards stretch to the row height and the price + button sit at the bottom,
     // so buttons line up regardless of how long names and descriptions are.
     <article className={cn("group", view === "grid" ? "flex h-full flex-col" : "grid gap-5 border-b border-border/60 pb-7 sm:grid-cols-[220px_1fr]")}>
-      <Link href={href} className={cn("relative block overflow-hidden bg-[#f4f4f2]", view === "grid" ? "aspect-square" : "aspect-square sm:aspect-[4/3]")}>
+      <Link href={href} className={cn("relative block overflow-hidden bg-[#f4f4f2]", view === "grid" ? "aspect-square" : "aspect-square sm:aspect-4/3")}>
         <Image
           unoptimized={isSvg(product.primaryImage.url)}
           src={product.primaryImage.url}
@@ -123,8 +123,8 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
   )
 
   return (
-    <div className="mx-auto max-w-[1500px] px-4 pb-20 md:px-6 md:pb-28">
-      <div className="flex min-h-[88px] items-center justify-between gap-5 border-b border-border/60">
+    <div className="mx-auto max-w-375 px-4 pb-20 md:px-6 md:pb-28">
+      <div className="flex min-h-22 items-center justify-between gap-5 border-b border-border/60">
         <div className="flex items-center gap-5">
           <button type="button" onClick={() => setFiltersOpen(true)} className="inline-flex items-center gap-2 text-sm font-semibold lg:hidden">
             {t("filters.title")} <SlidersHorizontal className="h-4 w-4" />{activeFilterCount > 0 && <span>({activeFilterCount})</span>}
@@ -149,7 +149,7 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
         </div>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto border-b border-border/60 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex gap-2 overflow-x-auto border-b border-border/60 py-4 scrollbar-none [&::-webkit-scrollbar]:hidden">
         <button type="button" onClick={() => setCategoryId("all")} className={cn("shrink-0 border px-5 py-2.5 text-sm transition-colors", categoryId === "all" ? "border-black bg-black text-white" : "border-border hover:border-foreground")}>{t("allCategoriesChip")}</button>
         {categories.map((category) => <button key={category.id} type="button" onClick={() => setCategoryId(category.id)} className={cn("shrink-0 border px-5 py-2.5 text-sm transition-colors", categoryId === category.id ? "border-black bg-black text-white" : "border-border hover:border-foreground")}>{category.localizedName}</button>)}
       </div>
@@ -177,7 +177,7 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
         </section>
       </div>
 
-      <div className={cn("fixed inset-0 z-[70] lg:hidden", filtersOpen ? "pointer-events-auto" : "pointer-events-none")} inert={!filtersOpen}>
+      <div className={cn("fixed inset-0 z-70 lg:hidden", filtersOpen ? "pointer-events-auto" : "pointer-events-none")} inert={!filtersOpen}>
         <button type="button" tabIndex={-1} aria-hidden onClick={() => setFiltersOpen(false)} className={cn("absolute inset-0 bg-black/45 transition-opacity", filtersOpen ? "opacity-100" : "opacity-0")} />
         <div ref={filterDialog} role="dialog" aria-modal="true" aria-label={t("filters.title")} className={cn("absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col bg-background transition-transform duration-300", filtersOpen ? "translate-x-0" : "-translate-x-full")}>
           <div className="flex items-center justify-between border-b border-border px-5 py-5"><p className="text-lg font-bold">{t("filters.title")}</p><button type="button" onClick={() => setFiltersOpen(false)} className="p-2" aria-label={t("filters.close")}><X className="h-5 w-5" aria-hidden /></button></div>
@@ -199,7 +199,7 @@ function FilterSection({ title, children }: { title: string; children: React.Rea
 function FilterOption({ name, label, count, checked, onChange }: { name: string; label: string; count: number; checked: boolean; onChange: () => void }) {
   return (
     <label className="flex cursor-pointer items-center gap-3 text-sm">
-      <input type="radio" name={name} checked={checked} onChange={onChange} className="h-5 w-5 appearance-none border border-foreground bg-background checked:bg-foreground checked:[background-image:linear-gradient(135deg,transparent_42%,white_42%,white_58%,transparent_58%),linear-gradient(45deg,transparent_56%,white_56%,white_68%,transparent_68%)]" />
+      <input type="radio" name={name} checked={checked} onChange={onChange} className="h-5 w-5 appearance-none border border-foreground bg-background checked:bg-foreground checked:bg-[linear-gradient(135deg,transparent_42%,white_42%,white_58%,transparent_58%),linear-gradient(45deg,transparent_56%,white_56%,white_68%,transparent_68%)]" />
       <span className="flex-1">{label}</span><span className="text-muted-foreground">({count})</span>
     </label>
   )

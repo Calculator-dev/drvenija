@@ -39,7 +39,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
       </div>
 
       <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-xl">
-        <div className="mx-auto grid h-[68px] max-w-[1500px] grid-cols-[1fr_auto] items-center gap-3 px-4 md:h-[76px] md:grid-cols-[220px_1fr] md:px-6">
+        <div className="mx-auto grid h-17 max-w-375 grid-cols-[1fr_auto] items-center gap-3 px-4 md:h-19 md:grid-cols-[220px_1fr] md:px-6">
           <div className="flex min-w-0 items-center gap-2">
             <button
               type="button"
@@ -51,14 +51,14 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             </button>
             <Link
               href={buildPath(locale)}
-              className="text-xl font-black uppercase tracking-[-0.05em] text-foreground sm:text-2xl md:text-[26px]"
+              className="text-xl font-black uppercase tracking-tighter text-foreground sm:text-2xl md:text-[26px]"
             >
               {siteName}
             </Link>
           </div>
 
           <div className="hidden md:flex md:items-center md:justify-evenly md:gap-6">
-            <div className="w-full max-w-[560px]">
+            <div className="w-full max-w-140">
               <SearchForm action={shopHref} id="desktop" />
             </div>
             <HeaderActions
@@ -85,7 +85,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           className="hidden border-t border-border/60 lg:block"
           aria-label={t("mainNavigation")}
         >
-          <div className="mx-auto flex h-12 max-w-[1500px] items-center justify-center gap-8 px-6 xl:gap-11">
+          <div className="mx-auto flex h-12 max-w-375 items-center justify-center gap-8 px-6 xl:gap-11">
             {navLinks.map((item) => {
               const itemPath = `${localePrefix}${item.href.split("?")[0]}`;
               const active = !item.href.includes("?") && pathname === itemPath;
@@ -109,7 +109,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
       <div
         className={cn(
-          "fixed inset-0 z-[60] transition-opacity lg:hidden",
+          "fixed inset-0 z-60 transition-opacity lg:hidden",
           menuOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0",
@@ -137,7 +137,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             <Link
               href={buildPath(locale)}
               onClick={() => setMenuOpen(false)}
-              className="text-xl font-black uppercase tracking-[-0.05em]"
+              className="text-xl font-black uppercase tracking-tighter"
             >
               {siteName}
             </Link>

@@ -14,7 +14,7 @@ export async function ShopPage({ locale }: { locale: Locale }) {
   return (
     <>
       <section className="border-b border-border/60">
-        <div className="mx-auto max-w-[1500px] px-4 pb-20 pt-7 md:px-6 md:pb-28 md:pt-8">
+        <div className="mx-auto max-w-375 px-4 pb-20 pt-7 md:px-6 md:pb-28 md:pt-8">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Link href={buildPath(locale)} className="transition-colors hover:text-foreground">{common("home")}</Link>
             <span aria-hidden="true">›</span>
@@ -26,7 +26,7 @@ export async function ShopPage({ locale }: { locale: Locale }) {
           </div>
         </div>
       </section>
-      <Suspense fallback={<div className="mx-auto min-h-[480px] max-w-[1500px] px-4 py-10 md:px-6" />}>
+      <Suspense fallback={<div className="mx-auto min-h-120 max-w-375 px-4 py-10 md:px-6" />}>
         <ShopClient locale={locale} products={products} categories={categories} />
       </Suspense>
     </>

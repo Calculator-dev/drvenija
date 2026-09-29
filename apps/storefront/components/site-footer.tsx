@@ -9,7 +9,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 
   return (
     <footer className="bg-black text-white">
-      <div className="mx-auto grid max-w-[1500px] gap-10 px-4 py-16 md:grid-cols-4 md:px-6 md:py-20">
+      <div className="mx-auto grid max-w-375 gap-10 px-4 py-16 md:grid-cols-4 md:px-6 md:py-20">
         <div className="md:col-span-2">
           <p className="text-2xl font-black uppercase tracking-[-0.04em]">{siteName}</p>
           <p className="mt-4 max-w-xl text-sm leading-7 text-white/60">
@@ -36,7 +36,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         </div>
       </div>
       <div className="border-t border-white/15">
-        <div className="mx-auto flex max-w-[1500px] flex-col gap-3 px-4 py-5 text-xs text-white/45 md:flex-row md:items-center md:justify-between md:px-6">
+        <div className="mx-auto flex max-w-375 flex-col gap-3 px-4 py-5 text-xs text-white/45 md:flex-row md:items-center md:justify-between md:px-6">
           <p>{t("languageNote")}</p>
           <Link href={buildPath(locale)}>{t("backHome")}</Link>
         </div>

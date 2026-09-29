@@ -44,5 +44,5 @@ export function InquiryDetails({ id, onBack }: { id: string; onBack: () => void 
 }
 
 function Detail({ label, value }: { label: string; value: string }) {
-  return <div><dt className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{label}</dt><dd className="mt-1 break-words">{value}</dd></div>
+  return <div><dt className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{label}</dt><dd className="mt-1 wrap-break-word">{value}</dd></div>
 }
