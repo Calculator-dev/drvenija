@@ -46,6 +46,7 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
                   key={variant.id}
                   type="button"
                   onClick={() => setVariantId(variant.id)}
+                  aria-pressed={active}
                   className={`border px-3 py-2 text-sm transition-colors ${active ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground"}`}
                 >
                   {variant.dimensions}
@@ -91,12 +92,12 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
 
       <div className="mt-7 flex flex-col items-stretch gap-3 sm:flex-row">
         <div className="inline-flex items-center justify-between border border-border sm:justify-start">
-          <button type="button" className="flex h-12 w-12 items-center justify-center" onClick={() => setQuantity((value) => Math.max(1, value - 1))}>
-            <Minus className="h-4 w-4" strokeWidth={1.5} />
+          <button type="button" className="flex h-12 w-12 items-center justify-center" onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label={locale === "bs" ? "Smanji količinu" : "Decrease quantity"}>
+            <Minus className="h-4 w-4" strokeWidth={1.5} aria-hidden />
           </button>
-          <span className="flex h-12 w-12 items-center justify-center text-sm">{quantity}</span>
-          <button type="button" className="flex h-12 w-12 items-center justify-center" onClick={() => setQuantity((value) => value + 1)}>
-            <Plus className="h-4 w-4" strokeWidth={1.5} />
+          <span className="flex h-12 w-12 items-center justify-center text-sm" aria-live="polite">{quantity}</span>
+          <button type="button" className="flex h-12 w-12 items-center justify-center" onClick={() => setQuantity((value) => Math.min(1000, value + 1))} aria-label={locale === "bs" ? "Povećaj količinu" : "Increase quantity"}>
+            <Plus className="h-4 w-4" strokeWidth={1.5} aria-hidden />
           </button>
         </div>
         <button

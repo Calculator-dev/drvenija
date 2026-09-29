@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { ChevronDown, Grid2X2, List, SlidersHorizontal, X } from "lucide-react"
 import { useMemo, useState } from "react"
+import { useModalPanel } from "@/hooks/use-modal-panel"
 import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedCategory, type LocalizedProduct, type Material, type ProductType, isSvg } from "@/lib/products"
 import { cn } from "@/lib/utils"
 
@@ -69,6 +70,7 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
   const [sort, setSort] = useState<SortKey>("featured")
   const [view, setView] = useState<ViewMode>("grid")
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const filterDialog = useModalPanel<HTMLDivElement>(filtersOpen, () => setFiltersOpen(false))
 
   const filtered = useMemo(() => {
     const result = products.filter((product) => {
@@ -94,22 +96,23 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
 
   const resetFilters = () => setFilters({ material: "all", category: "all", type: "all" })
 
-  const filterPanel = (
+  // Rendered in the desktop sidebar and the mobile drawer; `id` keeps radio groups separate.
+  const filterPanel = (id: string) => (
     <div className="divide-y divide-border/60">
       <FilterSection title={isBs ? "Materijal" : "Material"}>
-        <FilterOption label={isBs ? "Svi materijali" : "All materials"} count={products.length} checked={material === "all"} onChange={() => setMaterial("all")} />
-        <FilterOption label={isBs ? "Pleksiglas" : "Plexiglass"} count={countByMaterial("plexiglass")} checked={material === "plexiglass"} onChange={() => setMaterial("plexiglass")} />
-        <FilterOption label={isBs ? "Mediapan" : "MDF"} count={countByMaterial("mediapan")} checked={material === "mediapan"} onChange={() => setMaterial("mediapan")} />
-        {countByMaterial("mixed") > 0 && <FilterOption label={isBs ? "Kombinovano" : "Mixed"} count={countByMaterial("mixed")} checked={material === "mixed"} onChange={() => setMaterial("mixed")} />}
+        <FilterOption name={`${id}-material`} label={isBs ? "Svi materijali" : "All materials"} count={products.length} checked={material === "all"} onChange={() => setMaterial("all")} />
+        <FilterOption name={`${id}-material`} label={isBs ? "Pleksiglas" : "Plexiglass"} count={countByMaterial("plexiglass")} checked={material === "plexiglass"} onChange={() => setMaterial("plexiglass")} />
+        <FilterOption name={`${id}-material`} label={isBs ? "Mediapan" : "MDF"} count={countByMaterial("mediapan")} checked={material === "mediapan"} onChange={() => setMaterial("mediapan")} />
+        {countByMaterial("mixed") > 0 && <FilterOption name={`${id}-material`} label={isBs ? "Kombinovano" : "Mixed"} count={countByMaterial("mixed")} checked={material === "mixed"} onChange={() => setMaterial("mixed")} />}
       </FilterSection>
       <FilterSection title={isBs ? "Kategorija" : "Category"}>
-        <FilterOption label={isBs ? "Sve kategorije" : "All categories"} count={products.length} checked={categoryId === "all"} onChange={() => setCategoryId("all")} />
-        {categories.map((category) => <FilterOption key={category.id} label={category.localizedName} count={countByCategory(category.id)} checked={categoryId === category.id} onChange={() => setCategoryId(category.id)} />)}
+        <FilterOption name={`${id}-category`} label={isBs ? "Sve kategorije" : "All categories"} count={products.length} checked={categoryId === "all"} onChange={() => setCategoryId("all")} />
+        {categories.map((category) => <FilterOption name={`${id}-category`} key={category.id} label={category.localizedName} count={countByCategory(category.id)} checked={categoryId === category.id} onChange={() => setCategoryId(category.id)} />)}
       </FilterSection>
       <FilterSection title={isBs ? "Tip proizvoda" : "Product type"}>
-        <FilterOption label={isBs ? "Svi tipovi" : "All types"} count={products.length} checked={productType === "all"} onChange={() => setProductType("all")} />
-        <FilterOption label={isBs ? "Standardni" : "Standard"} count={countByType("standard")} checked={productType === "standard"} onChange={() => setProductType("standard")} />
-        <FilterOption label={isBs ? "Personalizirani" : "Customizable"} count={countByType("custom")} checked={productType === "custom"} onChange={() => setProductType("custom")} />
+        <FilterOption name={`${id}-type`} label={isBs ? "Svi tipovi" : "All types"} count={products.length} checked={productType === "all"} onChange={() => setProductType("all")} />
+        <FilterOption name={`${id}-type`} label={isBs ? "Standardni" : "Standard"} count={countByType("standard")} checked={productType === "standard"} onChange={() => setProductType("standard")} />
+        <FilterOption name={`${id}-type`} label={isBs ? "Personalizirani" : "Customizable"} count={countByType("custom")} checked={productType === "custom"} onChange={() => setProductType("custom")} />
       </FilterSection>
     </div>
   )
@@ -150,7 +153,7 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
         <aside className="hidden lg:block">
           <div className="sticky top-24">
             {activeFilterCount > 0 && <button type="button" onClick={resetFilters} className="mb-5 border-b border-foreground pb-1 text-xs font-semibold uppercase tracking-[0.12em]">{isBs ? "Očisti filtere" : "Clear filters"}</button>}
-            {filterPanel}
+            {filterPanel("desktop")}
           </div>
         </aside>
 
@@ -169,11 +172,11 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
         </section>
       </div>
 
-      <div className={cn("fixed inset-0 z-[70] lg:hidden", filtersOpen ? "pointer-events-auto" : "pointer-events-none")} aria-hidden={!filtersOpen}>
-        <button type="button" aria-label={isBs ? "Zatvori filtere" : "Close filters"} onClick={() => setFiltersOpen(false)} className={cn("absolute inset-0 bg-black/45 transition-opacity", filtersOpen ? "opacity-100" : "opacity-0")} />
-        <div className={cn("absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col bg-background transition-transform duration-300", filtersOpen ? "translate-x-0" : "-translate-x-full")}>
-          <div className="flex items-center justify-between border-b border-border px-5 py-5"><p className="text-lg font-bold">{isBs ? "Filteri" : "Filters"}</p><button type="button" onClick={() => setFiltersOpen(false)} className="p-2"><X className="h-5 w-5" /></button></div>
-          <div className="flex-1 overflow-y-auto px-5">{filterPanel}</div>
+      <div className={cn("fixed inset-0 z-[70] lg:hidden", filtersOpen ? "pointer-events-auto" : "pointer-events-none")} inert={!filtersOpen}>
+        <button type="button" tabIndex={-1} aria-hidden onClick={() => setFiltersOpen(false)} className={cn("absolute inset-0 bg-black/45 transition-opacity", filtersOpen ? "opacity-100" : "opacity-0")} />
+        <div ref={filterDialog} role="dialog" aria-modal="true" aria-label={isBs ? "Filteri" : "Filters"} className={cn("absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col bg-background transition-transform duration-300", filtersOpen ? "translate-x-0" : "-translate-x-full")}>
+          <div className="flex items-center justify-between border-b border-border px-5 py-5"><p className="text-lg font-bold">{isBs ? "Filteri" : "Filters"}</p><button type="button" onClick={() => setFiltersOpen(false)} className="p-2" aria-label={isBs ? "Zatvori filtere" : "Close filters"}><X className="h-5 w-5" aria-hidden /></button></div>
+          <div className="flex-1 overflow-y-auto px-5">{filterPanel("mobile")}</div>
           <div className="grid grid-cols-2 gap-3 border-t border-border p-5">
             <button type="button" onClick={resetFilters} className="h-12 border border-foreground text-sm font-semibold">{isBs ? "Očisti" : "Clear"}</button>
             <button type="button" onClick={() => setFiltersOpen(false)} className="h-12 bg-foreground text-sm font-semibold text-background">{isBs ? `Prikaži (${filtered.length})` : `Show (${filtered.length})`}</button>
@@ -185,13 +188,13 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
 }
 
 function FilterSection({ title, children }: { title: string; children: React.ReactNode }) {
-  return <div className="py-7"><h2 className="mb-5 text-sm font-bold">{title}</h2><div className="space-y-4">{children}</div></div>
+  return <fieldset className="py-7"><legend className="mb-5 text-sm font-bold">{title}</legend><div className="space-y-4">{children}</div></fieldset>
 }
 
-function FilterOption({ label, count, checked, onChange }: { label: string; count: number; checked: boolean; onChange: () => void }) {
+function FilterOption({ name, label, count, checked, onChange }: { name: string; label: string; count: number; checked: boolean; onChange: () => void }) {
   return (
     <label className="flex cursor-pointer items-center gap-3 text-sm">
-      <input type="checkbox" checked={checked} onChange={onChange} className="h-5 w-5 appearance-none border border-foreground bg-background checked:bg-foreground checked:[background-image:linear-gradient(135deg,transparent_42%,white_42%,white_58%,transparent_58%),linear-gradient(45deg,transparent_56%,white_56%,white_68%,transparent_68%)]" />
+      <input type="radio" name={name} checked={checked} onChange={onChange} className="h-5 w-5 appearance-none border border-foreground bg-background checked:bg-foreground checked:[background-image:linear-gradient(135deg,transparent_42%,white_42%,white_58%,transparent_58%),linear-gradient(45deg,transparent_56%,white_56%,white_68%,transparent_68%)]" />
       <span className="flex-1">{label}</span><span className="text-muted-foreground">({count})</span>
     </label>
   )

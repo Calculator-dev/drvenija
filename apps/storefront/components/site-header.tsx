@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { useModalPanel } from "@/hooks/use-modal-panel";
 import { Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/components/cart-provider";
@@ -32,6 +33,7 @@ const navByLocale = {
 export function SiteHeader({ locale }: { locale: Locale }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuPanel = useModalPanel<HTMLElement>(menuOpen, () => setMenuOpen(false));
   const { totalItems, setOpen, shippingPolicy } = useCart();
   const navLinks = navByLocale[locale];
   const localePrefix = locale === "en" ? "/en" : "";
@@ -121,15 +123,20 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0",
         )}
-        aria-hidden={!menuOpen}
+        inert={!menuOpen}
       >
         <button
           type="button"
-          aria-label={locale === "bs" ? "Zatvori meni" : "Close menu"}
+          tabIndex={-1}
+          aria-hidden
           className="absolute inset-0 bg-foreground/40"
           onClick={() => setMenuOpen(false)}
         />
         <aside
+          ref={menuPanel}
+          role="dialog"
+          aria-modal="true"
+          aria-label={locale === "bs" ? "Meni" : "Menu"}
           className={cn(
             "absolute inset-y-0 left-0 flex w-[90%] max-w-sm flex-col bg-background transition-transform duration-300",
             menuOpen ? "translate-x-0" : "-translate-x-full",

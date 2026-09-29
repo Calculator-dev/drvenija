@@ -4,6 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Minus, Plus, Trash2, X } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
+import { useModalPanel } from "@/hooks/use-modal-panel"
 import { formatPrice, type Locale, isSvg } from "@/lib/products"
 import { cn } from "@/lib/utils"
 
@@ -11,6 +12,8 @@ export function CartDrawer({ locale }: { locale: Locale }) {
   const { items, isOpen, setOpen, removeItem, subtotal, updateQuantity } = useCart()
   const checkoutHref = locale === "en" ? "/en/checkout" : "/checkout"
   const cartHref = locale === "en" ? "/en/cart" : "/cart"
+  const panel = useModalPanel<HTMLElement>(isOpen, () => setOpen(false))
+  const bs = locale === "bs"
 
   return (
     <div
@@ -18,10 +21,14 @@ export function CartDrawer({ locale }: { locale: Locale }) {
         "fixed inset-0 z-[70] transition-opacity",
         isOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
       )}
-      aria-hidden={!isOpen}
+      inert={!isOpen}
     >
       <div className="absolute inset-0 bg-foreground/35" onClick={() => setOpen(false)} />
       <aside
+        ref={panel}
+        role="dialog"
+        aria-modal="true"
+        aria-label={bs ? "Korpa" : "Cart"}
         className={cn(
           "absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-background transition-transform",
           isOpen ? "translate-x-0" : "translate-x-full",
@@ -38,8 +45,8 @@ export function CartDrawer({ locale }: { locale: Locale }) {
               {locale === "bs" ? "Pogledaj korpu" : "View cart"}
             </Link>
           </div>
-          <button type="button" className="ml-3 flex h-10 w-10 flex-shrink-0 items-center justify-center" onClick={() => setOpen(false)}>
-            <X className="h-5 w-5" strokeWidth={1.5} />
+          <button type="button" className="ml-3 flex h-10 w-10 flex-shrink-0 items-center justify-center" onClick={() => setOpen(false)} aria-label={bs ? "Zatvori korpu" : "Close cart"}>
+            <X className="h-5 w-5" strokeWidth={1.5} aria-hidden />
           </button>
         </div>
 
@@ -68,18 +75,18 @@ export function CartDrawer({ locale }: { locale: Locale }) {
                         {item.dimensions && <p className="mt-1 text-xs text-muted-foreground">{locale === "bs" ? "Dimenzije" : "Dimensions"}: {item.dimensions}</p>}
                         {item.variantSku && <p className="mt-1 text-[11px] text-muted-foreground">SKU: {item.variantSku}</p>}
                       </div>
-                      <button type="button" onClick={() => removeItem(item.lineId)} className="text-muted-foreground hover:text-foreground">
-                        <Trash2 className="h-4 w-4" strokeWidth={1.5} />
+                      <button type="button" onClick={() => removeItem(item.lineId)} className="text-muted-foreground hover:text-foreground" aria-label={bs ? `Ukloni ${item.name}` : `Remove ${item.name}`}>
+                        <Trash2 className="h-4 w-4" strokeWidth={1.5} aria-hidden />
                       </button>
                     </div>
                     {item.personalization && <p className="mt-2 text-xs text-muted-foreground">{item.personalization}</p>}
                     <div className="mt-3 inline-flex items-center border border-border">
-                      <button type="button" className="flex h-9 w-9 items-center justify-center" onClick={() => updateQuantity(item.lineId, item.quantity - 1)}>
-                        <Minus className="h-4 w-4" strokeWidth={1.5} />
+                      <button type="button" className="flex h-9 w-9 items-center justify-center" onClick={() => updateQuantity(item.lineId, item.quantity - 1)} aria-label={bs ? "Smanji količinu" : "Decrease quantity"}>
+                        <Minus className="h-4 w-4" strokeWidth={1.5} aria-hidden />
                       </button>
-                      <span className="flex h-9 w-10 items-center justify-center text-sm">{item.quantity}</span>
-                      <button type="button" className="flex h-9 w-9 items-center justify-center" onClick={() => updateQuantity(item.lineId, item.quantity + 1)}>
-                        <Plus className="h-4 w-4" strokeWidth={1.5} />
+                      <span className="flex h-9 w-10 items-center justify-center text-sm" aria-live="polite">{item.quantity}</span>
+                      <button type="button" className="flex h-9 w-9 items-center justify-center" onClick={() => updateQuantity(item.lineId, item.quantity + 1)} aria-label={bs ? "Povećaj količinu" : "Increase quantity"}>
+                        <Plus className="h-4 w-4" strokeWidth={1.5} aria-hidden />
                       </button>
                     </div>
                   </div>
