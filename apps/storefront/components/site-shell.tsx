@@ -1,14 +1,10 @@
 "use client"
 
-import { usePathname } from "next/navigation"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
-import { localeFromPath } from "@/lib/products"
+import type { Locale } from "@/lib/products"
 
-export function SiteShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const locale = localeFromPath(pathname)
-
+export function SiteShell({ locale, children }: { locale: Locale; children: React.ReactNode }) {
   return (
     <>
       <SiteHeader locale={locale} />

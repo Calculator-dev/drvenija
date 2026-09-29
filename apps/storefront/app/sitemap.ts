@@ -8,19 +8,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/about",
     "/shop",
     "/custom",
-    "/cart",
-    "/checkout",
     "/en",
     "/en/about",
     "/en/shop",
     "/en/custom",
-    "/en/cart",
-    "/en/checkout",
   ]
 
+  const [bs, en] = await Promise.all([getProducts("bs"), getProducts("en")])
   const productRoutes = [
-    ...(await getProducts("bs")).map((product) => `/product/${product.localizedSlug}`),
-    ...(await getProducts("en")).map((product) => `/en/product/${product.localizedSlug}`),
+    ...bs.map((product) => `/product/${product.localizedSlug}`),
+    ...en.map((product) => `/en/product/${product.localizedSlug}`),
   ]
 
   return [...routes, ...productRoutes].map((route) => ({

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
 import { useCart } from "@/components/cart-provider"
-import { formatPrice, OrderError, submitOrder, type Locale } from "@/lib/products"
+import { formatPrice, OrderError, submitOrder, type Locale, isSvg } from "@/lib/products"
 
 export function CheckoutClient({ locale }: { locale: Locale }) {
   const router = useRouter()
@@ -137,7 +137,7 @@ export function CheckoutClient({ locale }: { locale: Locale }) {
           {items.map((item) => (
             <li key={item.lineId} className="flex gap-3">
               <div className="relative h-20 w-16 overflow-hidden rounded-sm bg-muted">
-                <Image unoptimized src={item.image} alt={item.name} fill sizes="64px" className="object-cover" />
+                <Image unoptimized={isSvg(item.image)} src={item.image} alt={item.name} fill sizes="64px" className="object-cover" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="font-medium text-foreground">{item.name}</p>

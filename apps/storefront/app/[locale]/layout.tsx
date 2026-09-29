@@ -4,8 +4,9 @@ import { Analytics } from "@vercel/analytics/next"
 import { CartProvider } from "@/components/cart-provider"
 import { SiteShell } from "@/components/site-shell"
 import { Toaster } from "@/components/ui/sonner"
-import { createMetadata } from "@/lib/seo"
-import "./globals.css"
+import { generateLocaleParams, resolveLocale, type LocaleParams } from "@/lib/locale-params"
+import { getBaseUrl } from "@/lib/seo"
+import "../globals.css"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,10 +20,19 @@ const fraunces = Fraunces({
   display: "swap",
 })
 
-export const metadata: Metadata = createMetadata({
-  path: "/",
-  title: "Drvenija | CNC webshop za pleksiglas i mediapan",
-})
+export const generateStaticParams = generateLocaleParams
+
+export const metadata: Metadata = {
+  metadataBase: new URL(getBaseUrl()),
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-light-32x32.png", sizes: "32x32", media: "(prefers-color-scheme: light)" },
+      { url: "/icon-dark-32x32.png", sizes: "32x32", media: "(prefers-color-scheme: dark)" },
+    ],
+    apple: "/apple-icon.png",
+  },
+}
 
 export const viewport: Viewport = {
   themeColor: "#f6efe3",
@@ -30,16 +40,16 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+  params,
+}: Readonly<LocaleParams & { children: React.ReactNode }>) {
+  const locale = await resolveLocale(params)
   return (
-    <html lang="bs" className={`${inter.variable} ${fraunces.variable}`}>
+    <html lang={locale} className={`${inter.variable} ${fraunces.variable}`}>
       <body suppressHydrationWarning className="min-h-screen bg-background font-sans antialiased">
         <CartProvider>
-          <SiteShell>{children}</SiteShell>
+          <SiteShell locale={locale}>{children}</SiteShell>
           <Toaster position="top-center" />
         </CartProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}

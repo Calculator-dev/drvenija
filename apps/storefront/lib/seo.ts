@@ -9,7 +9,7 @@ import {
   type LocalizedField,
 } from "@/lib/products"
 
-function getBaseUrl() {
+export function getBaseUrl() {
   return process.env.NEXT_PUBLIC_SITE_URL ?? "https://drvenija.example"
 }
 
@@ -34,6 +34,10 @@ export function createMetadata(args: {
   path: string
   title: string | LocalizedField
   description?: string | LocalizedField
+  /** Social preview image path; defaults to the site hero image. */
+  image?: string
+  /** Keep transactional pages (cart, checkout) out of search results. */
+  noIndex?: boolean
 }): Metadata {
   const locale = args.locale ?? defaultLocale
   const title = typeof args.title === "string" ? args.title : getLocalizedField(args.title, locale)
@@ -43,9 +47,12 @@ export function createMetadata(args: {
       : getLocalizedField(args.description ?? siteDescription, locale)
   const canonicalPath = locale === "en" ? buildPath("en", args.path === "/" ? "" : args.path) : args.path
 
+  const image = args.image ?? "/images/hero-lifestyle.jpg"
+
   return {
     title,
     description,
+    ...(args.noIndex ? { robots: { index: false, follow: true } } : {}),
     alternates: {
       ...createAlternates(args.path),
       canonical: getAbsoluteUrl(canonicalPath || "/"),
@@ -57,11 +64,13 @@ export function createMetadata(args: {
       siteName,
       locale: locale === "bs" ? "bs_BA" : "en_US",
       type: "website",
+      images: [getAbsoluteUrl(image)],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [getAbsoluteUrl(image)],
     },
   }
 }

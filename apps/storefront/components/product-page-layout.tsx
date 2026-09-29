@@ -5,7 +5,7 @@ import { ProductCard } from "@/components/product-card"
 import { ProductDetail } from "@/components/product-detail"
 import { ProductGallery } from "@/components/product-gallery"
 import { Reveal } from "@/components/reveal"
-import { buildPath, type Locale, type LocalizedProduct } from "@/lib/products"
+import { buildPath, type Locale, type LocalizedProduct, isSvg } from "@/lib/products"
 
 export function ProductPageLayout({ locale, product, related }: { locale: Locale; product: LocalizedProduct; related: LocalizedProduct[] }) {
   const isBs = locale === "bs"
@@ -66,7 +66,7 @@ export function ProductPageLayout({ locale, product, related }: { locale: Locale
       <section className="bg-[#f0ece5]">
         <div className="mx-auto grid max-w-[1500px] md:grid-cols-2">
           <div className="relative min-h-[420px] md:min-h-[680px]">
-            <Image unoptimized src={editorialImage.url} alt={editorialImage.alt[locale]} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />
+            <Image unoptimized={isSvg(editorialImage.url)} src={editorialImage.url} alt={editorialImage.alt[locale]} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />
           </div>
           <Reveal className="flex items-center px-7 py-16 md:px-14 lg:px-20">
             <div className="max-w-xl">

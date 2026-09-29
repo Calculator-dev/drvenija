@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { ChevronDown, Grid2X2, List, SlidersHorizontal, X } from "lucide-react"
 import { useMemo, useState } from "react"
-import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedCategory, type LocalizedProduct, type Material, type ProductType } from "@/lib/products"
+import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedCategory, type LocalizedProduct, type Material, type ProductType, isSvg } from "@/lib/products"
 import { cn } from "@/lib/utils"
 
 type SortKey = "featured" | "name-asc" | "price-asc" | "price-desc"
@@ -19,7 +19,7 @@ function CollectionProductCard({ locale, product, view }: { locale: Locale; prod
     <article className={cn("group", view === "list" && "grid gap-5 border-b border-border/60 pb-7 sm:grid-cols-[220px_1fr]")}>
       <Link href={href} className={cn("relative block overflow-hidden bg-[#f4f4f2]", view === "grid" ? "aspect-square" : "aspect-square sm:aspect-[4/3]")}>
         <Image
-          unoptimized
+          unoptimized={isSvg(product.primaryImage.url)}
           src={product.primaryImage.url}
           alt={product.primaryImage.alt[locale]}
           fill

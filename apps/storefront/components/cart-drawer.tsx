@@ -4,7 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Minus, Plus, Trash2, X } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
-import { formatPrice, type Locale } from "@/lib/products"
+import { formatPrice, type Locale, isSvg } from "@/lib/products"
 import { cn } from "@/lib/utils"
 
 export function CartDrawer({ locale }: { locale: Locale }) {
@@ -58,7 +58,7 @@ export function CartDrawer({ locale }: { locale: Locale }) {
               {items.map((item) => (
                 <li key={item.lineId} className="flex gap-3 border-b border-border/50 pb-4">
                   <div className="relative h-24 w-20 flex-shrink-0 overflow-hidden rounded-sm bg-muted">
-                    <Image unoptimized src={item.image} alt={item.name} fill sizes="80px" className="object-cover" />
+                    <Image unoptimized={isSvg(item.image)} src={item.image} alt={item.name} fill sizes="80px" className="object-cover" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-3">

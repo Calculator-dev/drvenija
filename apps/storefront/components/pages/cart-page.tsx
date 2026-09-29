@@ -4,7 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Minus, Plus, Trash2 } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
-import { formatPrice, type Locale } from "@/lib/products"
+import { formatPrice, type Locale, isSvg } from "@/lib/products"
 
 export function CartPage({ locale }: { locale: Locale }) {
   const { items, subtotal, updateQuantity, removeItem, totalItems } = useCart()
@@ -53,7 +53,7 @@ export function CartPage({ locale }: { locale: Locale }) {
               {items.map((item) => (
                 <li key={item.lineId} className="grid grid-cols-[96px_minmax(0,1fr)] gap-4 border-b border-border py-6 sm:grid-cols-[130px_minmax(0,1fr)] md:grid-cols-[130px_minmax(0,1fr)_150px_130px] md:items-center md:gap-6">
                   <Link href={`${productPrefix}/${item.slug}`} className="relative aspect-[4/5] overflow-hidden bg-muted">
-                    <Image unoptimized src={item.image} alt={item.name} fill sizes="(max-width: 640px) 96px, 130px" className="object-cover transition-transform duration-500 hover:scale-105" />
+                    <Image unoptimized={isSvg(item.image)} src={item.image} alt={item.name} fill sizes="(max-width: 640px) 96px, 130px" className="object-cover transition-transform duration-500 hover:scale-105" />
                   </Link>
 
                   <div className="min-w-0 self-start md:self-center">

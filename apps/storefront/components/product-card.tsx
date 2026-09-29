@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedProduct } from "@/lib/products"
+import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedProduct, isSvg } from "@/lib/products"
 
 export function ProductCard({
   locale,
@@ -18,7 +18,7 @@ export function ProductCard({
     <Link href={href} className="group block">
       <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-muted">
         <Image
-          unoptimized
+          unoptimized={isSvg(product.primaryImage.url)}
           src={product.primaryImage.url}
           alt={product.primaryImage.alt[locale]}
           fill

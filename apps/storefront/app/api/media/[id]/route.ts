@@ -1,11 +1,23 @@
+import { serverApiUrl } from "@/lib/api-url"
+
+// Streams a product image from private storage. Uploaded images are never modified (a new
+// upload gets a new ID), so responses can be cached; the day-long lifetime lets images that
+// are removed from a product drop out of caches. Serving bytes rather than redirecting to
+// the short-lived signed URL also lets next/image optimize them.
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) return new Response(null, { status: 404 })
-  const api = (process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").replace(/\/$/, "")
   try {
-    const response = await fetch(`${api}/public/media/${id}`, { redirect: "manual", cache: "no-store", signal: AbortSignal.timeout(10000) })
-    const location = response.headers.get("location")
-    if (response.status >= 300 && response.status < 400 && location) return new Response(null, { status: 302, headers: { Location: location, "Cache-Control": "no-store" } })
-    return new Response(null, { status: response.status === 404 ? 404 : 502 })
-  } catch { return new Response(null, { status: 502 }) }
+    const response = await fetch(`${serverApiUrl()}/public/media/${id}`, { cache: "no-store", signal: AbortSignal.timeout(15000) })
+    if (response.status === 404) return new Response(null, { status: 404 })
+    if (!response.ok || !response.body) return new Response(null, { status: 502 })
+    return new Response(response.body, {
+      headers: {
+        "Content-Type": response.headers.get("content-type") ?? "image/webp",
+        "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+      },
+    })
+  } catch {
+    return new Response(null, { status: 502 })
+  }
 }

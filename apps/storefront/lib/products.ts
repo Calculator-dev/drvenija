@@ -122,6 +122,15 @@ export function displayPrice(product: Product) {
 
 export const locales: Locale[] = ["bs", "en"]
 
+/** next/image only optimizes raster images; SVG placeholders are served as-is. */
+export function isSvg(url: string) {
+  return url.endsWith(".svg")
+}
+
+export function isLocale(value: string): value is Locale {
+  return (locales as string[]).includes(value)
+}
+
 /** English pages live under /en; everything else is Bosnian. */
 export function localeFromPath(pathname: string): Locale {
   return /^\/en(\/|$)/.test(pathname) ? "en" : "bs"
