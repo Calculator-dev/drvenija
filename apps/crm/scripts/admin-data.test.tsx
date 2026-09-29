@@ -104,7 +104,7 @@ test('nacrt proizvoda zadržava ID-eve varijanti i gradi API tijelo zahtjeva', a
   form.set('material', 'mediapan')
   form.set('featured', 'on')
   const body = productPayload({ form, category: 'category-id', images: [], variants: drafts, mainDimensions: '35 cm' })
-  assert.equal(body.categoryId, 'category-id')
+  assert.equal('categoryId' in body ? body.categoryId : undefined, 'category-id')
   assert.deepEqual(body.variants[0], { id: variantId, sku: 'DRV-1', dimensions: '35 cm', price: 45, active: true })
   assert.deepEqual(body.variants[1], { sku: 'DRV-2', dimensions: '40 cm', price: 60, active: false })
   assert.equal(body.translations.bs.name, 'Monogram')
