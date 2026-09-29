@@ -19,19 +19,29 @@ type ConfirmationEmail = {
   shipping: { address: string; city: string; postalCode?: string; country: string }
 }
 
+type InquiryNotification = {
+  locale: "bs" | "en"
+  fullName: string
+  email: string
+  phone?: string
+  brief: string
+  dimensions?: string
+  deadline?: string
+}
+
 export type EmailResult = { sent: true } | { sent: false; reason: "not_configured" | "delivery_failed" }
 
 const escapeHtml = (value: string) => value.replace(/[&<>'"]/g, character => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", "\"": "&quot;",
 }[character]!))
 
-async function sendEmail(input: { to: string; subject: string; html: string }): Promise<EmailResult> {
+async function sendEmail(input: { to: string; subject: string; html: string; replyTo?: string }): Promise<EmailResult> {
   if (!env.RESEND_API_KEY || !env.ORDER_EMAIL_FROM) return { sent: false, reason: "not_configured" }
   try {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: env.ORDER_EMAIL_FROM, to: [input.to], subject: input.subject, html: input.html }),
+      body: JSON.stringify({ from: env.ORDER_EMAIL_FROM, to: [input.to], subject: input.subject, html: input.html, ...(input.replyTo ? { reply_to: input.replyTo } : {}) }),
     })
     return response.ok ? { sent: true } : { sent: false, reason: "delivery_failed" }
   } catch {
@@ -76,4 +86,20 @@ export async function sendOrderDecisionEmail(input: DecisionEmail): Promise<Emai
   const closing = bosnian ? "Srdačno,<br>Drvenija" : "Kind regards,<br>Drvenija"
 
   return sendEmail({ to: input.to, subject, html: `<p>${escapeHtml(greeting)}</p><p>${message}</p><p>${closing}</p>` })
+}
+
+/** Tells the shop about a new custom-work inquiry; replies go straight to the customer. */
+export async function sendInquiryNotification(input: InquiryNotification): Promise<EmailResult> {
+  if (!env.INQUIRY_NOTIFY_EMAIL) return { sent: false, reason: "not_configured" }
+  const rows = [
+    ["Ime", input.fullName], ["Email", input.email], ["Telefon", input.phone], ["Dimenzije / količina", input.dimensions],
+    ["Željeni rok", input.deadline], ["Jezik", input.locale.toUpperCase()],
+  ].filter((row): row is [string, string] => Boolean(row[1]))
+    .map(([label, value]) => `<tr><td style="padding:6px 12px 6px 0;color:#666">${label}</td><td style="padding:6px 0">${escapeHtml(value)}</td></tr>`).join("")
+  const html = `<div style="font-family:Arial,sans-serif;max-width:620px;color:#222">
+    <h1 style="font-size:22px">Novi upit za izradu po mjeri</h1>
+    <table style="border-collapse:collapse">${rows}</table>
+    <p style="white-space:pre-wrap;border-left:3px solid #ddd;padding-left:12px">${escapeHtml(input.brief)}</p>
+  </div>`
+  return sendEmail({ to: env.INQUIRY_NOTIFY_EMAIL, subject: `Novi upit: ${input.fullName}`, html, replyTo: input.email })
 }

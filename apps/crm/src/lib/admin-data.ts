@@ -9,9 +9,10 @@ export type AdminOrder = {
 export type AdminDashboard = {
   totals: {
     ordersToday: number;
-    inquiriesOpen: number;
-    productsActive: number;
+    awaitingReview: number;
     productionQueued: number;
+    inquiriesLast30Days: number;
+    productsActive: number;
   };
   recentOrders: AdminOrder[];
 };
@@ -62,12 +63,13 @@ export function dashboardView(data: AdminDashboard) {
   return {
     totals: [
       { label: "Današnje narudžbe", value: String(data.totals.ordersToday) },
-      { label: "Otvoreni upiti", value: String(data.totals.inquiriesOpen) },
-      { label: "Aktivni proizvodi", value: String(data.totals.productsActive) },
+      { label: "Čeka pregled", value: String(data.totals.awaitingReview) },
       {
         label: "Čeka proizvodnju",
         value: String(data.totals.productionQueued),
       },
+      { label: "Upiti (30 dana)", value: String(data.totals.inquiriesLast30Days) },
+      { label: "Proizvodi u katalogu", value: String(data.totals.productsActive) },
     ],
     recentOrders: orderRows(data.recentOrders),
   };
@@ -173,3 +175,29 @@ export type OrderDecisionResult = {
     | { sent: true }
     | { sent: false; reason: "not_configured" | "delivery_failed" };
 };
+
+export type AdminInquiry = {
+  id: string;
+  fullName: string;
+  email: string;
+  brief: string;
+  deadline: string | null;
+  createdAt: string;
+};
+export type AdminInquiryDetail = AdminInquiry & {
+  locale: "bs" | "en";
+  phone: string | null;
+  dimensions: string | null;
+};
+export function inquiryRows(inquiries: AdminInquiry[]) {
+  return inquiries.map((inquiry) => ({
+    id: inquiry.id,
+    fullName: inquiry.fullName,
+    email: inquiry.email,
+    brief: inquiry.brief.length > 90 ? `${inquiry.brief.slice(0, 90).trimEnd()}…` : inquiry.brief,
+    deadline: inquiry.deadline ?? "—",
+    createdAt: new Intl.DateTimeFormat("bs-BA", { dateStyle: "medium" }).format(
+      new Date(inquiry.createdAt),
+    ),
+  }));
+}

@@ -8,6 +8,7 @@ import { db } from "../db/client.js"
 import { categories, products, customers, orders, orderItems, mediaAssets, productVariants } from "../db/schema.js"
 import { sendOrderConfirmationEmail } from "../services/order-email.js"
 import { shippingFor } from "../lib/shipping.js"
+import { publicInquiryRoutes } from "./inquiries.js"
 
 const localeSchema = z.enum(["bs", "en"]).default("bs")
 
@@ -18,6 +19,7 @@ export function createOrderNumber(now = new Date()) {
 }
 
 export const publicRoutes: FastifyPluginAsync = async (app) => {
+  app.register(publicInquiryRoutes)
   const variantsFor = async (ids: string[]) => {
     if (ids.length === 0) return new Map<string, Array<typeof productVariants.$inferSelect>>()
     const rows = await db.select().from(productVariants).where(inArray(productVariants.productId, ids))

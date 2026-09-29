@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Boxes, LayoutDashboard, MessageSquareMore, PackageSearch, ShoppingCart, Sparkles } from "lucide-react"
 import { EditProduct } from "./components/edit-product"
+import { InquiryDetails } from "./components/inquiry-details"
 import { OrderDetails } from "./components/order-details"
 import { ProductForm } from "./components/product-form"
 import { Badge } from "./components/ui/badge"
@@ -17,7 +18,7 @@ const navigation = [
   { id: "inquiries", label: "Upiti", icon: MessageSquareMore },
 ] as const
 
-type SectionId = (typeof navigation)[number]["id"] | "new-product" | `edit-product:${string}` | `order:${string}`
+type SectionId = (typeof navigation)[number]["id"] | "new-product" | `edit-product:${string}` | `order:${string}` | `inquiry:${string}`
 function currentSection(): SectionId {
   if (typeof window === "undefined") return "dashboard"
   if (window.location.pathname === "/products/new") return "new-product"
@@ -25,6 +26,8 @@ function currentSection(): SectionId {
   if (edit) return `edit-product:${edit[1]}`
   const order = /^\/orders\/([^/]+)$/.exec(window.location.pathname)
   if (order) return `order:${order[1]}`
+  const inquiry = /^\/inquiries\/([^/]+)$/.exec(window.location.pathname)
+  if (inquiry) return `inquiry:${inquiry[1]}`
   return navigation.find(item => window.location.pathname === `/${item.id}`)?.id ?? "dashboard"
 }
 
@@ -37,7 +40,7 @@ export function App() {
     return () => window.removeEventListener("popstate", onPop)
   }, [])
   function navigate(next: SectionId) {
-    window.history.pushState(null, "", next.startsWith("edit-product:") ? `/products/${next.slice(13)}/edit` : next.startsWith("order:") ? `/orders/${next.slice(6)}` : next === "new-product" ? "/products/new" : next === "dashboard" ? "/" : `/${next}`)
+    window.history.pushState(null, "", next.startsWith("edit-product:") ? `/products/${next.slice(13)}/edit` : next.startsWith("order:") ? `/orders/${next.slice(6)}` : next.startsWith("inquiry:") ? `/inquiries/${next.slice(8)}` : next === "new-product" ? "/products/new" : next === "dashboard" ? "/" : `/${next}`)
     setSection(next)
     setNotice("")
     window.scrollTo(0, 0)
@@ -64,7 +67,7 @@ export function App() {
           <nav className="mt-8 space-y-2">
             {navigation.map((item) => {
               const Icon = item.icon
-              const active = section === item.id || ((section === "new-product" || section.startsWith("edit-product:")) && item.id === "products") || (section.startsWith("order:") && item.id === "orders")
+              const active = section === item.id || ((section === "new-product" || section.startsWith("edit-product:")) && item.id === "products") || (section.startsWith("order:") && item.id === "orders") || (section.startsWith("inquiry:") && item.id === "inquiries")
               return (
                 <button
                   key={item.id}
@@ -95,15 +98,16 @@ export function App() {
           </header>
 
           {notice && <p role="status" className="mt-6 rounded-lg border border-primary/20 bg-primary/5 p-4 text-sm">{notice}</p>}
+          {section.startsWith("inquiry:") && <InquiryDetails id={section.slice(8)} onBack={() => navigate("inquiries")} />}
           {section.startsWith("order:") && <OrderDetails id={section.slice(6)} onBack={() => navigate("orders")} />}
           {section.startsWith("edit-product:") && <EditProduct id={section.slice(13)} onCancel={() => navigate("products")} onSaved={() => { navigate("products"); setNotice("Proizvod je uspješno ažuriran.") }} />}
           {section === "new-product" && <ProductForm onCancel={() => navigate("products")} onSaved={() => { navigate("products"); setNotice("Proizvod je uspješno sačuvan.") }} />}
           {section === "products" && productsQuery.isPending && <p role="status" className="mt-6">Učitavanje proizvoda…</p>}
-          {[dashboardQuery, productsQuery, ordersQuery].some(query => query.isError) && <p role="alert" className="mt-6 text-destructive">CRM podatke nije moguće učitati. Osvježite stranicu i pokušajte ponovo.</p>}
+          {[dashboardQuery, productsQuery, ordersQuery, inquiriesQuery].some(query => query.isError) && <p role="alert" className="mt-6 text-destructive">CRM podatke nije moguće učitati. Osvježite stranicu i pokušajte ponovo.</p>}
 
           {section === "dashboard" && (
             <div className="space-y-6 pt-6">
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-5">
                 {dashboardQuery.data?.totals.map((item) => (
                   <Card key={item.label} className="p-5">
                     <p className="text-sm text-muted-foreground">{item.label}</p>
@@ -171,7 +175,9 @@ export function App() {
               title="Upiti za izradu po mjeri"
               description="Evidentirajte zahtjeve za personalizirane proizvode i pretvorite ih u ponude ili proizvodne zadatke."
               rows={inquiriesQuery.data ?? []}
-              columns={["client", "subject", "deadline", "status"]}
+              columns={["createdAt", "fullName", "email", "brief", "deadline"]}
+              onEdit={row => navigate(`inquiry:${row.id}`)}
+              actionLabel="Detalji"
             />
           )}
 
@@ -244,7 +250,7 @@ function SectionCard({
 const columnLabels: Record<string, string> = {
   sku: "SKU", name: "Naziv", type: "Tip", price: "Cijena", orderNumber: "Narudžba", customer: "Kupac",
   status: "Status", amount: "Iznos", client: "Klijent", subject: "Predmet", deadline: "Rok",
-  createdAt: "Datum",
+  createdAt: "Datum", fullName: "Ime", email: "Email", brief: "Upit",
 }
 
 function columnLabel(column: string) {

@@ -1,6 +1,4 @@
-import { demoInquiries } from "./demo"
-
-import { dashboardView, orderRows, productRows, type AdminDashboard, type AdminOrder, type AdminOrderDetail, type AdminProduct, type OrderDecisionResult, type ProductDetails } from "./admin-data"
+import { dashboardView, inquiryRows, orderRows, productRows, type AdminDashboard, type AdminInquiry, type AdminInquiryDetail, type AdminOrder, type AdminOrderDetail, type AdminProduct, type OrderDecisionResult, type ProductDetails } from "./admin-data"
 import { apiUrl as API_URL, supabase } from "./auth"
 
 export class ApiError extends Error {
@@ -54,7 +52,11 @@ export function decideOrder(id: string, body: { decision: "accept" } | { decisio
 }
 
 export function getInquiries() {
-  return Promise.resolve(demoInquiries)
+  return fetchJson<AdminInquiry[]>("/admin/inquiries").then(inquiryRows)
+}
+
+export function getInquiry(id: string) {
+  return fetchJson<AdminInquiryDetail>(`/admin/inquiries/${encodeURIComponent(id)}`)
 }
 
 export type AdminCategory = { id: string; translations: Record<string, { name: string }> }

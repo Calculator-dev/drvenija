@@ -104,6 +104,7 @@ export function ProductForm({
       if (product)
         void cache.invalidateQueries({ queryKey: ["product", product.id] });
       void cache.invalidateQueries({ queryKey: ["categories"] });
+      void cache.invalidateQueries({ queryKey: ["dashboard"] });
       onSaved();
     },
   });

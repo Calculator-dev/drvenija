@@ -12,8 +12,8 @@ const decisionInput = z.discriminatedUnion("decision", [
 ])
 const totalAmount = sql<number>`coalesce(sum(${orderItems.unitPrice} * ${orderItems.quantity}), 0) + ${orders.shippingAmount}`.mapWith(Number)
 
-export const orderReviewRoutes: FastifyPluginAsync = async app => {
-  app.get("/orders", async () => db
+export function orderSummaries() {
+  return db
     .select({
       id: orders.id, orderNumber: orders.orderNumber, customer: customers.fullName,
       status: orders.status, amount: totalAmount, createdAt: orders.createdAt,
@@ -22,7 +22,11 @@ export const orderReviewRoutes: FastifyPluginAsync = async app => {
     .innerJoin(customers, eq(customers.id, orders.customerId))
     .leftJoin(orderItems, eq(orderItems.orderId, orders.id))
     .groupBy(orders.id, customers.id)
-    .orderBy(desc(orders.createdAt)))
+    .orderBy(desc(orders.createdAt))
+}
+
+export const orderReviewRoutes: FastifyPluginAsync = async app => {
+  app.get("/orders", async () => orderSummaries())
 
   app.get("/orders/:id", async (request, reply) => {
     const { id } = params.parse(request.params)

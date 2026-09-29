@@ -3,13 +3,13 @@ import test from 'node:test'
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { seedDashboard, seedProducts } from '../../api/src/lib/seed.ts'
+import { seedDashboard, seedProducts } from './fixtures.ts'
 import { dashboardView, orderRows, productRows } from '../src/lib/admin-data.ts'
 import { App } from '../src/app.tsx'
 
 test('API odgovor kontrolne ploče prikazuje se bez greške', () => {
   const data = dashboardView(seedDashboard)
-  assert.equal(data.totals.length, 4)
+  assert.equal(data.totals.length, 5)
   assert.equal(data.totals[0].value, '4')
   const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } })
   client.setQueryData(['dashboard'], data)

@@ -1,3 +1,4 @@
+// Test fixtures shaped like API responses.
 export const seedCategories = [
   {
     id: "wedding",
@@ -88,9 +89,10 @@ export const seedProducts = [
 export const seedDashboard = {
   totals: {
     ordersToday: 4,
-    inquiriesOpen: 7,
-    productsActive: 12,
+    awaitingReview: 3,
     productionQueued: 5,
+    inquiriesLast30Days: 7,
+    productsActive: 12,
   },
   recentOrders: [
     { id: "b3f22b86-3991-46a6-b67b-0b2d696be12e", orderNumber: "DRV-104251", customer: "Amina K.", status: "submitted", amount: 98, createdAt: "2026-04-25T09:00:00.000Z" },

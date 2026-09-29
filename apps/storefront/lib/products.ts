@@ -300,11 +300,15 @@ export type OrderResponse = {
 
 export class OrderError extends Error {}
 
-export async function submitOrder(payload: OrderPayload): Promise<OrderResponse> {
+function browserApiUrl() {
+  // Localhost is only a development default; production builds must set NEXT_PUBLIC_API_URL.
   const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? (process.env.NODE_ENV === "production" ? "" : "http://localhost:4000")).replace(/\/$/, "")
   if (!apiUrl) throw new OrderError("Order service is not configured")
+  return apiUrl
+}
 
-  const response = await fetch(`${apiUrl}/public/orders`, {
+export async function submitOrder(payload: OrderPayload): Promise<OrderResponse> {
+  const response = await fetch(`${browserApiUrl()}/public/orders`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -314,4 +318,26 @@ export async function submitOrder(payload: OrderPayload): Promise<OrderResponse>
   const body = await response.json().catch(() => null) as (Partial<OrderResponse> & { message?: string }) | null
   if (!response.ok || !body?.orderNumber) throw new OrderError(body?.message ?? "Order submission failed")
   return body as OrderResponse
+}
+
+export type InquiryPayload = {
+  locale: Locale
+  fullName: string
+  email: string
+  phone?: string
+  brief: string
+  dimensions?: string
+  deadline?: string
+}
+
+export async function submitInquiry(payload: InquiryPayload) {
+  const response = await fetch(`${browserApiUrl()}/public/inquiries`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  if (!response.ok) {
+    const body = await response.json().catch(() => null) as { message?: string } | null
+    throw new OrderError(body?.message ?? "Inquiry submission failed")
+  }
 }
