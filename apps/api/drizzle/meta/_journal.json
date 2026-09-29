@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790239223381,
+      "tag": "0000_romantic_rumiko_fujikawa",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790330400000,
+      "tag": "0001_order_review",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790334000000,
+      "tag": "0002_short_order_numbers",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790402400000,
+      "tag": "0003_product_variants",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790578800000,
+      "tag": "0004_order_confirmation_email",
+      "breakpoints": true
+    }
+  ]
+}

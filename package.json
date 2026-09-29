@@ -1,0 +1,20 @@
+{
+  "name": "drvenija",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.0.0",
+  "scripts": {
+    "dev:storefront": "npm --prefix apps/storefront run dev -- --port 3001",
+    "dev:api": "npm --prefix apps/api run dev",
+    "dev:crm": "npm --prefix apps/crm run dev -- --port 3000 --strictPort",
+    "build:storefront": "npm --prefix apps/storefront run build",
+    "build:api": "npm --prefix apps/api run build",
+    "build:crm": "npm --prefix apps/crm run build",
+    "start": "node scripts/dev.mjs",
+    "dev": "node scripts/dev.mjs",
+    "test:crm": "TSX_TSCONFIG_PATH=apps/crm/tsconfig.json node --import ./apps/api/node_modules/tsx/dist/loader.mjs --test apps/crm/scripts/*.test.tsx"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
