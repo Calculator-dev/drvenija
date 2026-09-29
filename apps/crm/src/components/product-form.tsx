@@ -189,6 +189,11 @@ export function ProductForm({
                 </Field>
               </div>
             </Card>
+            <VariantEditor
+              variants={variants}
+              onChange={updateVariants}
+              mainDimensions={mainDimensions}
+            />
             <Card className="p-6">
               <details>
                 <summary className="cursor-pointer font-serif text-2xl">
@@ -334,11 +339,6 @@ export function ProductForm({
                 </select>
               </Field>
             </Card>
-            <VariantEditor
-              variants={variants}
-              onChange={updateVariants}
-              mainDimensions={mainDimensions}
-            />
             <Card className="space-y-4 p-6">
               <h3 className="font-serif text-2xl">Opcije</h3>
               <label className="flex items-center gap-3 text-sm">
