@@ -364,6 +364,12 @@ export function ProductForm({
                       ? "Učitavanje kategorija…"
                       : "Odaberite kategoriju"}
                   </option>
+                  {/* Keep a saved category selectable while the list is loading or failed. */}
+                  {category &&
+                    category !== "new" &&
+                    !categories.data?.some((item) => item.id === category) && (
+                      <option value={category}>Trenutna kategorija</option>
+                    )}
                   {categories.data?.map((item) => (
                     <option key={item.id} value={item.id}>
                       {item.translations.bs?.name ??
