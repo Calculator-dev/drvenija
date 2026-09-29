@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { ArrowLeft } from "lucide-react"
 import { getInquiry } from "../lib/api"
+import { formatDateTime } from "../lib/format"
 import { Button } from "./ui/button"
 import { Card } from "./ui/card"
 
-const date = (value: string) => new Intl.DateTimeFormat("bs-BA", { dateStyle: "long", timeStyle: "short" }).format(new Date(value))
+const date = formatDateTime
 
 export function InquiryDetails({ id, onBack }: { id: string; onBack: () => void }) {
   const query = useQuery({ queryKey: ["inquiry", id], queryFn: () => getInquiry(id) })
@@ -19,7 +20,7 @@ export function InquiryDetails({ id, onBack }: { id: string; onBack: () => void 
       </button>
       <div>
         <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Upit za izradu po mjeri</p>
-        <h2 className="mt-2 font-serif text-4xl">{inquiry.fullName}</h2>
+        <h1 id="page-title" tabIndex={-1} className="mt-2 font-serif text-4xl outline-none">{inquiry.fullName}</h1>
         <p className="mt-2 text-sm text-muted-foreground">Primljen {date(inquiry.createdAt)} · {inquiry.locale === "en" ? "engleski" : "bosanski"}</p>
       </div>
       <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">

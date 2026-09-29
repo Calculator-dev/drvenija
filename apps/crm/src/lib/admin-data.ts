@@ -1,3 +1,5 @@
+import { formatDate, formatMoney } from "./format";
+
 export type AdminOrder = {
   id: string;
   orderNumber: string;
@@ -24,10 +26,6 @@ export type AdminProduct = {
   priceFrom?: number | null;
   translations: Record<string, { name: string }>;
 };
-const money = (amount: number) =>
-  new Intl.NumberFormat("bs-BA", { style: "currency", currency: "BAM" }).format(
-    amount,
-  );
 const productType = (type: string) =>
   type === "custom"
     ? "Personalizirani"
@@ -52,10 +50,8 @@ export function orderRows(orders: AdminOrder[]) {
   return orders.map((order) => ({
     ...order,
     status: orderStatus(order.status),
-    amount: money(order.amount),
-    createdAt: new Intl.DateTimeFormat("bs-BA", { dateStyle: "medium" }).format(
-      new Date(order.createdAt),
-    ),
+    amount: formatMoney(order.amount),
+    createdAt: formatDate(order.createdAt),
   }));
 }
 export const localizedOrderStatus = orderStatus;
@@ -83,7 +79,8 @@ export function productRows(products: AdminProduct[]) {
       product.translations.en?.name ??
       product.sku,
     type: productType(product.type),
-    price: `${money(product.priceFrom ?? product.price)}${product.priceFrom != null ? "+" : ""}`,
+    // Orders charge `price`; a starting price only marks that the final amount may be higher.
+    price: `${formatMoney(product.price)}${product.priceFrom != null ? "+" : ""}`,
   }));
 }
 
@@ -196,8 +193,6 @@ export function inquiryRows(inquiries: AdminInquiry[]) {
     email: inquiry.email,
     brief: inquiry.brief.length > 90 ? `${inquiry.brief.slice(0, 90).trimEnd()}…` : inquiry.brief,
     deadline: inquiry.deadline ?? "—",
-    createdAt: new Intl.DateTimeFormat("bs-BA", { dateStyle: "medium" }).format(
-      new Date(inquiry.createdAt),
-    ),
+    createdAt: formatDate(inquiry.createdAt),
   }));
 }

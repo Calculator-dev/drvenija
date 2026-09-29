@@ -1,78 +1,16 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type SetStateAction } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, PackagePlus, Plus, Trash2 } from "lucide-react";
+import { useBlocker } from "react-router";
+import { ArrowLeft, PackagePlus } from "lucide-react";
 import { createProduct, getCategories, updateProduct } from "../lib/api";
+import { productPayload, variantDrafts, type VariantDraft } from "../lib/product-draft";
 import { ProductImages } from "./product-images";
-import type {
-  ProductDetails,
-  ProductImage,
-  ProductVariant,
-} from "../lib/admin-data";
+import { VariantEditor } from "./variant-editor";
+import type { ProductDetails, ProductImage } from "../lib/admin-data";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Card } from "./ui/card";
-
-const control =
-  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
-function Field({
-  label,
-  children,
-  hint,
-}: {
-  label: string;
-  children: ReactNode;
-  hint?: string;
-}) {
-  return (
-    <label className="block space-y-2 text-sm">
-      <span className="font-medium">{label}</span>
-      {children}
-      {hint && (
-        <span className="block text-xs leading-5 text-muted-foreground">
-          {hint}
-        </span>
-      )}
-    </label>
-  );
-}
-
-type VariantDraft = {
-  key: string;
-  id?: string;
-  sku: string;
-  dimensions: string;
-  price: string;
-  priceFrom: string;
-  active: boolean;
-};
-const uuidPattern =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-function variantDrafts(product?: ProductDetails): VariantDraft[] {
-  const fromApi = product?.variants?.length
-    ? product.variants
-    : [
-        {
-          id: "primary",
-          sku: product?.sku ?? "",
-          dimensions: product?.dimensions ?? "",
-          price: product?.price ?? 0,
-          priceFrom: product?.priceFrom ?? null,
-          active: true,
-          isDefault: true,
-        } satisfies ProductVariant,
-      ];
-  return fromApi.map((variant) => ({
-    key: crypto.randomUUID(),
-    // The API reports a synthetic "<product>-default" variant for legacy products; only
-    // real row IDs are sent back so the server updates them in place.
-    id: uuidPattern.test(variant.id) ? variant.id : undefined,
-    sku: variant.sku,
-    dimensions: variant.dimensions,
-    price: String(variant.price),
-    priceFrom: variant.priceFrom == null ? "" : String(variant.priceFrom),
-    active: variant.active ?? true,
-  }));
-}
+import { control, Field } from "./ui/field";
 
 export function ProductForm({
   onCancel,
@@ -90,12 +28,32 @@ export function ProductForm({
   });
   const [category, setCategory] = useState(product?.categoryId ?? "");
   const [images, setImages] = useState<ProductImage[]>(product?.media ?? []);
-  const initialVariants = variantDrafts(product);
-  const [variants, setVariants] = useState<VariantDraft[]>(initialVariants);
+  const [variants, setVariants] = useState<VariantDraft[]>(() => variantDrafts(product));
   const [mainDimensions, setMainDimensions] = useState(
-    product?.dimensions ?? initialVariants[0]?.dimensions ?? "",
+    () => product?.dimensions ?? variants[0]?.dimensions ?? "",
   );
   const [uploading, setUploading] = useState(false);
+  // Warn before leaving with unsaved edits; a successful save navigates away freely.
+  const [dirty, setDirty] = useState(false);
+  const saved = useRef(false);
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      dirty && !saved.current && currentLocation.pathname !== nextLocation.pathname,
+  );
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+  const updateImages = (next: SetStateAction<ProductImage[]>) => {
+    setDirty(true);
+    setImages(next);
+  };
+  const updateVariants = (next: SetStateAction<VariantDraft[]>) => {
+    setDirty(true);
+    setVariants(next);
+  };
   const mutation = useMutation({
     mutationFn: (body: unknown) =>
       product ? updateProduct(product.id, body) : createProduct(body),
@@ -105,77 +63,16 @@ export function ProductForm({
         void cache.invalidateQueries({ queryKey: ["product", product.id] });
       void cache.invalidateQueries({ queryKey: ["categories"] });
       void cache.invalidateQueries({ queryKey: ["dashboard"] });
+      saved.current = true;
       onSaved();
     },
   });
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (mutation.isPending || uploading) return;
-    const data = new FormData(event.currentTarget);
-    const text = (name: string) => String(data.get(name) ?? "").trim();
-    const localized = (name: string) => ({
-      bs: text(`${name}.bs`),
-      en: text(`${name}.en`) || text(`${name}.bs`),
-    });
-    const translation = (locale: "bs" | "en") =>
-      Object.fromEntries(
-        ["name", "tagline", "shortDescription", "description"].map((key) => [
-          key,
-          text(`${key}.${locale}`) ||
-            (locale === "en" ? text(`${key}.bs`) : ""),
-        ]),
-      );
-    if (variants.length === 0) return;
-    mutation.mutate({
-      images: images.map(({ id, alt, isPrimary }) => ({ id, alt, isPrimary })),
-      ...(category === "new"
-        ? { newCategory: localized("category") }
-        : { categoryId: category }),
-      type: text("type"),
-      material: text("material"),
-      variants: variants.map((variant, index) => ({
-        ...(variant.id ? { id: variant.id } : {}),
-        sku: variant.sku.trim(),
-        dimensions: (index === 0 ? mainDimensions : variant.dimensions).trim(),
-        price: Number(variant.price),
-        priceFrom:
-          variant.priceFrom.trim() === "" ? null : Number(variant.priceFrom),
-        active: variant.active,
-      })),
-      leadTime: localized("leadTime"),
-      stockLabel: localized("stockLabel"),
-      featured: data.has("featured"),
-      customizable: data.has("customizable"),
-      translations: { bs: translation("bs"), en: translation("en") },
-    });
-  }
-
-  function addVariant() {
-    setVariants((current) => [
-      ...current,
-      {
-        key: crypto.randomUUID(),
-        sku: "",
-        dimensions: "",
-        price: "",
-        priceFrom: "",
-        active: true,
-      },
-    ]);
-  }
-  function updateVariant(index: number, patch: Partial<VariantDraft>) {
-    setVariants((current) =>
-      current.map((variant, currentIndex) =>
-        currentIndex === index ? { ...variant, ...patch } : variant,
-      ),
-    );
-  }
-  function removeVariant(index: number) {
-    setVariants((current) =>
-      current.length <= 1
-        ? current
-        : current.filter((_, currentIndex) => currentIndex !== index),
+    if (mutation.isPending || uploading || variants.length === 0) return;
+    mutation.mutate(
+      productPayload({ form: new FormData(event.currentTarget), category, images, variants, mainDimensions }),
     );
   }
 
@@ -193,18 +90,25 @@ export function ProductForm({
         <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
           Katalog
         </p>
-        <h2 className="mt-2 font-serif text-4xl">
+        <h1 id="page-title" tabIndex={-1} className="mt-2 font-serif text-4xl outline-none">
           {product ? "Uredi proizvod" : "Dodaj proizvod"}
-        </h2>
+        </h1>
         <p className="mt-3 text-sm text-muted-foreground">
           Opišite proizvod, odaberite kategoriju i postavite cijenu. Polja
           označena zvjezdicom (*) su obavezna.
         </p>
       </div>
-      <form onSubmit={submit} className="space-y-6">
+      {blocker.state === "blocked" && (
+        <div role="alertdialog" aria-label="Nesačuvane izmjene" className="mt-6 flex flex-wrap items-center gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm">
+          <p className="flex-1">Imate nesačuvane izmjene. Napustiti stranicu bez čuvanja?</p>
+          <Button type="button" variant="outline" onClick={() => blocker.reset()}>Ostani</Button>
+          <Button type="button" onClick={() => blocker.proceed()}>Napusti bez čuvanja</Button>
+        </div>
+      )}
+      <form onSubmit={submit} onChange={() => setDirty(true)} className="space-y-6">
         <ProductImages
           images={images}
-          onChange={setImages}
+          onChange={updateImages}
           onBusy={setUploading}
           disabled={mutation.isPending}
         />
@@ -430,122 +334,11 @@ export function ProductForm({
                 </select>
               </Field>
             </Card>
-            <Card className="space-y-5 p-6">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="font-serif text-2xl">Varijante i cijene</h3>
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    Prva varijanta je osnovna i koristi se kao glavna cijena
-                    proizvoda i glavne dimenzije.
-                  </p>
-                </div>
-                <Button type="button" variant="outline" onClick={addVariant}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Dodaj varijantu
-                </Button>
-              </div>
-              <div className="space-y-4">
-                {variants.map((variant, index) => (
-                  <div
-                    key={variant.key}
-                    className="space-y-4 rounded-lg border border-border/70 p-4"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm font-medium">
-                        Varijanta {index + 1}
-                        {index === 0 ? " (osnovna)" : ""}
-                      </p>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        disabled={variants.length <= 1}
-                        onClick={() => removeVariant(index)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Ukloni
-                      </Button>
-                    </div>
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <Field label="SKU *" hint="Jedinstvena šifra varijante.">
-                        <Input
-                          required
-                          maxLength={80}
-                          pattern="[A-Za-z0-9_-]+"
-                          placeholder="DRV-MONO-01-30"
-                          value={variant.sku}
-                          onChange={(event) =>
-                            updateVariant(index, { sku: event.target.value })
-                          }
-                        />
-                      </Field>
-                      <Field label="Dimenzije *">
-                        <Input
-                          required
-                          maxLength={200}
-                          placeholder="npr. 30 × 30 cm"
-                          value={index === 0 ? mainDimensions : variant.dimensions}
-                          readOnly={index === 0}
-                          onChange={
-                            index === 0
-                              ? undefined
-                              : (event) =>
-                                  updateVariant(index, {
-                                    dimensions: event.target.value,
-                                  })
-                          }
-                        />
-                      </Field>
-                    </div>
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <Field label="Cijena (BAM) *">
-                        <Input
-                          required
-                          type="number"
-                          min={0}
-                          max={1000000}
-                          step={1}
-                          placeholder="45"
-                          value={variant.price}
-                          onChange={(event) =>
-                            updateVariant(index, { price: event.target.value })
-                          }
-                        />
-                      </Field>
-                      <Field
-                        label="Početna cijena (BAM)"
-                        hint="Opcionalno, za prikaz cijene od određenog iznosa."
-                      >
-                        <Input
-                          type="number"
-                          min={0}
-                          max={1000000}
-                          step={1}
-                          placeholder="45"
-                          value={variant.priceFrom}
-                          onChange={(event) =>
-                            updateVariant(index, {
-                              priceFrom: event.target.value,
-                            })
-                          }
-                        />
-                      </Field>
-                    </div>
-                    <label className="flex items-center gap-3 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={variant.active}
-                        onChange={(event) =>
-                          updateVariant(index, { active: event.target.checked })
-                        }
-                        className="h-4 w-4 accent-primary"
-                      />
-                      Aktivna varijanta
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </Card>
+            <VariantEditor
+              variants={variants}
+              onChange={updateVariants}
+              mainDimensions={mainDimensions}
+            />
             <Card className="space-y-4 p-6">
               <h3 className="font-serif text-2xl">Opcije</h3>
               <label className="flex items-center gap-3 text-sm">

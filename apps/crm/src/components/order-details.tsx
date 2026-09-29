@@ -3,11 +3,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { ArrowLeft, Check, Mail, X } from "lucide-react"
 import { decideOrder, getOrder } from "../lib/api"
 import { localizedOrderStatus } from "../lib/admin-data"
+import { formatDateTime, formatMoney } from "../lib/format"
 import { Button } from "./ui/button"
 import { Card } from "./ui/card"
 
-const money = (amount: number) => new Intl.NumberFormat("bs-BA", { style: "currency", currency: "BAM" }).format(amount)
-const date = (value: string) => new Intl.DateTimeFormat("bs-BA", { dateStyle: "long", timeStyle: "short" }).format(new Date(value))
+const money = formatMoney
+const date = formatDateTime
 
 export function OrderDetails({ id, onBack }: { id: string; onBack: () => void }) {
   const queryClient = useQueryClient()
@@ -54,7 +55,7 @@ export function OrderDetails({ id, onBack }: { id: string; onBack: () => void })
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Detalji narudžbe</p>
-          <h2 className="mt-2 font-serif text-4xl">{order.orderNumber}</h2>
+          <h1 id="page-title" tabIndex={-1} className="mt-2 font-serif text-4xl outline-none">{order.orderNumber}</h1>
           <p className="mt-2 text-sm text-muted-foreground">Kreirana {date(order.createdAt)}</p>
         </div>
         <span className="w-fit rounded-full border border-border bg-card px-4 py-2 text-sm font-medium">{localizedOrderStatus(order.status)}</span>
