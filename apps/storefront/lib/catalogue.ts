@@ -1,4 +1,5 @@
 import "server-only"
+import { connection } from "next/server"
 import { cache } from "react"
 import { serverApiUrl } from "./api-url"
 import { activeVariants, defaultShippingPolicy, localizeCategory, localizeProduct, type CatalogueOffer, type Category, type Product, type Locale, type ShippingPolicy } from "./products"
@@ -7,6 +8,8 @@ type Catalogue = { products: Product[]; categories: Category[]; shipping: Shippi
 
 // cache() deduplicates the fetch within one request (metadata, page, related products).
 export const getCatalogue = cache(async (): Promise<Catalogue> => {
+  // The catalogue is always read at request time so CRM changes appear immediately.
+  await connection()
   const response = await fetch(`${serverApiUrl()}/public/catalogue`, { cache: "no-store", signal: AbortSignal.timeout(10000) })
   if (!response.ok) throw new Error("The product catalogue is temporarily unavailable")
   const data = await response.json() as Catalogue
