@@ -28,9 +28,6 @@ export async function getProducts(locale: Locale) {
 export async function getCategories(locale: Locale) {
   return (await getCatalogue()).categories.map(category => localizeCategory(category, locale))
 }
-export async function getFeaturedProducts(locale: Locale) {
-  return (await getProducts(locale)).filter(product => product.featured)
-}
 export async function getProductBySlug(locale: Locale, slug: string) {
   return (await getProducts(locale)).find(product => product.localizedSlug === slug || product.slug.bs === slug || product.slug.en === slug) ?? null
 }

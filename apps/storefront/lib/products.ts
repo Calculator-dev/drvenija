@@ -88,19 +88,6 @@ export type LandingSection = {
   description: LocalizedField
 }
 
-export type HeroContent = {
-  eyebrow: LocalizedField
-  title: LocalizedField
-  highlight: LocalizedField
-  description: LocalizedField
-  primaryCta: LocalizedField
-  secondaryCta: LocalizedField
-  stats: Array<{
-    label: LocalizedField
-    value: LocalizedField
-  }>
-}
-
 export type ShippingPolicy = { freeFrom: number; fee: number }
 
 /** Shown before the live policy loads; the API's GET /public/catalogue is authoritative. */
@@ -156,63 +143,7 @@ export const siteDescription: LocalizedField = {
   en: "Drvenija creates CNC-cut plexiglass and MDF products for homes, businesses, and special occasions.",
 }
 
-export const heroContent: HeroContent = {
-  eyebrow: {
-    bs: "CNC radionica za pleksiglas i mediapan",
-    en: "CNC studio for plexiglass and MDF",
-  },
-  title: {
-    bs: "Proizvodi koje režemo precizno, a završavamo ručno.",
-    en: "Products cut with precision and finished by hand.",
-  },
-  highlight: {
-    bs: "za dom, poklone i biznis",
-    en: "for homes, gifts, and businesses",
-  },
-  description: {
-    bs: "Drvenija izrađuje personalizirane i serijske komade od pleksiglasa i mediapana. Fokus nam je na čistom rezu, dobrom materijalu i urednoj završnoj obradi spremnoj za prodaju ili poklon.",
-    en: "Drvenija makes personalized and small-batch products in plexiglass and MDF. We focus on clean cuts, quality material choices, and a polished finish ready for retail, gifting, or interior use.",
-  },
-  primaryCta: {
-    bs: "Pregledaj webshop",
-    en: "Browse the webshop",
-  },
-  secondaryCta: {
-    bs: "Zatraži custom izradu",
-    en: "Request a custom piece",
-  },
-  stats: [
-    {
-      label: { bs: "Materijali", en: "Materials" },
-      value: { bs: "Pleksiglas i mediapan", en: "Plexiglass and MDF" },
-    },
-    {
-      label: { bs: "Tip narudžbi", en: "Order mode" },
-      value: { bs: "Standardno i po mjeri", en: "Standard and custom" },
-    },
-    {
-      label: { bs: "Prosječna izrada", en: "Typical lead time" },
-      value: { bs: "2 do 8 radnih dana", en: "2 to 8 business days" },
-    },
-    {
-      label: { bs: "Dostava", en: "Delivery" },
-      value: { bs: "BiH i inostranstvo", en: "Bosnia and abroad" },
-    },
-  ],
-}
-
-export const landingSections: Record<"materials" | "process" | "custom", LandingSection> = {
-  materials: {
-    eyebrow: { bs: "Materijali", en: "Materials" },
-    title: {
-      bs: "Biramo površine koje izgledaju uredno i na fotografiji i uživo.",
-      en: "We choose surfaces that look clean both in photos and in person.",
-    },
-    description: {
-      bs: "Pleksiglas koristimo za sjajne, moderne i precizne detalje, dok mediapan daje topliju teksturu, lakše farbanje i fleksibilnost za enterijerske komade.",
-      en: "Plexiglass is used for crisp, polished pieces, while MDF brings warmth, easier finishing, and flexibility for interior products.",
-    },
-  },
+export const landingSections: Record<"process", LandingSection> = {
   process: {
     eyebrow: { bs: "Proces", en: "Process" },
     title: {
@@ -222,17 +153,6 @@ export const landingSections: Record<"materials" | "process" | "custom", Landing
     description: {
       bs: "Prvo usklađujemo dimenzije i primjenu, zatim pripremamo fajl za CNC obradu, završavamo rubove i provjeravamo svaki komad prije pakovanja.",
       en: "We first align size and intended use, prepare the CNC-ready file, finish the edges, and inspect each piece before packing.",
-    },
-  },
-  custom: {
-    eyebrow: { bs: "Custom izrada", en: "Custom work" },
-    title: {
-      bs: "Ako imate ideju, možemo je pretvoriti u prodajni ili dekorativni proizvod.",
-      en: "If you have an idea, we can turn it into a sellable or decorative product.",
-    },
-    description: {
-      bs: "Za biznise i posebne događaje nudimo prilagođene natpise, oznake, poklone i serije proizvoda sa jasnim rokovima i materijalnim prijedlogom.",
-      en: "For businesses and special events, we offer tailored signs, branded pieces, gifts, and small-batch production with clear timelines and material guidance.",
     },
   },
 }

@@ -4,17 +4,32 @@
   "version": "0.1.0",
   "packageManager": "pnpm@10.0.0",
   "scripts": {
-    "dev:storefront": "npm --prefix apps/storefront run dev -- --port 3001",
-    "dev:api": "npm --prefix apps/api run dev",
-    "dev:crm": "npm --prefix apps/crm run dev -- --port 3000 --strictPort",
-    "build:storefront": "npm --prefix apps/storefront run build",
-    "build:api": "npm --prefix apps/api run build",
-    "build:crm": "npm --prefix apps/crm run build",
-    "start": "node scripts/dev.mjs",
     "dev": "node scripts/dev.mjs",
-    "test:crm": "TSX_TSCONFIG_PATH=apps/crm/tsconfig.json node --import ./apps/api/node_modules/tsx/dist/loader.mjs --test apps/crm/scripts/*.test.tsx"
+    "start": "node scripts/dev.mjs",
+    "dev:api": "pnpm --filter @drvenija/api dev",
+    "dev:crm": "pnpm --filter @drvenija/crm dev --port 3000 --strictPort",
+    "dev:storefront": "pnpm --filter @drvenija/storefront dev --port 3001",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "lint": "eslint ."
   },
   "engines": {
     "node": ">=22"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@next/eslint-plugin-next": "^16.2.0",
+    "eslint": "^10.11.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.12.0",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.71.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
+    ]
   }
 }

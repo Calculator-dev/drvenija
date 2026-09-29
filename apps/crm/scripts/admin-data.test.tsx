@@ -18,7 +18,7 @@ test('API odgovor kontrolne ploče prikazuje se bez greške', () => {
   const html = renderToString(<QueryClientProvider client={client}><App /></QueryClientProvider>)
   assert.match(html, /Današnje narudžbe/)
   assert.match(html, /DRV-104251/)
-  assert.match(html, /98,00 KM/)
+  assert.match(html, /98,00\u00a0KM/)
   client.clear()
 })
 

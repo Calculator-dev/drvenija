@@ -6,7 +6,7 @@ import { ZodError } from "zod";
 process.env.DATABASE_URL = "postgresql://unused:unused@localhost/unused";
 const { catalogueRoutes } = await import("../dist/routes/catalogue.js");
 const { db, pool } = await import("../dist/db/client.js");
-const { categories, products, mediaAssets, productVariants } =
+const { categories, products, productVariants } =
   await import("../dist/db/schema.js");
 const { productInput } = await import("../dist/lib/product-input.js");
 const categoryId = "626a4408-646c-4d99-bb56-edbd40b1a10b";
@@ -336,7 +336,7 @@ test("product images attach atomically, can be removed, and cannot be taken from
   db.transaction = async (callback) =>
     callback({
       select: () => ({
-        from: (table) => ({
+        from: () => ({
           where: () => ({
             limit: async () => [{ id: categoryId }],
             for: async () => assets,
