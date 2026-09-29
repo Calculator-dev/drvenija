@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
-import { defaultShippingPolicy, shippingFor, type CatalogueOffer, type LocalizedProduct, type ShippingPolicy } from "@/lib/products"
+import { activeVariants, defaultShippingPolicy, shippingFor, type CatalogueOffer, type LocalizedProduct, type ShippingPolicy } from "@/lib/products"
 
 const STORAGE_KEY = "drvenija-cart-v2"
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -112,7 +112,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const offer = byProduct.get(item.productId)
       const variant = offer && (item.variantId
         ? offer.variants.find(candidate => candidate.id === item.variantId)
-        : offer.variants[0])
+        // Items without a variant ID are charged the product's default variant.
+        : offer.variants.find(candidate => candidate.isDefault) ?? offer.variants[0])
       if (!variant) {
         removed++
         continue
@@ -140,9 +141,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       addItem: (product, options) => {
         const quantity = Math.max(1, options?.quantity ?? 1)
         const personalization = options?.personalization?.trim() || undefined
-        const variants = (product.variants?.filter((variant) => variant.active !== false) ?? []).length
-          ? product.variants!.filter((variant) => variant.active !== false)
-          : [{ id: `${product.id}-default`, sku: product.sku, dimensions: product.dimensions, price: product.price }]
+        const variants = activeVariants(product)
         const selected = variants.find((variant) => variant.id === options?.variantId) ?? variants[0]
         const persistedVariantId = uuidPattern.test(selected.id) ? selected.id : undefined
         const lineId = `${product.id}:${selected.id}:${personalization ?? "base"}`

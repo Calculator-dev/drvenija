@@ -97,16 +97,20 @@ export function shippingFor(subtotal: number, policy: ShippingPolicy) {
   return subtotal === 0 || subtotal >= policy.freeFrom ? 0 : policy.fee
 }
 
-/** Live price data for cart repricing: active variants per product, default variant first. */
+/** Live price data for cart repricing: active variants per product, cheapest first. */
 export type CatalogueOffer = {
   productId: string
-  variants: Array<Pick<ProductVariant, "id" | "sku" | "dimensions" | "price">>
+  variants: Array<Pick<ProductVariant, "id" | "sku" | "dimensions" | "price" | "isDefault">>
 }
 
+/**
+ * Variants a customer can order, cheapest first, so the lowest price is listed and
+ * preselected. Equal prices keep the default variant first, then the CRM order.
+ */
 export function activeVariants(product: Product): Array<Pick<ProductVariant, "id" | "sku" | "dimensions" | "price" | "priceFrom" | "isDefault">> {
   const active = product.variants?.filter(variant => variant.active !== false) ?? []
   if (!active.length) return [{ id: `${product.id}-default`, sku: product.sku, dimensions: product.dimensions, price: product.price, priceFrom: product.priceFrom, isDefault: true }]
-  return [...active].sort((a, b) => Number(Boolean(b.isDefault)) - Number(Boolean(a.isDefault)))
+  return [...active].sort((a, b) => a.price - b.price || Number(Boolean(b.isDefault)) - Number(Boolean(a.isDefault)))
 }
 
 /**

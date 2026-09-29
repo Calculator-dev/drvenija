@@ -5,7 +5,7 @@ import { ProductCard } from "@/components/product-card"
 import { ProductDetail } from "@/components/product-detail"
 import { ProductGallery } from "@/components/product-gallery"
 import { Reveal } from "@/components/reveal"
-import { buildPath, type Locale, type LocalizedProduct, isSvg } from "@/lib/products"
+import { activeVariants, buildPath, type Locale, type LocalizedProduct, isSvg } from "@/lib/products"
 
 export function ProductPageLayout({ locale, product, related }: { locale: Locale; product: LocalizedProduct; related: LocalizedProduct[] }) {
   const isBs = locale === "bs"
@@ -84,7 +84,7 @@ export function ProductPageLayout({ locale, product, related }: { locale: Locale
           <h2 className="mt-4 text-center text-4xl font-bold tracking-[-0.035em] md:text-5xl">{isBs ? "Specifikacije" : "Specifications"}</h2>
           <dl className="mt-12 border-t border-border/60">
             <SpecRow label={isBs ? "Materijal" : "Material"} value={materialName} />
-            <SpecRow label={isBs ? "Dimenzije" : "Dimensions"} value={product.dimensions} />
+            <SpecRow label={isBs ? "Dimenzije" : "Dimensions"} value={activeVariants(product).map(variant => variant.dimensions).join(" / ")} />
             <SpecRow label={isBs ? "Rok izrade" : "Lead time"} value={product.localizedLeadTime} />
             <SpecRow label="SKU" value={product.sku} />
             <SpecRow label={isBs ? "Dostupnost" : "Availability"} value={product.localizedStockLabel} />
