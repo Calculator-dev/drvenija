@@ -7,6 +7,7 @@ import { inArray, sql, eq, and, isNotNull } from "drizzle-orm"
 import { db } from "../db/client.js"
 import { categories, products, customers, orders, orderItems, mediaAssets, productVariants } from "../db/schema.js"
 import { sendOrderConfirmationEmail } from "../services/order-email.js"
+import { shippingFor } from "../lib/shipping.js"
 
 const localeSchema = z.enum(["bs", "en"]).default("bs")
 
@@ -144,26 +145,27 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
   })
 
   app.post("/orders", async (request, reply) => {
+    // Limits mirror the database column sizes so oversized input is a 400, not a 500.
     const payload = z.object({
       locale: localeSchema,
       customer: z.object({
-        fullName: z.string().min(2),
-        email: z.string().email(),
-        phone: z.string().optional(),
+        fullName: z.string().trim().min(2).max(160),
+        email: z.string().trim().email().max(190),
+        phone: z.string().trim().max(60).optional(),
       }),
       shipping: z.object({
-        address: z.string().min(3),
-        city: z.string().min(2),
-        postalCode: z.string().optional(),
-        country: z.string().min(2),
+        address: z.string().trim().min(3).max(300),
+        city: z.string().trim().min(2).max(120),
+        postalCode: z.string().trim().max(20).optional(),
+        country: z.string().trim().min(2).max(80),
       }),
-      notes: z.string().optional(),
+      notes: z.string().trim().max(2000).optional(),
       items: z.array(
         z.object({
           productId: z.string().uuid(),
           variantId: z.string().uuid().optional(),
           quantity: z.number().int().positive().max(1000),
-          personalization: z.string().optional(),
+          personalization: z.string().trim().max(500).optional(),
         }),
       ).min(1).max(100),
     }).parse(request.body)
@@ -177,46 +179,45 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
         ? await tx.select().from(productVariants).where(inArray(productVariants.id, variantIds)).for("share")
         : []
       const variantsById = new Map(selectedVariants.map(variant => [variant.id, variant]))
-      for (const item of payload.items) {
+      const lines = payload.items.map(item => {
         const product = byId.get(item.productId)
         if (!product) throw app.httpErrors.badRequest("Unknown product")
         if (item.personalization && !product.customizable) throw app.httpErrors.badRequest("Product cannot be personalized")
+        const variant = item.variantId ? variantsById.get(item.variantId) : undefined
         if (item.variantId) {
-          const variant = variantsById.get(item.variantId)
           if (!variant || variant.productId !== product.id) throw app.httpErrors.badRequest("Unknown product variant")
           if (!variant.active) throw app.httpErrors.badRequest("Selected variant is no longer available")
         }
-      }
+        const variantNote = variant && (variant.sku !== product.sku || variant.dimensions !== product.dimensions)
+          ? `Variant: ${variant.sku} · ${variant.dimensions}`
+          : ""
+        return {
+          item,
+          product,
+          unitPrice: variant?.price ?? product.price,
+          personalization: [item.personalization, variantNote].filter(Boolean).join("\n") || undefined,
+        }
+      })
+      const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.item.quantity, 0)
+      const shippingAmount = shippingFor(subtotal)
       const [customer] = await tx.insert(customers).values(payload.customer).returning()
       const [order] = await tx.insert(orders).values({
         orderNumber, locale: payload.locale, customerId: customer.id,
-        shippingAddress: payload.shipping, notes: payload.notes,
+        shippingAddress: payload.shipping, notes: payload.notes, shippingAmount,
       }).returning()
-      await tx.insert(orderItems).values(payload.items.map((item) => ({
-        ...(() => {
-          const variant = item.variantId ? variantsById.get(item.variantId) : undefined
-          const variantNote = variant && (variant.sku !== byId.get(item.productId)!.sku || variant.dimensions !== byId.get(item.productId)!.dimensions)
-            ? `Variant: ${variant.sku} · ${variant.dimensions}`
-            : ""
-          const personalization = [item.personalization?.trim(), variantNote].filter(Boolean).join("\n")
-          return {
-            unitPrice: variant?.price ?? byId.get(item.productId)!.price,
-            personalization: personalization || undefined,
-          }
-        })(),
-        orderId: order.id, productId: item.productId, quantity: item.quantity,
+      await tx.insert(orderItems).values(lines.map(line => ({
+        orderId: order.id, productId: line.item.productId, quantity: line.item.quantity,
+        unitPrice: line.unitPrice, personalization: line.personalization,
       })))
       return {
         order,
-        emailItems: payload.items.map(item => {
-          const product = byId.get(item.productId)!
-          const variant = item.variantId ? variantsById.get(item.variantId) : undefined
-          return {
-            name: product.translations[payload.locale]?.name ?? product.translations.bs?.name ?? product.sku,
-            quantity: item.quantity,
-            unitPrice: variant?.price ?? product.price,
-          }
-        }),
+        subtotal,
+        shippingAmount,
+        emailItems: lines.map(line => ({
+          name: line.product.translations[payload.locale]?.name ?? line.product.translations.bs?.name ?? line.product.sku,
+          quantity: line.item.quantity,
+          unitPrice: line.unitPrice,
+        })),
       }
     })
     const notification = await sendOrderConfirmationEmail({
@@ -225,6 +226,7 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
       orderNumber: result.order.orderNumber,
       locale: payload.locale,
       items: result.emailItems,
+      shippingAmount: result.shippingAmount,
       shipping: payload.shipping,
     })
     if (notification.sent) {
@@ -238,6 +240,9 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
       ok: true,
       orderNumber: result.order.orderNumber,
       status: result.order.status,
+      subtotal: result.subtotal,
+      shippingAmount: result.shippingAmount,
+      total: result.subtotal + result.shippingAmount,
       message: "Manual confirmation pending",
       notification,
     })

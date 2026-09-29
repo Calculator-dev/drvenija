@@ -10,7 +10,7 @@ const decisionInput = z.discriminatedUnion("decision", [
   z.object({ decision: z.literal("accept") }),
   z.object({ decision: z.literal("decline"), reason: z.string().trim().min(5).max(2000) }),
 ])
-const totalAmount = sql<number>`coalesce(sum(${orderItems.unitPrice} * ${orderItems.quantity}), 0)`.mapWith(Number)
+const totalAmount = sql<number>`coalesce(sum(${orderItems.unitPrice} * ${orderItems.quantity}), 0) + ${orders.shippingAmount}`.mapWith(Number)
 
 export const orderReviewRoutes: FastifyPluginAsync = async app => {
   app.get("/orders", async () => db
@@ -31,6 +31,7 @@ export const orderReviewRoutes: FastifyPluginAsync = async app => {
         id: orders.id, orderNumber: orders.orderNumber, locale: orders.locale,
         status: orders.status, paymentStatus: orders.paymentStatus,
         shippingAddress: orders.shippingAddress, notes: orders.notes,
+        shippingAmount: orders.shippingAmount,
         declineReason: orders.declineReason, reviewedAt: orders.reviewedAt,
         reviewEmailSentAt: orders.reviewEmailSentAt, confirmationEmailSentAt: orders.confirmationEmailSentAt,
         createdAt: orders.createdAt,
@@ -59,7 +60,8 @@ export const orderReviewRoutes: FastifyPluginAsync = async app => {
         name: item.translations[order.locale]?.name ?? item.translations.bs?.name ?? item.sku,
         quantity: item.quantity, unitPrice: item.unitPrice, personalization: item.personalization,
       })),
-      amount: items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
+      subtotal: items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
+      amount: items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0) + order.shippingAmount,
     }
   })
 

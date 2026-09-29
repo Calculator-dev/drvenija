@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { ChevronDown, Grid2X2, List, SlidersHorizontal, X } from "lucide-react"
 import { useMemo, useState } from "react"
-import { buildPath, formatPrice, type Locale, type LocalizedCategory, type LocalizedProduct, type Material, type ProductType } from "@/lib/products"
+import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedCategory, type LocalizedProduct, type Material, type ProductType } from "@/lib/products"
 import { cn } from "@/lib/utils"
 
 type SortKey = "featured" | "name-asc" | "price-asc" | "price-desc"
@@ -32,7 +32,7 @@ function CollectionProductCard({ locale, product, view }: { locale: Locale; prod
         <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{product.categoryName?.[locale] ?? ""} · {product.material}</p>
         <Link href={href} className="mt-2 text-base font-semibold leading-snug transition-opacity hover:opacity-60">{product.localizedName}</Link>
         <p className={cn("mt-2 text-sm leading-6 text-muted-foreground", view === "grid" && "line-clamp-2")}>{product.localizedShortDescription}</p>
-        <p className="mt-3 text-sm font-semibold">{product.priceFrom ? (isBs ? "Od " : "From ") : ""}{formatPrice(product.priceFrom ?? product.price, locale)}</p>
+        <p className="mt-3 text-sm font-semibold">{displayPrice(product).from ? (isBs ? "Od " : "From ") : ""}{formatPrice(displayPrice(product).amount, locale)}</p>
         <Link href={href} className={cn("mt-5 inline-flex h-11 items-center justify-center border border-foreground px-2 text-[10px] font-semibold uppercase tracking-[0.08em] transition-colors hover:bg-foreground hover:text-background sm:px-5 sm:text-xs sm:tracking-[0.12em]", view === "grid" ? "w-full" : "w-fit")}>
           {isBs ? "Pogledaj proizvod" : "View product"}
         </Link>
@@ -65,8 +65,8 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
 
     return [...result].sort((a, b) => {
       if (sort === "name-asc") return a.localizedName.localeCompare(b.localizedName, locale)
-      if (sort === "price-asc") return (a.priceFrom ?? a.price) - (b.priceFrom ?? b.price)
-      if (sort === "price-desc") return (b.priceFrom ?? b.price) - (a.priceFrom ?? a.price)
+      if (sort === "price-asc") return displayPrice(a).amount - displayPrice(b).amount
+      if (sort === "price-desc") return displayPrice(b).amount - displayPrice(a).amount
       return Number(b.featured) - Number(a.featured)
     })
   }, [categoryId, locale, material, productType, products, query, sort])

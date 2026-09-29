@@ -14,5 +14,5 @@ export default async function Page({
   searchParams: Promise<{ order?: string }>
 }) {
   const params = await searchParams
-  return <SuccessPage locale="en" orderNumber={params.order ?? "DRV-DEMO"} />
+  return <SuccessPage locale="en" orderNumber={params.order} />
 }

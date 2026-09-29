@@ -146,6 +146,8 @@ export type AdminOrderDetail = {
   reviewEmailSentAt: string | null;
   confirmationEmailSentAt: string | null;
   createdAt: string;
+  subtotal: number;
+  shippingAmount: number;
   amount: number;
   items: Array<{
     id: string;

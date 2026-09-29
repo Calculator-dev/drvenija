@@ -75,7 +75,11 @@ export function OrderDetails({ id, onBack }: { id: string; onBack: () => void })
               </tr>)}</tbody>
             </table>
           </div>
-          <div className="flex justify-end border-t border-border pt-5"><p className="text-sm text-muted-foreground">Ukupno <span className="ml-4 font-serif text-3xl text-foreground">{money(order.amount)}</span></p></div>
+          <dl className="ml-auto max-w-xs space-y-2 border-t border-border pt-5 text-sm">
+            <div className="flex justify-between gap-6"><dt className="text-muted-foreground">Proizvodi</dt><dd>{money(order.subtotal)}</dd></div>
+            <div className="flex justify-between gap-6"><dt className="text-muted-foreground">Dostava</dt><dd>{order.shippingAmount === 0 ? "Besplatna" : money(order.shippingAmount)}</dd></div>
+            <div className="flex items-baseline justify-between gap-6"><dt className="text-muted-foreground">Ukupno</dt><dd className="font-serif text-3xl">{money(order.amount)}</dd></div>
+          </dl>
         </Card>
 
         <div className="space-y-6">

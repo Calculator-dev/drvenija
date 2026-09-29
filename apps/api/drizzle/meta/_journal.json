@@ -36,6 +36,13 @@
       "when": 1790578800000,
       "tag": "0004_order_confirmation_email",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790665200000,
+      "tag": "0005_order_shipping_amount",
+      "breakpoints": true
     }
   ]
 }

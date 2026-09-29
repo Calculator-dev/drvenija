@@ -15,6 +15,7 @@ type ConfirmationEmail = {
   orderNumber: string
   locale: "bs" | "en"
   items: Array<{ name: string; quantity: number; unitPrice: number }>
+  shippingAmount: number
   shipping: { address: string; city: string; postalCode?: string; country: string }
 }
 
@@ -40,8 +41,10 @@ async function sendEmail(input: { to: string; subject: string; html: string }): 
 
 export async function sendOrderConfirmationEmail(input: ConfirmationEmail): Promise<EmailResult> {
   const bosnian = input.locale === "bs"
-  const total = input.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
+  const subtotal = input.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
+  const total = subtotal + input.shippingAmount
   const rows = input.items.map(item => `<tr><td style="padding:10px 0;border-bottom:1px solid #e5e5e5">${escapeHtml(item.name)} × ${item.quantity}</td><td style="padding:10px 0;border-bottom:1px solid #e5e5e5;text-align:right">${item.unitPrice * item.quantity} KM</td></tr>`).join("")
+    + `<tr><td style="padding:10px 0;border-bottom:1px solid #e5e5e5">${bosnian ? "Dostava" : "Delivery"}</td><td style="padding:10px 0;border-bottom:1px solid #e5e5e5;text-align:right">${input.shippingAmount === 0 ? (bosnian ? "Besplatna" : "Free") : `${input.shippingAmount} KM`}</td></tr>`
   const location = [input.shipping.postalCode, input.shipping.city].filter(Boolean).join(" ")
   const subject = bosnian ? `Primili smo vašu narudžbu ${input.orderNumber}` : `We received your order ${input.orderNumber}`
   const html = `<div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#222">

@@ -156,6 +156,7 @@ export const orders = pgTable("orders", {
     }>()
     .notNull(),
   notes: text("notes"),
+  shippingAmount: integer("shipping_amount").notNull().default(0),
   declineReason: text("decline_reason"),
   reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
   reviewEmailSentAt: timestamp("review_email_sent_at", { withTimezone: true }),

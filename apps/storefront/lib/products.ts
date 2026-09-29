@@ -101,6 +101,38 @@ export type HeroContent = {
   }>
 }
 
+export type ShippingPolicy = { freeFrom: number; fee: number }
+
+/** Shown before the live policy loads; the API's GET /public/catalogue is authoritative. */
+export const defaultShippingPolicy: ShippingPolicy = { freeFrom: 150, fee: 10 }
+
+export function shippingFor(subtotal: number, policy: ShippingPolicy) {
+  return subtotal === 0 || subtotal >= policy.freeFrom ? 0 : policy.fee
+}
+
+/** Live price data for cart repricing: active variants per product, default variant first. */
+export type CatalogueOffer = {
+  productId: string
+  variants: Array<Pick<ProductVariant, "id" | "sku" | "dimensions" | "price">>
+}
+
+export function activeVariants(product: Product): Array<Pick<ProductVariant, "id" | "sku" | "dimensions" | "price" | "priceFrom" | "isDefault">> {
+  const active = product.variants?.filter(variant => variant.active !== false) ?? []
+  if (!active.length) return [{ id: `${product.id}-default`, sku: product.sku, dimensions: product.dimensions, price: product.price, priceFrom: product.priceFrom, isDefault: true }]
+  return [...active].sort((a, b) => Number(Boolean(b.isDefault)) - Number(Boolean(a.isDefault)))
+}
+
+/**
+ * The listed price is what an order is charged (the variant price). "From" is shown when the
+ * final price may vary: several variant prices, or a product marked with a starting price.
+ */
+export function displayPrice(product: Product) {
+  const variants = activeVariants(product)
+  const prices = variants.map(variant => variant.price)
+  const amount = Math.min(...prices)
+  return { amount, from: new Set(prices).size > 1 || variants.some(variant => variant.priceFrom != null) }
+}
+
 export const locales: Locale[] = ["bs", "en"]
 export const defaultLocale: Locale = "bs"
 
@@ -259,24 +291,27 @@ export type OrderPayload = {
   items: CheckoutLineItem[]
 }
 
-export async function submitOrder(payload: OrderPayload) {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"
+export type OrderResponse = {
+  orderNumber: string
+  subtotal: number
+  shippingAmount: number
+  total: number
+}
 
-  if (apiUrl) {
-    const response = await fetch(`${apiUrl}/public/orders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
+export class OrderError extends Error {}
 
-    if (!response.ok) {
-      throw new Error("Order submission failed")
-    }
+export async function submitOrder(payload: OrderPayload): Promise<OrderResponse> {
+  const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? (process.env.NODE_ENV === "production" ? "" : "http://localhost:4000")).replace(/\/$/, "")
+  if (!apiUrl) throw new OrderError("Order service is not configured")
 
-    return response.json()
-  }
-
-  throw new Error("Order service is not configured")
+  const response = await fetch(`${apiUrl}/public/orders`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+  const body = await response.json().catch(() => null) as (Partial<OrderResponse> & { message?: string }) | null
+  if (!response.ok || !body?.orderNumber) throw new OrderError(body?.message ?? "Order submission failed")
+  return body as OrderResponse
 }

@@ -1,3 +1,4 @@
+import { CartCatalogueSync } from "@/components/cart-catalogue-sync"
 import { CheckoutClient } from "@/components/checkout-client"
 import { PageIntro } from "@/components/page-intro"
 import { type Locale } from "@/lib/products"
@@ -14,6 +15,7 @@ export function CheckoutPage({ locale }: { locale: Locale }) {
             : "This is the first webshop checkout release. After submitting, you receive confirmation, shipping details, and manual payment instructions."
         }
       />
+      <CartCatalogueSync locale={locale} />
       <CheckoutClient locale={locale} />
     </>
   )

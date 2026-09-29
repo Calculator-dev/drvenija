@@ -1,12 +1,26 @@
 import "server-only"
-import { localizeCategory, localizeProduct, type Category, type Product, type Locale } from "./products"
+import { cache } from "react"
+import { activeVariants, defaultShippingPolicy, localizeCategory, localizeProduct, type CatalogueOffer, type Category, type Product, type Locale, type ShippingPolicy } from "./products"
 
-export async function getCatalogue(): Promise<{ products: Product[]; categories: Category[] }> {
+type Catalogue = { products: Product[]; categories: Category[]; shipping: ShippingPolicy }
+
+// cache() deduplicates the fetch within one request (metadata, page, related products).
+export const getCatalogue = cache(async (): Promise<Catalogue> => {
   const api = (process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").replace(/\/$/, "")
   const response = await fetch(`${api}/public/catalogue`, { cache: "no-store", signal: AbortSignal.timeout(10000) })
   if (!response.ok) throw new Error("The product catalogue is temporarily unavailable")
-  const data = await response.json() as { products: Product[]; categories: Category[] }
-  return { ...data, products: data.products.map(product => ({ ...product, media: product.media.map(image => ({ ...image, url: `/api/media/${image.id}` })) })) }
+  const data = await response.json() as Catalogue
+  return { ...data, shipping: data.shipping ?? defaultShippingPolicy, products: data.products.map(product => ({ ...product, media: product.media.map(image => ({ ...image, url: `/api/media/${image.id}` })) })) }
+})
+export async function getCartOffers(): Promise<{ offers: CatalogueOffer[]; shipping: ShippingPolicy }> {
+  const { products, shipping } = await getCatalogue()
+  return {
+    shipping,
+    offers: products.map(product => ({
+      productId: product.id,
+      variants: activeVariants(product).map(({ id, sku, dimensions, price }) => ({ id, sku, dimensions, price })),
+    })),
+  }
 }
 export async function getProducts(locale: Locale) {
   return (await getCatalogue()).products.map(product => localizeProduct(product, locale))

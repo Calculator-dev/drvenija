@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { CartCatalogueSync } from "@/components/cart-catalogue-sync"
 import { CartPage } from "@/components/pages/cart-page"
 import { createMetadata } from "@/lib/seo"
 
@@ -9,5 +10,8 @@ export const metadata: Metadata = createMetadata({
 })
 
 export default function Page() {
-  return <CartPage locale="en" />
+  return <>
+    <CartCatalogueSync locale="en" />
+    <CartPage locale="en" />
+  </>
 }

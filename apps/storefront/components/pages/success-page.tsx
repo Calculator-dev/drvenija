@@ -1,7 +1,9 @@
 import Link from "next/link"
 import { type Locale } from "@/lib/products"
 
-export function SuccessPage({ locale, orderNumber }: { locale: Locale; orderNumber: string }) {
+const orderNumberPattern = /^DRV-\d{6}-[A-F0-9]{8}$/
+
+export function SuccessPage({ locale, orderNumber }: { locale: Locale; orderNumber?: string }) {
   const href = locale === "en" ? "/en/shop" : "/shop"
 
   return (
@@ -16,7 +18,7 @@ export function SuccessPage({ locale, orderNumber }: { locale: Locale; orderNumb
             ? "Poslat ćemo potvrdu dostupnosti. Sačuvajte broj narudžbe za komunikaciju."
             : "We will send you confirmation of availability. Keep the order number for follow-up."}
         </p>
-        <p className="mt-6 font-medium text-foreground">{orderNumber}</p>
+        {orderNumber && orderNumberPattern.test(orderNumber) && <p className="mt-6 font-medium text-foreground">{orderNumber}</p>}
         <Link href={href} className="mt-8 inline-flex h-12 items-center justify-center bg-foreground px-6 text-sm tracking-wide text-background">
           {locale === "bs" ? "Nazad u shop" : "Back to shop"}
         </Link>

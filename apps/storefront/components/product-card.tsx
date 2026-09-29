@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { buildPath, formatPrice, type Locale, type LocalizedProduct } from "@/lib/products"
+import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedProduct } from "@/lib/products"
 
 export function ProductCard({
   locale,
@@ -12,6 +12,7 @@ export function ProductCard({
   priority?: boolean
 }) {
   const href = `${buildPath(locale, "/product")}/${product.localizedSlug}`
+  const price = displayPrice(product)
 
   return (
     <Link href={href} className="group block">
@@ -38,7 +39,7 @@ export function ProductCard({
             <p className="mt-1 max-w-xs text-sm leading-6 text-muted-foreground">{product.localizedShortDescription}</p>
           </div>
           <p className="font-medium text-foreground">
-            {formatPrice(product.priceFrom ?? product.price, locale)}
+            {price.from ? (locale === "bs" ? "Od " : "From ") : ""}{formatPrice(price.amount, locale)}
           </p>
         </div>
         <p className="text-xs text-muted-foreground">

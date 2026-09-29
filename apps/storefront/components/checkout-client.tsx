@@ -7,14 +7,13 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
 import { useCart } from "@/components/cart-provider"
-import { formatPrice, submitOrder, type Locale } from "@/lib/products"
+import { formatPrice, OrderError, submitOrder, type Locale } from "@/lib/products"
 
 export function CheckoutClient({ locale }: { locale: Locale }) {
   const router = useRouter()
-  const { items, subtotal, clear } = useCart()
+  const { items, subtotal, shippingAmount: shipping, clear } = useCart()
   const [submitting, setSubmitting] = useState(false)
 
-  const shipping = subtotal >= 150 || subtotal === 0 ? 0 : 10
   const total = subtotal + shipping
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -49,9 +48,11 @@ export function CheckoutClient({ locale }: { locale: Locale }) {
 
       clear()
       const successBase = locale === "en" ? "/en/checkout/success" : "/checkout/success"
-      router.push(`${successBase}?order=${encodeURIComponent(response.orderNumber ?? "DRV-DEMO")}`)
+      router.push(`${successBase}?order=${encodeURIComponent(response.orderNumber)}`)
     } catch (error) {
-      toast.error(locale === "bs" ? "Narudžba nije poslana. Pokušajte ponovo." : "Order submission failed. Please try again.")
+      // Validation messages from the API are English; show them as detail after the localized summary.
+      const detail = error instanceof OrderError && error.message !== "Order submission failed" ? ` (${error.message})` : ""
+      toast.error((locale === "bs" ? "Narudžba nije poslana. Pokušajte ponovo." : "Order submission failed. Please try again.") + detail)
     } finally {
       setSubmitting(false)
     }

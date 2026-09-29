@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation"
 import { ProductPageLayout } from "@/components/product-page-layout"
 import { createMetadata, getAbsoluteUrl } from "@/lib/seo"
 import { getProductBySlug, getRelatedProducts } from "@/lib/catalogue"
+import { displayPrice } from "@/lib/products"
 
 export async function generateMetadata({
   params,
@@ -65,7 +66,7 @@ export default async function Page({
             offers: {
               "@type": "Offer",
               priceCurrency: product.currency,
-              price: product.priceFrom ?? product.price,
+              price: displayPrice(product).amount,
               availability: "https://schema.org/InStock",
               url: getAbsoluteUrl(`/product/${product.localizedSlug}`),
             },

@@ -1,6 +1,7 @@
 import { db } from "../db/client.js"
 import { categories, products, mediaAssets, productVariants } from "../db/schema.js"
 import { asc, desc, isNotNull } from "drizzle-orm"
+import { shippingPolicy } from "../lib/shipping.js"
 
 function localized(rows: Record<string, Record<string, string>>, field: string) {
   return { bs: rows.bs?.[field] ?? "", en: rows.en?.[field] || rows.bs?.[field] || "" }
@@ -19,6 +20,7 @@ export function catalogueResponse(
     else variantsByProduct.set(variant.productId, [variant])
   }
   return {
+    shipping: shippingPolicy,
     categories: categoryRows.map(row => ({ id: row.id, name: localized(row.translations, "name"), slug: localized(row.translations, "slug"), description: localized(row.translations, "description"), seo: { title: localized(row.seo, "title"), description: localized(row.seo, "description") } })),
     products: productRows.map(row => ({
       variants: (variantsByProduct.get(row.id)?.length

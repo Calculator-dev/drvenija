@@ -31,7 +31,7 @@ const navByLocale = {
 export function SiteHeader({ locale }: { locale: Locale }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const { totalItems, setOpen } = useCart();
+  const { totalItems, setOpen, shippingPolicy } = useCart();
   const navLinks = navByLocale[locale];
   const isEnglishRoute = pathname.startsWith("/en");
   const languageHref = isEnglishRoute
@@ -45,8 +45,8 @@ export function SiteHeader({ locale }: { locale: Locale }) {
     <>
       <div className="bg-black px-3 py-2 text-center text-[9px] font-medium uppercase tracking-[0.14em] text-white sm:text-[11px] sm:tracking-[0.2em]">
         {locale === "bs"
-          ? "Besplatna dostava za narudžbe iznad 100 KM"
-          : "Free delivery on orders over 100 BAM"}
+          ? `Besplatna dostava za narudžbe od ${shippingPolicy.freeFrom} KM`
+          : `Free delivery on orders from ${shippingPolicy.freeFrom} BAM`}
       </div>
 
       <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-xl">
