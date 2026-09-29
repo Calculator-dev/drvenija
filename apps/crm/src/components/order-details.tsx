@@ -14,6 +14,8 @@ export function OrderDetails({ id, onBack }: { id: string; onBack: () => void })
   const query = useQuery({ queryKey: ["order", id], queryFn: () => getOrder(id) })
   const [declining, setDeclining] = useState(false)
   const [message, setMessage] = useState("")
+  const [confirmingAccept, setConfirmingAccept] = useState(false)
+  const [reasonError, setReasonError] = useState("")
   const mutation = useMutation({
     mutationFn: (body: { decision: "accept" } | { decision: "decline"; reason: string }) => decideOrder(id, body),
     onSuccess: result => {
@@ -21,6 +23,7 @@ export function OrderDetails({ id, onBack }: { id: string; onBack: () => void })
       queryClient.invalidateQueries({ queryKey: ["dashboard"] })
       queryClient.invalidateQueries({ queryKey: ["order", id] })
       setDeclining(false)
+      setConfirmingAccept(false)
       setMessage(result.notification.sent
         ? "Odluka je sačuvana i kupcu je poslan email."
         : result.notification.reason === "not_configured"
@@ -32,11 +35,13 @@ export function OrderDetails({ id, onBack }: { id: string; onBack: () => void })
   function decline(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const reason = String(new FormData(event.currentTarget).get("reason") ?? "").trim()
+    if (reason.length < 5) { setReasonError("Obrazloženje mora imati najmanje 5 znakova."); return }
+    setReasonError("")
     mutation.mutate({ decision: "decline", reason })
   }
 
   if (query.isPending) return <p role="status" className="mt-6">Učitavanje narudžbe…</p>
-  if (query.isError || !query.data) return <p role="alert" className="mt-6 text-destructive">Detalje narudžbe nije moguće učitati.</p>
+  if (!query.data) return <p role="alert" className="mt-6 text-destructive">Detalje narudžbe nije moguće učitati.</p>
   const order = query.data
   const canReview = order.status === "submitted"
 
@@ -56,7 +61,7 @@ export function OrderDetails({ id, onBack }: { id: string; onBack: () => void })
       </div>
 
       {message && <p role="status" className="rounded-lg border border-primary/20 bg-primary/5 p-4 text-sm">{message}</p>}
-      {mutation.isError && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">Odluku nije moguće sačuvati. Osvježite stranicu i pokušajte ponovo.</p>}
+      {mutation.isError && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">Odluku nije moguće sačuvati: {mutation.error.message}</p>}
 
       <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
         <Card className="p-6">
@@ -83,11 +88,18 @@ export function OrderDetails({ id, onBack }: { id: string; onBack: () => void })
         <h3 className="font-serif text-2xl">Odluka o narudžbi</h3>
         <p className="mt-2 text-sm text-muted-foreground">Prihvatite narudžbu ili unesite obrazloženje prije odbijanja. Kupac će dobiti email s odlukom.</p>
         {!declining ? <div className="mt-6 flex flex-wrap gap-3">
-          <Button disabled={mutation.isPending} onClick={() => mutation.mutate({ decision: "accept" })}><Check className="mr-2 h-4 w-4" />Prihvati narudžbu</Button>
-          <Button variant="outline" disabled={mutation.isPending} onClick={() => setDeclining(true)} className="border-red-300 text-red-700 hover:bg-red-50"><X className="mr-2 h-4 w-4" />Odbij narudžbu</Button>
+          {confirmingAccept ? <>
+            <p className="w-full text-sm">Kupac će odmah dobiti email da je narudžba prihvaćena. Nastaviti?</p>
+            <Button disabled={mutation.isPending} onClick={() => mutation.mutate({ decision: "accept" })}><Check className="mr-2 h-4 w-4" />{mutation.isPending ? "Slanje…" : "Da, prihvati i pošalji email"}</Button>
+            <Button variant="ghost" disabled={mutation.isPending} onClick={() => setConfirmingAccept(false)}>Odustani</Button>
+          </> : <>
+            <Button disabled={mutation.isPending} onClick={() => setConfirmingAccept(true)}><Check className="mr-2 h-4 w-4" />Prihvati narudžbu</Button>
+            <Button variant="outline" disabled={mutation.isPending} onClick={() => setDeclining(true)} className="border-red-300 text-red-700 hover:bg-red-50"><X className="mr-2 h-4 w-4" />Odbij narudžbu</Button>
+          </>}
         </div> : <form onSubmit={decline} className="mt-6 max-w-2xl">
           <label htmlFor="reason" className="text-sm font-medium">Obrazloženje za kupca</label>
           <textarea id="reason" name="reason" required minLength={5} maxLength={2000} rows={5} className="mt-2 w-full rounded-md border border-input bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-ring" placeholder="Objasnite zašto narudžbu nije moguće prihvatiti…" />
+          {reasonError && <p role="alert" className="mt-2 text-sm text-destructive">{reasonError}</p>}
           <div className="mt-3 flex gap-3"><Button type="submit" disabled={mutation.isPending} className="bg-red-700 hover:bg-red-800"><Mail className="mr-2 h-4 w-4" />{mutation.isPending ? "Slanje…" : "Odbij i pošalji objašnjenje"}</Button><Button type="button" variant="ghost" onClick={() => setDeclining(false)}>Odustani</Button></div>
         </form>}
       </Card>}

@@ -1,7 +1,7 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from "react"
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react"
 import type { Session } from "@supabase/supabase-js"
 import { useQueryClient } from "@tanstack/react-query"
-import { apiUrl, supabase, verifyAdmin } from "./lib/auth"
+import { apiUrl, resetAdminVerification, supabase, verifyAdmin } from "./lib/auth"
 import { Button } from "./components/ui/button"
 import { Input } from "./components/ui/input"
 
@@ -9,7 +9,10 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
   const [session, setSession] = useState<Session | null>(null)
   const [loaded, setLoaded] = useState(false)
-  const [verifiedToken, setVerifiedToken] = useState<string | null>(null)
+  // Access is verified per user, not per token, so hourly token refreshes keep the app mounted.
+  const [verifiedUser, setVerifiedUser] = useState<string | null>(null)
+  const userRef = useRef<string | null>(null)
+  const [accessDenied, setAccessDenied] = useState(false)
   const [error, setError] = useState("")
   const [settingPassword, setSettingPassword] = useState(() => new URLSearchParams(window.location.search).get("setup") === "password" || ["invite", "recovery"].includes(new URLSearchParams(window.location.hash.slice(1)).get("type") ?? ""))
   const [busy, setBusy] = useState(false)
@@ -18,31 +21,44 @@ export function AuthGate({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!supabase) return
-    const { data } = supabase.auth.onAuthStateChange((_event, next) => {
-      if (_event === "PASSWORD_RECOVERY") setSettingPassword(true)
+    const { data } = supabase.auth.onAuthStateChange((event, next) => {
+      if (event === "PASSWORD_RECOVERY") setSettingPassword(true)
       setSession(next)
       setLoaded(true)
-      setVerifiedToken(null)
-      queryClient.clear()
+      const userId = next?.user.id ?? null
+      if (userId !== userRef.current) {
+        userRef.current = userId
+        setVerifiedUser(null)
+        setAccessDenied(false)
+        resetAdminVerification()
+        queryClient.clear()
+      }
     })
     return () => data.subscription.unsubscribe()
   }, [queryClient])
 
+  const userId = session?.user.id
+  const accessToken = session?.access_token
+  const needsVerification = Boolean(userId && verifiedUser !== userId && !accessDenied)
   useEffect(() => {
-    if (!session) return
+    if (!needsVerification || !userId || !accessToken) return
     let cancelled = false
     setError("")
-    verifyAdmin(session.access_token).then(() => {
-      if (!cancelled) setVerifiedToken(session.access_token)
+    verifyAdmin(accessToken).then(() => {
+      if (!cancelled) setVerifiedUser(userId)
     }).catch((reason) => {
       if (!cancelled) setError(reason instanceof Error ? reason.message : "Nije moguće potvrditi pristup.")
     })
     return () => { cancelled = true }
-  }, [session, attempt])
+    // The token is read when verification starts; refreshing it must not restart verification.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [needsVerification, userId, attempt])
 
   useEffect(() => {
     function denied() {
-      setVerifiedToken(null)
+      setVerifiedUser(null)
+      setAccessDenied(true)
+      resetAdminVerification()
       queryClient.clear()
       setError("Vaš pristup nije moguće potvrditi. Pokušajte ponovo ili se ponovo prijavite.")
     }
@@ -86,14 +102,16 @@ export function AuthGate({ children }: { children: ReactNode }) {
       const result = await supabase?.auth.signOut({ scope: "local" })
       if (result?.error) { setError("Odjava nije uspjela. Pokušajte ponovo."); return }
       setSession(null)
-      setVerifiedToken(null)
+      userRef.current = null
+      setVerifiedUser(null)
+      resetAdminVerification()
       queryClient.clear()
       setError("")
     } catch { setError("Odjava nije uspjela. Pokušajte ponovo.") }
     finally { setBusy(false) }
   }
 
-  if (configured && session && settingPassword && verifiedToken === session.access_token) return <main className="flex min-h-screen items-center justify-center bg-background p-6">
+  if (configured && session && settingPassword && verifiedUser === session.user.id) return <main className="flex min-h-screen items-center justify-center bg-background p-6">
     <section className="w-full max-w-md space-y-6 rounded-xl border bg-card p-8">
       <h1 className="font-serif text-3xl">Postavite lozinku</h1>
       <p>Odaberite lozinku za svoj Drvenija administratorski račun.</p>
@@ -107,7 +125,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
     </section>
   </main>
 
-  if (configured && session && verifiedToken === session.access_token) return <>
+  if (configured && session && verifiedUser === session.user.id) return <>
     <div className="flex items-center justify-end gap-4 border-b bg-card px-6 py-3 text-sm">
       <span>{session.user.email}</span><Button variant="outline" disabled={busy} onClick={signOut}>Odjavi se</Button>
       {error && <p role="alert">{error}</p>}
@@ -119,7 +137,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
       <div><p className="text-sm text-muted-foreground">Drvenija CRM</p><h1 className="mt-2 font-serif text-3xl">Administratorska prijava</h1></div>
       {!configured ? <p>Administratorska prijava još nije dostupna. Obratite se administratoru stranice.</p> : !loaded ? <p role="status">Učitavanje sesije…</p> : session ? <>
         {!error && <p role="status">Provjera administratorskog pristupa…</p>}
-        {error && <><p role="alert">{error}</p><Button onClick={() => setAttempt(value => value + 1)}>Pokušaj ponovo</Button></>}
+        {error && <><p role="alert">{error}</p><Button onClick={() => { setAccessDenied(false); setAttempt(value => value + 1) }}>Pokušaj ponovo</Button></>}
         <Button variant="outline" disabled={busy} onClick={signOut}>Odjavi se</Button>
       </> : <form onSubmit={signIn} className="space-y-4">
         <label className="block space-y-2"><span>Email adresa</span><Input name="email" type="email" autoComplete="username" required /></label>

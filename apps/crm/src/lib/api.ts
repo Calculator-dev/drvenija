@@ -3,6 +3,12 @@ import { demoInquiries } from "./demo"
 import { dashboardView, orderRows, productRows, type AdminDashboard, type AdminOrder, type AdminOrderDetail, type AdminProduct, type OrderDecisionResult, type ProductDetails } from "./admin-data"
 import { apiUrl as API_URL, supabase } from "./auth"
 
+export class ApiError extends Error {
+  constructor(message: string, readonly status: number) {
+    super(message)
+  }
+}
+
 async function fetchJson<T>(path: string, options?: { method: "POST" | "PUT"; body: unknown }): Promise<T> {
   if (!API_URL || !supabase) throw new Error("Administratorski servis nije konfigurisan")
   const { data, error } = await supabase.auth.getSession()
@@ -21,7 +27,7 @@ async function fetchJson<T>(path: string, options?: { method: "POST" | "PUT"; bo
   if (!response.ok) {
     const body = await response.json().catch(() => null)
     const fields = Array.isArray(body?.fields) ? `: ${body.fields.join(", ")}` : ""
-    throw new Error(`${body?.message ?? "Zahtjev nije uspio"}${fields}`)
+    throw new ApiError(`${body?.message ?? "Zahtjev nije uspio"}${fields}`, response.status)
   }
 
   return response.json() as Promise<T>
