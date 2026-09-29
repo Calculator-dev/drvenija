@@ -19,7 +19,6 @@ const variantInput = z.object({
     .transform((value) => value.toUpperCase()),
   dimensions: short,
   price: z.number().int().min(0).max(1000000),
-  priceFrom: z.number().int().min(0).max(1000000).nullable().optional(),
   active: z.boolean().default(true),
 });
 export const productInput = z

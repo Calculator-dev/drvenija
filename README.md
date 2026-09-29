@@ -61,6 +61,8 @@ The API uses PostgreSQL via Drizzle.
 
 Migration `0005_order_shipping_amount` adds `orders.shipping_amount`; apply it
 before deploying this version of the API, since order creation writes that column.
+Migration `0006_drop_price_from` removes the unused starting-price columns; apply it
+only after this version of the API is deployed, since older API versions still read them.
 `drizzle/meta` holds a snapshot of the current schema, so `db:generate` only emits
 new changes. If you hand-write a migration, regenerate the snapshot as well.
 
@@ -113,9 +115,9 @@ availability, and at least one variant with a SKU and price. Optional English fi
 fall back to Bosnian. A new category can be created in the same transaction as the
 product. Slugs and SEO defaults are generated automatically.
 
-Prices are whole KM. Each variant's **Cijena** is what orders are charged. An optional
-**Početna cijena** marks that the final price may be higher; the storefront then shows
-"Od" (from) before the price.
+Prices are whole KM, and each variant has one price, which is what orders are charged.
+The storefront lists a product's sizes cheapest first and preselects the cheapest; shop
+cards show "Od" (from) before the lowest price when sizes cost different amounts.
 
 Choose **Uredi** on a product to open `/products/:id/edit`, which submits a full update
 through `PUT /admin/products/:id`. Updates keep existing slugs and variant IDs (so

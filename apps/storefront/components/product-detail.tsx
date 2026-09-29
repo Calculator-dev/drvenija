@@ -31,7 +31,7 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
       <p className="mt-5 break-all text-xs text-muted-foreground">SKU: <span className="text-foreground">{selectedVariant.sku}</span></p>
 
       <div className="mt-5 flex flex-wrap items-center gap-4">
-        <p className="text-3xl font-bold text-foreground">{selectedVariant.priceFrom != null ? (locale === "bs" ? "Od " : "From ") : ""}{formatPrice(selectedVariant.price, locale)}</p>
+        <p className="text-3xl font-bold text-foreground">{formatPrice(selectedVariant.price, locale)}</p>
         <span className="inline-flex items-center gap-1.5 bg-secondary px-3 py-1.5 text-xs font-medium text-foreground"><Check className="h-3.5 w-3.5" />{product.localizedStockLabel}</span>
       </div>
 

@@ -7,14 +7,13 @@ export type VariantDraft = {
   sku: string
   dimensions: string
   price: string
-  priceFrom: string
   active: boolean
 }
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export function newVariantDraft(): VariantDraft {
-  return { key: crypto.randomUUID(), sku: "", dimensions: "", price: "", priceFrom: "", active: true }
+  return { key: crypto.randomUUID(), sku: "", dimensions: "", price: "", active: true }
 }
 
 export function variantDrafts(product?: ProductDetails): VariantDraft[] {
@@ -25,7 +24,6 @@ export function variantDrafts(product?: ProductDetails): VariantDraft[] {
         sku: product?.sku ?? "",
         dimensions: product?.dimensions ?? "",
         price: product?.price ?? 0,
-        priceFrom: product?.priceFrom ?? null,
         active: true,
         isDefault: true,
       }]
@@ -37,7 +35,6 @@ export function variantDrafts(product?: ProductDetails): VariantDraft[] {
     sku: variant.sku,
     dimensions: variant.dimensions,
     price: product ? String(variant.price) : "",
-    priceFrom: variant.priceFrom == null ? "" : String(variant.priceFrom),
     active: variant.active ?? true,
   }))
 }
@@ -70,7 +67,6 @@ export function productPayload({ form, category, images, variants, mainDimension
       sku: variant.sku.trim(),
       dimensions: (index === 0 ? mainDimensions : variant.dimensions).trim(),
       price: Number(variant.price),
-      priceFrom: variant.priceFrom.trim() === "" ? null : Number(variant.priceFrom),
       active: variant.active,
     })),
     leadTime: localized("leadTime"),

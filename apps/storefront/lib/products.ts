@@ -11,7 +11,6 @@ export type ProductVariant = {
   sku: string
   dimensions: string
   price: number
-  priceFrom?: number
   isDefault?: boolean
   active?: boolean
 }
@@ -47,7 +46,6 @@ export type Product = {
   featured: boolean
   customizable: boolean
   price: number
-  priceFrom?: number
   currency: "BAM"
   material: Material
   dimensions: string
@@ -107,21 +105,18 @@ export type CatalogueOffer = {
  * Variants a customer can order, cheapest first, so the lowest price is listed and
  * preselected. Equal prices keep the default variant first, then the CRM order.
  */
-export function activeVariants(product: Product): Array<Pick<ProductVariant, "id" | "sku" | "dimensions" | "price" | "priceFrom" | "isDefault">> {
+export function activeVariants(product: Product): Array<Pick<ProductVariant, "id" | "sku" | "dimensions" | "price" | "isDefault">> {
   const active = product.variants?.filter(variant => variant.active !== false) ?? []
-  if (!active.length) return [{ id: `${product.id}-default`, sku: product.sku, dimensions: product.dimensions, price: product.price, priceFrom: product.priceFrom, isDefault: true }]
+  if (!active.length) return [{ id: `${product.id}-default`, sku: product.sku, dimensions: product.dimensions, price: product.price, isDefault: true }]
   return [...active].sort((a, b) => a.price - b.price || Number(Boolean(b.isDefault)) - Number(Boolean(a.isDefault)))
 }
 
-/**
- * The listed price is what an order is charged (the variant price). "From" is shown when the
- * final price may vary: several variant prices, or a product marked with a starting price.
- */
+/** Lowest variant price; "From" is shown when the product's sizes cost different amounts. */
 export function displayPrice(product: Product) {
   const variants = activeVariants(product)
   const prices = variants.map(variant => variant.price)
   const amount = Math.min(...prices)
-  return { amount, from: new Set(prices).size > 1 || variants.some(variant => variant.priceFrom != null) }
+  return { amount, from: new Set(prices).size > 1 }
 }
 
 export const locales: Locale[] = ["bs", "en"]

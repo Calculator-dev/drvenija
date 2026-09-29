@@ -23,7 +23,6 @@ const payload = {
       sku: "drv-new-01-30",
       dimensions: "30 x 30 cm",
       price: 45,
-      priceFrom: null,
       active: true,
     },
   ],
@@ -40,7 +39,6 @@ test("product validation rejects invalid pricing and ambiguous categories", () =
   for (const invalid of [
     { ...payload, variants: [{ ...payload.variants[0], price: -1 }] },
     { ...payload, variants: [{ ...payload.variants[0], price: 4.5 }] },
-    { ...payload, variants: [{ ...payload.variants[0], priceFrom: -1 }] },
     { ...payload, variants: [{ ...payload.variants[0], sku: "bad sku" }] },
     { ...payload, material: "invalid" },
     { ...payload, categoryId: undefined },
@@ -102,7 +100,7 @@ test("product creation saves complete data, supports new categories, and handles
     assert.equal(response.statusCode, 201);
     assert.equal(response.json().sku, "DRV-NEW-01-30");
     assert.equal(response.json().categoryId, categoryId);
-    assert.equal(response.json().priceFrom, null);
+    assert.equal(response.json().priceFrom, undefined);
     assert.match(response.json().translations.bs.slug, /^zidno-ime-/);
     assert.equal(response.json().seo.en.title, "Wall name | Drvenija");
 

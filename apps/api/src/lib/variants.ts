@@ -10,13 +10,12 @@ type Variant = typeof productVariants.$inferSelect
 export function publicVariants(product: Product, rows: Variant[] | undefined) {
   const variants = rows?.length
     ? rows
-    : [{ id: `${product.id}-default`, sku: product.sku, dimensions: product.dimensions, price: product.price, priceFrom: product.priceFrom, isDefault: true, active: true }]
+    : [{ id: `${product.id}-default`, sku: product.sku, dimensions: product.dimensions, price: product.price, isDefault: true, active: true }]
   return variants.map(variant => ({
     id: variant.id,
     sku: variant.sku,
     dimensions: variant.dimensions,
     price: variant.price,
-    priceFrom: variant.priceFrom,
     isDefault: variant.isDefault,
     active: variant.active,
   }))

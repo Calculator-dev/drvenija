@@ -43,6 +43,13 @@
       "when": 1790665200000,
       "tag": "0005_order_shipping_amount",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790677400845,
+      "tag": "0006_drop_price_from",
+      "breakpoints": true
     }
   ]
 }

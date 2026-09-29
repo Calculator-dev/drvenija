@@ -24,10 +24,10 @@ export function catalogueResponse(
     shipping: shippingPolicy,
     categories: categoryRows.map(row => ({ id: row.id, name: localized(row.translations, "name"), slug: localized(row.translations, "slug"), description: localized(row.translations, "description"), seo: { title: localized(row.seo, "title"), description: localized(row.seo, "description") } })),
     products: productRows.map(row => ({
-      variants: publicVariants(row, variantsByProduct.get(row.id)).map(variant => ({ ...variant, priceFrom: variant.priceFrom ?? undefined })),
+      variants: publicVariants(row, variantsByProduct.get(row.id)),
       id: row.id, sku: row.sku, categoryId: row.categoryId, categoryName: categoryNames.get(row.categoryId) ?? { bs: "", en: "" },
       type: row.type, material: row.material, featured: row.featured, customizable: row.customizable,
-      price: row.price, priceFrom: row.priceFrom ?? undefined, currency: "BAM" as const, dimensions: row.dimensions,
+      price: row.price, currency: "BAM" as const, dimensions: row.dimensions,
       leadTime: row.leadTime, stockLabel: row.stockLabel,
       ...Object.fromEntries(["name", "slug", "tagline", "shortDescription", "description"].map(field => [field, localized(row.translations, field)])),
       seo: { title: localized(row.seo, "title"), description: localized(row.seo, "description") },

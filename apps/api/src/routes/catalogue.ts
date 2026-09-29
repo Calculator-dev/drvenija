@@ -130,7 +130,6 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
           sku: primaryVariant.sku,
           dimensions: primaryVariant.dimensions,
           price: primaryVariant.price,
-          priceFrom: primaryVariant.priceFrom ?? null,
           translations,
           seo: Object.fromEntries(
             (["bs", "en"] as const).map((locale) => [
@@ -191,7 +190,6 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
           sku: variant.sku,
           dimensions: variant.dimensions,
           price: variant.price,
-          priceFrom: variant.priceFrom ?? null,
           sortOrder: index,
           isDefault: index === 0,
           active: variant.active,

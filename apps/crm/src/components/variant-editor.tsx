@@ -50,7 +50,7 @@ export function VariantEditor({ variants, onChange, mainDimensions }: {
                 Ukloni
               </Button>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid items-start gap-4 sm:grid-cols-3">
               <Field label="SKU *" hint="Jedinstvena šifra varijante.">
                 <Input
                   required
@@ -71,8 +71,6 @@ export function VariantEditor({ variants, onChange, mainDimensions }: {
                   onChange={index === 0 ? undefined : event => update(variant.key, { dimensions: event.target.value })}
                 />
               </Field>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Cijena (KM) *" hint="Cijene su u cijelim KM.">
                 <Input
                   required
@@ -83,17 +81,6 @@ export function VariantEditor({ variants, onChange, mainDimensions }: {
                   placeholder="45"
                   value={variant.price}
                   onChange={event => update(variant.key, { price: event.target.value })}
-                />
-              </Field>
-              <Field label="Početna cijena (KM)" hint="Opcionalno. Prikazuje „Od“ ispred cijene kada konačni iznos može biti veći.">
-                <Input
-                  type="number"
-                  min={0}
-                  max={1000000}
-                  step={1}
-                  placeholder="45"
-                  value={variant.priceFrom}
-                  onChange={event => update(variant.key, { priceFrom: event.target.value })}
                 />
               </Field>
             </div>

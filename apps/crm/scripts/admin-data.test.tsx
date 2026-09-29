@@ -31,7 +31,7 @@ test('API odgovor kontrolne ploče prikazuje se bez greške', () => {
 test('API proizvodi se mapiraju u lokalizovane ćelije tabele', () => {
   const products = productRows(seedProducts)
   assert.equal(products[0].name, 'Monogram za vjenčanje')
-  assert.equal(products[0].price, '45,00 KM+')
+  assert.equal(products[0].price, '45,00\u00a0KM')
   assert.deepEqual(productRows([]), [])
 })
 
@@ -89,8 +89,8 @@ test('nacrt proizvoda zadržava ID-eve varijanti i gradi API tijelo zahtjeva', a
   const { productPayload, variantDrafts } = await import('../src/lib/product-draft.ts')
   const variantId = '0b3f4f5e-9f55-4e0e-9d57-8f1d6a3a2c11'
   const drafts = variantDrafts({ ...seedProducts[0], id: 'product-id', variants: [
-    { id: variantId, sku: 'DRV-1', dimensions: '30 cm', price: 45, priceFrom: null, active: true, isDefault: true },
-    { id: 'product-id-default', sku: 'DRV-2', dimensions: '40 cm', price: 60, priceFrom: 55, active: false, isDefault: false },
+    { id: variantId, sku: 'DRV-1', dimensions: '30 cm', price: 45, active: true, isDefault: true },
+    { id: 'product-id-default', sku: 'DRV-2', dimensions: '40 cm', price: 60, active: false, isDefault: false },
   ] })
   assert.equal(drafts[0].id, variantId)
   assert.equal(drafts[1].id, undefined)
@@ -105,8 +105,8 @@ test('nacrt proizvoda zadržava ID-eve varijanti i gradi API tijelo zahtjeva', a
   form.set('featured', 'on')
   const body = productPayload({ form, category: 'category-id', images: [], variants: drafts, mainDimensions: '35 cm' })
   assert.equal(body.categoryId, 'category-id')
-  assert.deepEqual(body.variants[0], { id: variantId, sku: 'DRV-1', dimensions: '35 cm', price: 45, priceFrom: null, active: true })
-  assert.deepEqual(body.variants[1], { sku: 'DRV-2', dimensions: '40 cm', price: 60, priceFrom: 55, active: false })
+  assert.deepEqual(body.variants[0], { id: variantId, sku: 'DRV-1', dimensions: '35 cm', price: 45, active: true })
+  assert.deepEqual(body.variants[1], { sku: 'DRV-2', dimensions: '40 cm', price: 60, active: false })
   assert.equal(body.translations.bs.name, 'Monogram')
   assert.equal(body.translations.en.name, 'Monogram')
   assert.equal(body.featured, true)

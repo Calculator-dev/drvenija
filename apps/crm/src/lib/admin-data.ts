@@ -23,7 +23,6 @@ export type AdminProduct = {
   sku: string;
   type: string;
   price: number;
-  priceFrom?: number | null;
   translations: Record<string, { name: string }>;
 };
 const productType = (type: string) =>
@@ -79,8 +78,7 @@ export function productRows(products: AdminProduct[]) {
       product.translations.en?.name ??
       product.sku,
     type: productType(product.type),
-    // Orders charge `price`; a starting price only marks that the final amount may be higher.
-    price: `${formatMoney(product.price)}${product.priceFrom != null ? "+" : ""}`,
+    price: formatMoney(product.price),
   }));
 }
 
@@ -112,7 +110,6 @@ export type ProductVariant = {
   sku: string;
   dimensions: string;
   price: number;
-  priceFrom?: number | null;
   active?: boolean;
   isDefault?: boolean;
 };
