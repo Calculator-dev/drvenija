@@ -9,6 +9,7 @@ import { categories, products, customers, orders, orderItems, mediaAssets, produ
 import { sendOrderConfirmationEmail } from "../services/order-email.js"
 import { shippingFor } from "../lib/shipping.js"
 import { publicInquiryRoutes } from "./inquiries.js"
+import { publicFormRateLimit } from "../lib/rate-limits.js"
 
 const localeSchema = z.enum(["bs", "en"]).default("bs")
 
@@ -146,7 +147,7 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
     }
   })
 
-  app.post("/orders", async (request, reply) => {
+  app.post("/orders", { config: { rateLimit: publicFormRateLimit } }, async (request, reply) => {
     // Limits mirror the database column sizes so oversized input is a 400, not a 500.
     const payload = z.object({
       locale: localeSchema,

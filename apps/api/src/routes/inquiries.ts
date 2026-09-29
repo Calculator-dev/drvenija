@@ -4,6 +4,7 @@ import { z } from "zod"
 import { db } from "../db/client.js"
 import { inquiries } from "../db/schema.js"
 import { sendInquiryNotification } from "../services/order-email.js"
+import { publicFormRateLimit } from "../lib/rate-limits.js"
 
 const optionalText = (max: number) => z.string().trim().max(max).optional().transform(value => value || undefined)
 
@@ -19,7 +20,7 @@ export const inquiryInput = z.object({
 })
 
 export const publicInquiryRoutes: FastifyPluginAsync = async app => {
-  app.post("/inquiries", async (request, reply) => {
+  app.post("/inquiries", { config: { rateLimit: publicFormRateLimit } }, async (request, reply) => {
     const input = inquiryInput.parse(request.body)
     const [inquiry] = await db.insert(inquiries).values(input).returning({ id: inquiries.id, createdAt: inquiries.createdAt })
     const notification = await sendInquiryNotification(input)
