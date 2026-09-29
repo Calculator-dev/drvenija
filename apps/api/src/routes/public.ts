@@ -8,6 +8,7 @@ import { db } from "../db/client.js"
 import { categories, products, customers, orders, orderItems, mediaAssets, productVariants } from "../db/schema.js"
 import { sendOrderConfirmationEmail } from "../services/order-email.js"
 import { shippingFor } from "../lib/shipping.js"
+import { publicVariants } from "../lib/variants.js"
 import { publicInquiryRoutes } from "./inquiries.js"
 import { publicFormRateLimit } from "../lib/rate-limits.js"
 
@@ -69,29 +70,7 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
       dimensions: product.dimensions,
       leadTime: product.leadTime[locale],
       stockLabel: product.stockLabel[locale],
-      variants: (byProduct.get(product.id)?.length
-        ? byProduct.get(product.id)!
-        : [{
-            id: `${product.id}-default`,
-            productId: product.id,
-            sku: product.sku,
-            dimensions: product.dimensions,
-            price: product.price,
-            priceFrom: product.priceFrom,
-            sortOrder: 0,
-            isDefault: true,
-            active: true,
-            createdAt: product.createdAt,
-            updatedAt: product.updatedAt,
-          }]).map(variant => ({
-        id: variant.id,
-        sku: variant.sku,
-        dimensions: variant.dimensions,
-        price: variant.price,
-        priceFrom: variant.priceFrom,
-        isDefault: variant.isDefault,
-        active: variant.active,
-      })),
+      variants: publicVariants(product, byProduct.get(product.id)),
       ...product.translations[locale],
     }))
   })
@@ -120,29 +99,7 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
       dimensions: product.dimensions,
       leadTime: product.leadTime[locale],
       stockLabel: product.stockLabel[locale],
-      variants: (rows.length
-        ? rows
-        : [{
-            id: `${product.id}-default`,
-            productId: product.id,
-            sku: product.sku,
-            dimensions: product.dimensions,
-            price: product.price,
-            priceFrom: product.priceFrom,
-            sortOrder: 0,
-            isDefault: true,
-            active: true,
-            createdAt: product.createdAt,
-            updatedAt: product.updatedAt,
-          }]).map(variant => ({
-        id: variant.id,
-        sku: variant.sku,
-        dimensions: variant.dimensions,
-        price: variant.price,
-        priceFrom: variant.priceFrom,
-        isDefault: variant.isDefault,
-        active: variant.active,
-      })),
+      variants: publicVariants(product, rows),
       ...product.translations[locale],
     }
   })

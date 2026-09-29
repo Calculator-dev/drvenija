@@ -2,6 +2,7 @@ import { db } from "../db/client.js"
 import { categories, products, mediaAssets, productVariants } from "../db/schema.js"
 import { asc, desc, isNotNull } from "drizzle-orm"
 import { shippingPolicy } from "../lib/shipping.js"
+import { publicVariants } from "../lib/variants.js"
 
 function localized(rows: Record<string, Record<string, string>>, field: string) {
   return { bs: rows.bs?.[field] ?? "", en: rows.en?.[field] || rows.bs?.[field] || "" }
@@ -23,29 +24,7 @@ export function catalogueResponse(
     shipping: shippingPolicy,
     categories: categoryRows.map(row => ({ id: row.id, name: localized(row.translations, "name"), slug: localized(row.translations, "slug"), description: localized(row.translations, "description"), seo: { title: localized(row.seo, "title"), description: localized(row.seo, "description") } })),
     products: productRows.map(row => ({
-      variants: (variantsByProduct.get(row.id)?.length
-        ? variantsByProduct.get(row.id)!
-        : [{
-            id: `${row.id}-default`,
-            productId: row.id,
-            sku: row.sku,
-            dimensions: row.dimensions,
-            price: row.price,
-            priceFrom: row.priceFrom,
-            sortOrder: 0,
-            isDefault: true,
-            active: true,
-            createdAt: row.createdAt,
-            updatedAt: row.updatedAt,
-          }]).map(variant => ({
-        id: variant.id,
-        sku: variant.sku,
-        dimensions: variant.dimensions,
-        price: variant.price,
-        priceFrom: variant.priceFrom ?? undefined,
-        isDefault: variant.isDefault,
-        active: variant.active,
-      })),
+      variants: publicVariants(row, variantsByProduct.get(row.id)).map(variant => ({ ...variant, priceFrom: variant.priceFrom ?? undefined })),
       id: row.id, sku: row.sku, categoryId: row.categoryId, categoryName: categoryNames.get(row.categoryId) ?? { bs: "", en: "" },
       type: row.type, material: row.material, featured: row.featured, customizable: row.customizable,
       price: row.price, priceFrom: row.priceFrom ?? undefined, currency: "BAM" as const, dimensions: row.dimensions,

@@ -11,6 +11,7 @@ import {
   productVariants,
 } from "../db/schema.js";
 import { productInput, slugFor } from "../lib/product-input.js";
+import { publicVariants } from "../lib/variants.js";
 
 // Registered inside the authenticated admin route scope.
 export const catalogueRoutes: FastifyPluginAsync = async (app) => {
@@ -42,28 +43,7 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
     return {
       ...product,
       media: await withImageUrls(media),
-      variants: (variants.length
-        ? variants
-        : [
-            {
-              id: `${product.id}-default`,
-              sku: product.sku,
-              dimensions: product.dimensions,
-              price: product.price,
-              priceFrom: product.priceFrom,
-              active: true,
-              isDefault: true,
-            },
-          ]
-      ).map((variant) => ({
-        id: variant.id,
-        sku: variant.sku,
-        dimensions: variant.dimensions,
-        price: variant.price,
-        priceFrom: variant.priceFrom ?? null,
-        active: variant.active,
-        isDefault: variant.isDefault,
-      })),
+      variants: publicVariants(product, variants),
     };
   });
   async function save(
