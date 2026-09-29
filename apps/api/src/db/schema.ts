@@ -1,5 +1,6 @@
 import {
   boolean,
+  index,
   integer,
   jsonb,
   pgEnum,
@@ -109,7 +110,9 @@ export const productVariants = pgTable("product_variants", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
-}).enableRLS();
+}, (table) => [
+  index("product_variants_product_id_idx").on(table.productId),
+]).enableRLS();
 
 export const mediaAssets = pgTable("media_assets", {
   id: uuid("id").defaultRandom().primaryKey(),
