@@ -17,7 +17,9 @@ function CollectionProductCard({ locale, product, view }: { locale: Locale; prod
   const href = `${buildPath(locale, "/product")}/${product.localizedSlug}`
 
   return (
-    <article className={cn("group", view === "list" && "grid gap-5 border-b border-border/60 pb-7 sm:grid-cols-[220px_1fr]")}>
+    // In the grid, cards stretch to the row height and the price + button sit at the bottom,
+    // so buttons line up regardless of how long names and descriptions are.
+    <article className={cn("group", view === "grid" ? "flex h-full flex-col" : "grid gap-5 border-b border-border/60 pb-7 sm:grid-cols-[220px_1fr]")}>
       <Link href={href} className={cn("relative block overflow-hidden bg-[#f4f4f2]", view === "grid" ? "aspect-square" : "aspect-square sm:aspect-[4/3]")}>
         <Image
           unoptimized={isSvg(product.primaryImage.url)}
@@ -29,11 +31,11 @@ function CollectionProductCard({ locale, product, view }: { locale: Locale; prod
         />
         {product.featured && <span className="absolute left-3 top-3 bg-black px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white">{isBs ? "Istaknuto" : "Featured"}</span>}
       </Link>
-      <div className={cn("flex flex-col", view === "grid" ? "pt-4" : "justify-center py-1")}>
+      <div className={cn("flex flex-col", view === "grid" ? "flex-1 pt-4" : "justify-center py-1")}>
         <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{product.categoryName?.[locale] ?? ""} · {product.material}</p>
         <Link href={href} className="mt-2 text-base font-semibold leading-snug transition-opacity hover:opacity-60">{product.localizedName}</Link>
         <p className={cn("mt-2 text-sm leading-6 text-muted-foreground", view === "grid" && "line-clamp-2")}>{product.localizedShortDescription}</p>
-        <p className="mt-3 text-sm font-semibold">{displayPrice(product).from ? (isBs ? "Od " : "From ") : ""}{formatPrice(displayPrice(product).amount, locale)}</p>
+        <p className={cn("mt-3 text-sm font-semibold", view === "grid" && "mt-auto pt-3")}>{displayPrice(product).from ? (isBs ? "Od " : "From ") : ""}{formatPrice(displayPrice(product).amount, locale)}</p>
         <Link href={href} className={cn("mt-5 inline-flex h-11 items-center justify-center border border-foreground px-2 text-[10px] font-semibold uppercase tracking-[0.08em] transition-colors hover:bg-foreground hover:text-background sm:px-5 sm:text-xs sm:tracking-[0.12em]", view === "grid" ? "w-full" : "w-fit")}>
           {isBs ? "Pogledaj proizvod" : "View product"}
         </Link>
