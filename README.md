@@ -5,34 +5,68 @@ Monorepo workspace for the Drvenija customer webshop, admin CRM, and Fastify API
 ## Apps
 
 - `apps/storefront` - Next.js multilingual webshop frontend
-- `apps/api` - Fastify + TypeScript + Drizzle backend scaffold
-- `apps/crm` - React + TanStack Query admin frontend scaffold
+- `apps/api` - Fastify + TypeScript + Drizzle backend
+- `apps/crm` - React + React Router + TanStack Query admin frontend
 
-## Notes
+## Getting started
 
-- Bosnian is the default storefront language.
-- English routes live under `/en`.
-- The storefront can use local seed data during development until the API is wired with production data.
+Use Node.js 22+ (`nvm use 25` on the current development computer) and pnpm 10.
+Install everything from the repository root with `pnpm install`; there is one
+workspace lockfile (`pnpm-lock.yaml`).
+
+Run `pnpm dev` from the root to start the API on port 4000, the CRM on port 3000,
+and the storefront on port 3001. Ctrl+C stops all three. Stop existing development
+servers first. For separate terminals, use `pnpm dev:api`, `pnpm dev:crm`, and
+`pnpm dev:storefront`.
+
+Other root commands, also run in CI (`.github/workflows/ci.yml`):
+
+- `pnpm lint`: ESLint for all apps (`eslint.config.mjs`).
+- `pnpm typecheck`: TypeScript checks for all apps.
+- `pnpm test`: API and CRM tests. Tests mock the database, Supabase and storage.
+- `pnpm build`: production builds of all apps.
+
+## Configuration
+
+| App | File | Variables |
+| --- | --- | --- |
+| API | `apps/api/.env` | `DATABASE_URL`, `SUPABASE_*`, `BACKBLAZE_*`, `RESEND_API_KEY`, `ORDER_EMAIL_FROM`, `INQUIRY_NOTIFY_EMAIL`, `CORS_ORIGINS`, `TRUST_PROXY` |
+| CRM | `apps/crm/.env.local` | `VITE_API_URL`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` |
+| Storefront | `apps/storefront/.env.local` | `API_URL`, `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL` |
+
+Each app has a `.env.example`. Environment files are git-ignored. Never put a
+database URL, service-role key or other secret in a `VITE_` or `NEXT_PUBLIC_` variable.
+Restart an app after changing its environment.
+
+In production:
+
+- Set `CORS_ORIGINS` to the storefront and CRM origins, comma-separated
+  (e.g. `https://drvenija.ba,https://crm.drvenija.ba`). Outside production it
+  defaults to the localhost development ports. The API logs a warning at startup
+  if it is missing in production.
+- Behind a reverse proxy or load balancer, set `TRUST_PROXY=true` (or the number
+  of proxy hops) so rate limits apply per client rather than per proxy.
+- The storefront requires `API_URL` and `NEXT_PUBLIC_API_URL`; they only default
+  to `http://localhost:4000` in development.
+- The CRM is a single-page app: configure the host to serve `index.html` for all
+  paths (for example `/orders/<id>`).
 
 ## Database
 
-The API uses PostgreSQL via Drizzle. Set `DATABASE_URL` in `apps/api/.env` (git-ignored).
-Node.js 22+ is required; API commands load that file automatically.
+The API uses PostgreSQL via Drizzle.
 
 - `pnpm --dir apps/api db:check`: read-only connectivity and table check.
 - `pnpm --dir apps/api db:generate`: generate a migration after schema changes.
 - `pnpm --dir apps/api db:migrate`: apply reviewed migrations to the configured database.
-- `pnpm dev:api`: start the API with its environment file.
 
-The initial migration creates seven application tables and enables row-level security
-without public policies. The backend connection must use a trusted database role with
-access to these tables; never expose DATABASE_URL in a frontend environment variable.
-Public catalogue reads and order creation use PostgreSQL. Orders are saved atomically
-with server-side prices. No demo records are automatically inserted.
+Migration `0005_order_shipping_amount` adds `orders.shipping_amount`; apply it
+before deploying this version of the API, since order creation writes that column.
+`drizzle/meta` holds a snapshot of the current schema, so `db:generate` only emits
+new changes. If you hand-write a migration, regenerate the snapshot as well.
 
-The storefront reads the live public catalogue from the API and uses database UUIDs
-for checkout. The CRM is still a
-prototype; admin endpoints require a verified Supabase session and a server-managed admin role.
+The initial migration enables row-level security without public policies. The
+backend connection must use a trusted database role with access to these tables.
+Orders are saved atomically with server-side prices. No demo records are inserted.
 
 ## CRM admin authentication
 
@@ -46,76 +80,72 @@ There is no public admin signup or role-grant endpoint.
 2. Copy `apps/crm/.env.example` to `apps/crm/.env.local` and configure
    `VITE_API_URL`, `VITE_SUPABASE_URL`, and `VITE_SUPABASE_PUBLISHABLE_KEY`
    (or legacy `VITE_SUPABASE_ANON_KEY`). Use the same Supabase project.
-   Never put a service-role key or database password in a `VITE_` variable.
 3. Create or select a confirmed email/password user in Supabase Auth, and assign
    `app_metadata.role` to `admin` through a trusted administrative operation.
-   Preserve existing app metadata when updating it. Removing this role denies
-   subsequent API requests immediately because the API retrieves current user data.
+   Preserve existing app metadata when updating it. The API caches a verified
+   session for up to 60 seconds, so removing the role denies access within a minute.
 4. Restart the API and CRM after configuration changes, then sign in.
 
 `GET /admin/me` returns only the verified administrator's ID and email.
 Missing/invalid sessions return 401, non-admin accounts return 403, and unavailable
-or unconfigured authentication returns 503. The CRM verifies access before mounting
-the dashboard, attaches the access token to API requests, and clears cached data
-on auth changes and sign-out. Sign-out affects the current browser session.
+or unconfigured authentication returns 503. The CRM verifies access once per signed-in
+user (token refreshes do not interrupt work), attaches the access token to API
+requests, and clears cached data when the user changes or signs out.
 
-Run `pnpm --dir apps/api test` for authorization and order tests, and
-`pnpm --dir apps/crm build` for the CRM build. Tests mock Supabase responses;
-a real sign-in check requires the configuration and an admin account above.
-Admin products and categories use PostgreSQL. Dashboard and order views still use prototype data.
+Admin provisioning: with `SUPABASE_SECRET_KEY` (or legacy `SUPABASE_SERVICE_ROLE_KEY`)
+configured, run `node --env-file=.env scripts/create-admin.mjs EMAIL` from `apps/api`.
+This creates an unconfirmed user with no password and the admin role, or grants that
+role to the existing user while preserving other app metadata. It sends no email.
+Password setup links should redirect to the CRM with `?setup=password`, and the CRM
+URL must be allowed in Supabase Auth redirect settings.
 
-Admin provisioning: with SUPABASE_SECRET_KEY (or legacy SUPABASE_SERVICE_ROLE_KEY) configured, run `node --env-file=.env scripts/create-admin.mjs EMAIL` from `apps/api` using Node 22+. This creates an unconfirmed user with no password and the admin role, or grants that role to the existing user while preserving other app metadata. It sends no email. Password setup links should redirect to the CRM with `?setup=password`, and the CRM URL must be allowed in Supabase Auth redirect settings.
+## CRM
 
-## Starting local development
+The dashboard shows live counts (orders today, awaiting review, awaiting production,
+inquiries in the last 30 days, catalogue size) and recent orders. Every page has its
+own URL, and leaving a product form with unsaved changes asks for confirmation.
 
-Use Node.js 22+ (`nvm use 25` on the current development computer), then run
-`npm start` from the repository root. This starts the API on port 4000, the CRM
-on port 3000, and the storefront on port 3001. Ctrl+C stops all three.
-Stop existing development servers before starting this command.
+### Adding and editing products
 
-For separate terminals, use `npm run dev:api`, `npm run dev:crm`, and
-`npm run dev:storefront`. The API requires `apps/api/.env`; CRM configuration
-is in `apps/crm/.env.local`. Dependency installation still uses pnpm and its
-workspace lockfile; npm is supported for running these scripts.
+Select **Novi proizvod** or open `/products/new`. Required fields are the Bosnian
+name and description, category, material/type, main dimensions, production time,
+availability, and at least one variant with a SKU and price. Optional English fields
+fall back to Bosnian. A new category can be created in the same transaction as the
+product. Slugs and SEO defaults are generated automatically.
 
-## Adding products
+Prices are whole KM. Each variant's **Cijena** is what orders are charged. An optional
+**Početna cijena** marks that the final price may be higher; the storefront then shows
+"Od" (from) before the price.
 
-In the CRM, select **New product** or open `/products/new`. Required fields are
-Bosnian name and description, SKU, category, material/type, price in BAM,
-dimensions, production time, and availability. Optional English fields fall back
-to Bosnian. A new category can be created in the same transaction as the product.
-Slugs and SEO defaults are generated automatically. Product listing and creation
-use authenticated `/admin/products`; category selection uses `/admin/categories`.
-Duplicate SKUs return a conflict without saving a partial product/category.
-The storefront uses the public catalogue API.
+Choose **Uredi** on a product to open `/products/:id/edit`, which submits a full update
+through `PUT /admin/products/:id`. Updates keep existing slugs and variant IDs (so
+customers' carts stay valid), refresh SEO defaults and `updatedAt`, and return 404 for
+missing products or 409 for duplicate SKUs.
 
-## Editing products
+### Reviewing orders
 
-Choose **Edit** on a product in the CRM catalogue. The form at
-`/products/:id/edit` loads saved fields and submits a full update through
-`PUT /admin/products/:id`; `GET /admin/products/:id` loads the record.
-Both endpoints require admin authentication. Updates preserve existing slugs,
-refresh SEO defaults and `updatedAt`, and return 404 for missing products or
-409 for duplicate SKUs. Category creation and product updates are transactional.
-Restart the API after backend code changes if it is already running.
+Open **Detalji** on an order to view the customer, delivery address, notes, ordered
+products, personalization, shipping and total. A submitted order can be accepted once
+(after a confirmation step), or declined with a required explanation. The decision,
+review time, decline reason, and notification time are saved.
 
-## Reviewing orders
+Customer emails are sent through Resend. Configure `RESEND_API_KEY` and
+`ORDER_EMAIL_FROM`; the sender must use a domain verified in Resend. Customers get a
+receipt when they order and an email when the order is accepted or declined. Email
+failures never roll back a saved order or decision; the CRM shows whether each email
+was sent so the customer can be contacted manually if needed.
 
-The CRM order list uses live database records. Open **Details** to view the
-customer, delivery address, notes, ordered products, quantities, personalization,
-and total amount. A submitted order can be accepted once, or declined with a
-required explanation. The decision, review time, decline reason, and notification
-time are saved in the database.
+### Custom-work inquiries
 
-Customer decision emails are sent through Resend. Configure `RESEND_API_KEY` and
-`ORDER_EMAIL_FROM` in `apps/api/.env`; the sender must use a domain verified in
-Resend. If delivery is not configured or fails, the decision remains saved and
-the CRM displays a warning so the customer can be contacted manually.
+The storefront's custom-work form saves inquiries through `POST /public/inquiries`.
+They appear under **Upiti** in the CRM. Set `INQUIRY_NOTIFY_EMAIL` to also email each
+inquiry to the shop (reply-to is the customer's address).
 
-The same Resend configuration sends an immediate receipt after a customer places
-an order. It includes the order number, products, total, and delivery address.
-Email failures never roll back a successfully saved order; the CRM order details
-show whether the receipt was sent.
+## Shipping
+
+Shipping is calculated by the API (`apps/api/src/lib/shipping.ts`): free from 150 KM,
+otherwise 10 KM. Orders store the amount, emails and the CRM show it, and the storefront
+reads the same policy from `GET /public/catalogue`.
 
 ## Product images
 
@@ -125,39 +155,47 @@ its binary body and the matching Content-Type). The backend decodes and checks
 images, rejects animation and oversized dimensions, strips metadata, and converts
 them to WebP at a maximum of 2400 pixels per side.
 
-Configure BACKBLAZE_ENDPOINT, BACKBLAZE_REGION, BACKBLAZE_KEY_ID,
-BACKBLAZE_APP_KEY, and BACKBLAZE_BUCKET_NAME in `apps/api/.env`. The application
+Configure `BACKBLAZE_ENDPOINT`, `BACKBLAZE_REGION`, `BACKBLAZE_KEY_ID`,
+`BACKBLAZE_APP_KEY`, and `BACKBLAZE_BUCKET_NAME` in `apps/api/.env`. The application
 key needs read/write access to the configured bucket and the `products/` prefix.
-The bucket can remain private; no browser CORS configuration is needed. Preview
-links expire after one hour; reopen the edit page to renew them.
+The bucket can remain private; no browser CORS configuration is needed.
 
 Choose a primary image and enter Bosnian/English image descriptions. Saving the
 product links its images in the same database transaction as product changes.
 Removing an image from the form takes effect on save and detaches it from the
-product; it does not delete the original object from Backblaze. Uploads abandoned
-before saving remain unlinked for future cleanup. Existing product updates that
-omit `images` preserve all attachments; sending `images: []` detaches them.
+product. Existing product updates that omit `images` preserve all attachments;
+sending `images: []` detaches them.
 
-Run `node --env-file=.env scripts/check-storage.mjs` in `apps/api` with Node 22+
-to upload, read, and remove a generated test image. This needs delete permission
-for the temporary test object in addition to normal read/write permissions.
+Detached images and uploads abandoned before saving stay in storage until cleaned up.
+From `apps/api`, after `pnpm build`:
 
-## Live webshop catalogue
+```sh
+node --env-file=.env scripts/cleanup-media.mjs            # list what would be removed
+node --env-file=.env scripts/cleanup-media.mjs --apply    # remove images unlinked for 24h+
+```
 
-The webshop loads `GET /public/catalogue` on the server for categories, products,
-translations, SEO, and attached images. The shop, featured products, product detail
-pages, related products, and sitemap all use this data. Empty catalogues show no
-sample products; failures show a retry page. Catalogue fetches use `no-store` so
-CRM changes appear on a fresh page load. No database credentials go to the browser.
+`--hours=N` changes the age threshold. Run `node --env-file=.env scripts/check-storage.mjs`
+to upload, read, and remove a generated test image (needs delete permission).
 
-Set `API_URL` in `apps/storefront/.env.local` for server requests, and
-`NEXT_PUBLIC_API_URL` for browser checkout requests. Both default to
-`http://localhost:4000` locally. Set `NEXT_PUBLIC_SITE_URL` to the webshop's origin
-for canonical links and SEO. Restart after changing environment variables.
+## Storefront
 
-Attached product images have stable `/api/media/:id` webshop URLs. The API checks
-that each asset is attached to a product before redirecting to a temporary signed
-Backblaze URL, allowing private buckets and persistent cart image links. All saved
-products are public (there is no draft/publish switch yet). Existing localized
-`/public/products`, `/public/products/:slug`, and `/public/categories` endpoints
-remain available. The new catalogue endpoint provides full bilingual records.
+Bosnian is the default language at unprefixed URLs (`/shop`); English lives under `/en`
+(`/en/shop`). Both are served by `app/[locale]`: `proxy.ts` rewrites unprefixed paths to
+the Bosnian locale and redirects `/bs/...` to the canonical unprefixed URL.
+
+The storefront loads `GET /public/catalogue` on the server for categories, products,
+translations, SEO, images, and the shipping policy. Catalogue reads happen at request
+time so CRM changes appear on the next page load. Empty catalogues show no sample
+products; failures show a retry page. No database credentials go to the browser.
+
+The cart is stored in the browser. On the cart and checkout pages it is repriced from
+the live catalogue, and products that are no longer sold are removed with a notice.
+Order and inquiry submissions are limited to 10 per client per 10 minutes.
+
+Product images are served from `/api/media/:id`. The route streams the image from
+private storage with a one-day cache, which lets `next/image` resize and convert it to
+AVIF/WebP. All saved products are public (there is no draft/publish switch yet).
+Cart and checkout pages are excluded from search indexing and the sitemap.
+
+The legacy localized `/public/products`, `/public/products/:slug`, and
+`/public/categories` API endpoints remain available alongside `/public/catalogue`.

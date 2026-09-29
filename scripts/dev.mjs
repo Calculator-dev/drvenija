@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
 if (Number(process.versions.node.split('.')[0]) < 22) {
-  console.error('Node.js 22+ is required. Run `nvm use 25` on this computer, then `npm start`.')
+  console.error('Node.js 22+ is required. Run `nvm use 25` on this computer, then `pnpm dev`.')
   process.exit(1)
 }
 
