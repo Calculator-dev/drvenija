@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next"
 import { Inter, Fraunces } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { NextIntlClientProvider } from "next-intl"
 import { CartProvider } from "@/components/cart-provider"
 import { SiteShell } from "@/components/site-shell"
 import { Toaster } from "@/components/ui/sonner"
@@ -48,10 +49,12 @@ export default async function RootLayout({
   return (
     <html lang={locale} className={`${inter.variable} ${fraunces.variable}`}>
       <body suppressHydrationWarning className="min-h-screen bg-background font-sans antialiased">
-        <CartProvider>
-          <SiteShell locale={locale}>{children}</SiteShell>
-          <Toaster position="top-center" />
-        </CartProvider>
+        <NextIntlClientProvider>
+          <CartProvider>
+            <SiteShell locale={locale}>{children}</SiteShell>
+            <Toaster position="top-center" />
+          </CartProvider>
+        </NextIntlClientProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>

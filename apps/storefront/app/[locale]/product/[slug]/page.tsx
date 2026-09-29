@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!product) return {}
 
   const productPath = (target: "bs" | "en") => buildPath(target, `/product/${product.slug[target]}`)
-  const metadata = createMetadata({
+  const metadata = await createMetadata({
     locale,
     path: `/product/${product.localizedSlug}`,
     title: product.seo.title[locale],

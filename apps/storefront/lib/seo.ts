@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
+import { getTranslations } from "next-intl/server"
 import {
   buildPath,
   defaultLocale,
   getLocalizedField,
-  siteDescription,
   siteName,
   type Locale,
   type LocalizedField,
@@ -29,7 +29,7 @@ export function createAlternates(path: string) {
   }
 }
 
-export function createMetadata(args: {
+export async function createMetadata(args: {
   locale?: Locale
   path: string
   title: string | LocalizedField
@@ -38,13 +38,15 @@ export function createMetadata(args: {
   image?: string
   /** Keep transactional pages (cart, checkout) out of search results. */
   noIndex?: boolean
-}): Metadata {
+}): Promise<Metadata> {
   const locale = args.locale ?? defaultLocale
   const title = typeof args.title === "string" ? args.title : getLocalizedField(args.title, locale)
   const description =
     typeof args.description === "string"
       ? args.description
-      : getLocalizedField(args.description ?? siteDescription, locale)
+      : args.description
+        ? getLocalizedField(args.description, locale)
+        : (await getTranslations({ locale, namespace: "common" }))("siteDescription")
   const canonicalPath = locale === "en" ? buildPath("en", args.path === "/" ? "" : args.path) : args.path
 
   const image = args.image ?? "/images/hero-lifestyle.jpg"

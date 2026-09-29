@@ -80,12 +80,6 @@ export type LocalizedProduct = Product & {
   primaryImage: MediaAsset
 }
 
-export type LandingSection = {
-  eyebrow: LocalizedField
-  title: LocalizedField
-  description: LocalizedField
-}
-
 export type ShippingPolicy = { freeFrom: number; fee: number }
 
 /** Shown before the live policy loads; the API's GET /public/catalogue is authoritative. */
@@ -145,25 +139,6 @@ export function alternateLocalePath(pathname: string, search = "") {
 export const defaultLocale: Locale = "bs"
 
 export const siteName = "Drvenija"
-
-export const siteDescription: LocalizedField = {
-  bs: "Drvenija izrađuje CNC proizvode od pleksiglasa i mediapana za dom, biznis i posebne prilike.",
-  en: "Drvenija creates CNC-cut plexiglass and MDF products for homes, businesses, and special occasions.",
-}
-
-export const landingSections: Record<"process", LandingSection> = {
-  process: {
-    eyebrow: { bs: "Proces", en: "Process" },
-    title: {
-      bs: "Od ideje do gotovog komada bez improvizacije u zadnjem koraku.",
-      en: "From first idea to finished piece without last-minute improvisation.",
-    },
-    description: {
-      bs: "Prvo usklađujemo dimenzije i primjenu, zatim pripremamo fajl za CNC obradu, završavamo rubove i provjeravamo svaki komad prije pakovanja.",
-      en: "We first align size and intended use, prepare the CNC-ready file, finish the edges, and inspect each piece before packing.",
-    },
-  },
-}
 
 export function getLocalizedField(field: LocalizedField, locale: Locale) {
   return field[locale] ?? field[defaultLocale]

@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Suspense } from "react"
+import { getTranslations } from "next-intl/server"
 import { ShopClient } from "@/components/shop-client"
 import { getCategories, getProducts } from "@/lib/catalogue"
 import { buildPath, type Locale } from "@/lib/products"
@@ -7,20 +8,21 @@ import { buildPath, type Locale } from "@/lib/products"
 export async function ShopPage({ locale }: { locale: Locale }) {
   const products = await getProducts(locale)
   const categories = await getCategories(locale)
-  const isBs = locale === "bs"
+  const t = await getTranslations("shop")
+  const common = await getTranslations("common")
 
   return (
     <>
       <section className="border-b border-border/60">
         <div className="mx-auto max-w-[1500px] px-4 pb-20 pt-7 md:px-6 md:pb-28 md:pt-8">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Link href={buildPath(locale)} className="transition-colors hover:text-foreground">{isBs ? "Početna" : "Home"}</Link>
+            <Link href={buildPath(locale)} className="transition-colors hover:text-foreground">{common("home")}</Link>
             <span aria-hidden="true">›</span>
-            <span className="text-foreground">{isBs ? "Svi proizvodi" : "All products"}</span>
+            <span className="text-foreground">{t("allProducts")}</span>
           </div>
           <div className="mt-16 flex flex-wrap items-end gap-x-4 gap-y-2 md:mt-20">
-            <h1 className="text-5xl font-bold tracking-[-0.045em] md:text-6xl">{isBs ? "Svi proizvodi" : "All products"}</h1>
-            <p className="pb-1 text-sm text-muted-foreground">({products.length} {isBs ? "proizvoda" : "products"})</p>
+            <h1 className="text-5xl font-bold tracking-[-0.045em] md:text-6xl">{t("allProducts")}</h1>
+            <p className="pb-1 text-sm text-muted-foreground">{t("productCount", { count: products.length })}</p>
           </div>
         </div>
       </section>

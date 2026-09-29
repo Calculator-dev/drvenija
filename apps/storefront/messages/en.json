@@ -1,0 +1,326 @@
+{
+  "common": {
+    "siteDescription": "Drvenija creates CNC-cut plexiglass and MDF products for homes, businesses, and special occasions.",
+    "home": "Home",
+    "shop": "Shop",
+    "cart": "Cart",
+    "materials": {
+      "plexiglass": "Plexiglass",
+      "mediapan": "MDF",
+      "mixed": "Mixed"
+    },
+    "productTypes": {
+      "standard": "Standard",
+      "custom": "Customizable"
+    },
+    "from": "From {price}",
+    "decreaseQuantity": "Decrease quantity",
+    "increaseQuantity": "Increase quantity",
+    "remove": "Remove {name}"
+  },
+  "meta": {
+    "home": "Drvenija | CNC webshop for plexiglass and MDF",
+    "shop": "Shop | Drvenija",
+    "about": "About | Drvenija",
+    "custom": "Custom work | Drvenija",
+    "cart": "Your cart | Drvenija",
+    "checkout": "Checkout | Drvenija",
+    "success": "Order received | Drvenija"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "This page doesn't exist. Go back to the home page or browse the shop."
+  },
+  "error": {
+    "title": "The shop is temporarily unavailable",
+    "description": "Please try again in a moment.",
+    "retry": "Try again"
+  },
+  "header": {
+    "freeDelivery": "Free delivery on orders from {amount} BAM",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "menu": "Menu",
+    "mainNavigation": "Main navigation",
+    "nav": {
+      "allProducts": "All products",
+      "customizable": "Customizable products",
+      "customWork": "Custom work",
+      "about": "About"
+    },
+    "tagline": "Plexiglass, MDF, gifts, and branded signage made in Sarajevo.",
+    "searchLabel": "Search products",
+    "searchButton": "Search",
+    "switchLanguage": "BS"
+  },
+  "footer": {
+    "description": "A webshop for CNC-cut plexiglass and MDF products. Standard products can be ordered directly, while tailored pieces can be requested with a short brief and dimensions.",
+    "navigation": "Navigation",
+    "customWork": "Custom work",
+    "about": "About",
+    "contact": "Contact",
+    "location": "Sarajevo, Bosnia and Herzegovina",
+    "languageNote": "English is available as a secondary storefront language.",
+    "backHome": "Back to home"
+  },
+  "home": {
+    "hero": {
+      "imageAlt": "Drvenija decor in an interior",
+      "eyebrow": "Designed and made in Sarajevo",
+      "title": "Your idea, precisely made.",
+      "description": "Decor, gifts, and business signage in plexiglass and MDF — from the first sketch to the finished piece.",
+      "shopCta": "Shop products",
+      "customCta": "Send your idea"
+    },
+    "categories": {
+      "title": "What would you like us to make?",
+      "tiles": {
+        "nameSigns": "Name signs",
+        "wallDecor": "Wall decor",
+        "celebrationDecor": "Celebration decor",
+        "gifts": "Gifts and keepsakes",
+        "businessSigns": "Business signage",
+        "keychains": "Keychains",
+        "houseNumbers": "House numbers",
+        "monograms": "Monograms",
+        "forHome": "For the home",
+        "yourIdea": "Made from your idea"
+      }
+    },
+    "customStudio": {
+      "imageAlt": "Custom business signage",
+      "title": "Can’t find what you have in mind?",
+      "description": "Send us a sketch, dimensions, or simply an idea. We’ll choose the material together and make a piece that fits your space.",
+      "cta": "Start a custom project"
+    },
+    "products": {
+      "title": "All products",
+      "viewAll": "View all"
+    },
+    "showcase": {
+      "eyebrow": "From the workshop",
+      "title": "Made to become part of your moments.",
+      "tiles": {
+        "space": "Details that change a room",
+        "name": "A name made just for you",
+        "memories": "Memories kept close",
+        "celebrations": "Moments worth celebrating"
+      }
+    },
+    "craft": {
+      "imageAlt": "Making a Drvenija product",
+      "eyebrow": "Material and craft",
+      "title": "Choose a finish that belongs in your space.",
+      "description": "Plexiglass brings crisp lines and shine, while MDF adds warmth and a natural feel. Each piece can be adjusted in color, size, and mounting style.",
+      "cta": "Explore custom work"
+    }
+  },
+  "shop": {
+    "allProducts": "All products",
+    "productCount": "({count} products)",
+    "featured": "Featured",
+    "viewProduct": "View product",
+    "filters": {
+      "title": "Filters",
+      "material": "Material",
+      "allMaterials": "All materials",
+      "category": "Category",
+      "allCategories": "All categories",
+      "productType": "Product type",
+      "allTypes": "All types",
+      "clearFilters": "Clear filters",
+      "close": "Close filters",
+      "clear": "Clear",
+      "show": "Show ({count})"
+    },
+    "sort": {
+      "label": "Sort by",
+      "featured": "Featured",
+      "nameAsc": "Name A–Z",
+      "priceAsc": "Price: low to high",
+      "priceDesc": "Price: high to low"
+    },
+    "view": {
+      "label": "View as",
+      "list": "List view",
+      "grid": "Grid view"
+    },
+    "allCategoriesChip": "All",
+    "resultsFor": "Results for “{query}” · {count}",
+    "showing": "Showing {shown} of {total}",
+    "empty": "No products match these filters."
+  },
+  "product": {
+    "personalizationAvailable": "Personalization available",
+    "readyToOrder": "Ready to order",
+    "addedToCart": "Product added to cart.",
+    "chooseDimensions": "Choose dimensions",
+    "dimensions": "Dimensions",
+    "leadTime": "Lead time",
+    "personalization": "Personalization",
+    "personalizationPlaceholder": "Enter a name, wording, dimension, or short note.",
+    "addToCart": "Add to cart",
+    "details": {
+      "deliveryTitle": "Delivery and lead time",
+      "deliveryText": "The estimated lead time is {leadTime}. We confirm the order after reviewing all details.",
+      "careTitle": "Material and care",
+      "careText": "Clean with a soft, lightly damp cloth without abrasive products.",
+      "bulkTitle": "Bulk and business orders",
+      "bulkText": "For larger batches, we prepare a tailored quote and production schedule."
+    },
+    "showImage": "Show image {number}",
+    "breadcrumb": "Breadcrumb",
+    "collectionFallback": "Drvenija collection",
+    "highlights": {
+      "eyebrow": "Quality in every detail",
+      "title": "Made to last.",
+      "cncTitle": "Precision CNC cut",
+      "cncText": "Clean lines and consistent dimensions.",
+      "materialTitle": "Selected material",
+      "materialTextMediapan": "MDF prepared for a clean finish.",
+      "materialTextPlexiglass": "Plexiglass selected for a crisp, modern look.",
+      "finishTitle": "Finished by hand",
+      "finishText": "Every piece is checked before packing.",
+      "packagingTitle": "Secure packaging",
+      "packagingText": "Prepared for safe delivery to your door."
+    },
+    "finish": {
+      "eyebrow": "Material and finish",
+      "titleFallback": "Precision you can see and feel.",
+      "text": "This piece is made from {material}. CNC production creates its precise form, while the finishing details are checked and completed by hand."
+    },
+    "specs": {
+      "eyebrow": "Precision",
+      "title": "Specifications",
+      "material": "Material",
+      "availability": "Availability",
+      "personalizationAvailable": "Available",
+      "personalizationUnavailable": "Not available"
+    },
+    "related": "Related products"
+  },
+  "cart": {
+    "drawerTitle": "Your cart",
+    "viewCart": "View cart",
+    "closeCart": "Close cart",
+    "emptyTitle": "Your cart is empty",
+    "drawerEmptyDescription": "Add standard products or personalized pieces from the webshop.",
+    "dimensions": "Dimensions: {dimensions}",
+    "drawerSubtotal": "Subtotal",
+    "proceedToCheckout": "Proceed to checkout",
+    "itemCount": "{count} items",
+    "pageTitle": "Your cart",
+    "continueShopping": "Continue shopping",
+    "pageEmptyDescription": "Find something you love and add it to your cart.",
+    "startShopping": "Start shopping",
+    "columns": {
+      "product": "Product",
+      "quantity": "Quantity",
+      "total": "Total"
+    },
+    "removeButton": "Remove",
+    "summaryTitle": "Order summary",
+    "subtotal": "Subtotal",
+    "shippingNote": "Shipping and final order details are confirmed at checkout.",
+    "repricer": {
+      "removed": "Some products are no longer available and were removed from your cart.",
+      "repriced": "Cart prices were updated to match the current catalogue."
+    }
+  },
+  "checkout": {
+    "intro": {
+      "eyebrow": "Checkout",
+      "title": "Submit the order and we will confirm the details manually.",
+      "description": "This is the first webshop checkout release. After submitting, you receive confirmation, shipping details, and manual payment instructions."
+    },
+    "submitError": "Order submission failed. Please try again.",
+    "emptyDescription": "Add products before continuing to checkout.",
+    "backToShop": "Back to shop",
+    "sections": {
+      "contact": "Contact",
+      "shipping": "Shipping",
+      "notes": "Notes"
+    },
+    "fields": {
+      "fullName": "Full name",
+      "phone": "Phone",
+      "address": "Address",
+      "city": "City",
+      "postalCode": "Postal code",
+      "country": "Country",
+      "countryDefault": "Bosnia and Herzegovina",
+      "notes": "Additional information",
+      "notesPlaceholder": "Any extra note for delivery, personalization, or order confirmation."
+    },
+    "confirmationNote": "After the order is submitted, we will contact you to confirm availability, final delivery cost, and manual payment details.",
+    "submitting": "Submitting...",
+    "submit": "Submit order · {total}",
+    "summary": {
+      "title": "Summary",
+      "quantity": "Qty {quantity}",
+      "products": "Products",
+      "free": "Free",
+      "total": "Total"
+    }
+  },
+  "success": {
+    "eyebrow": "Order received",
+    "title": "Thank you. We are reviewing your order.",
+    "description": "We will send you confirmation of availability. Keep the order number for follow-up.",
+    "backToShop": "Back to shop"
+  },
+  "custom": {
+    "eyebrow": "Custom work",
+    "title": "Send the idea, dimensions, and timing, and we will return a production-ready proposal.",
+    "description": "This form is intended for pieces that are not standard webshop items: branded signs, gift batches, custom markers, and tailored decor.",
+    "helpTitle": "What helps us reply quickly",
+    "bullets": {
+      "signage": "Business signage and logo plaques",
+      "gifts": "Tailored gifts and event decor",
+      "batch": "Small-batch products for retail or brand promotion"
+    },
+    "helpNote": "If you already have a visual, sketch, or logo, mention it in the brief and describe how the product will be used.",
+    "form": {
+      "fullName": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "deadline": "Preferred deadline",
+      "dimensions": "Dimensions / quantity",
+      "brief": "Project brief",
+      "briefPlaceholder": "Describe the product, material, color, quantity, and intended use.",
+      "submit": "Send brief",
+      "sending": "Sending...",
+      "success": "Your brief has been sent. We will reply soon.",
+      "error": "The brief could not be sent. Check the details and try again."
+    }
+  },
+  "about": {
+    "eyebrow": "About",
+    "title": "A compact studio with serious attention to the final result.",
+    "description": "Drvenija combines CNC precision and hand finishing to create products that need to look polished, sellable, and durable.",
+    "values": {
+      "precision": {
+        "title": "Precision",
+        "text": "Each piece starts with a clear technical drawing and ends with a manual quality check before dispatch."
+      },
+      "flexibility": {
+        "title": "Flexibility",
+        "text": "We handle both one-off custom pieces and small-batch production for retail, events, and interiors."
+      },
+      "speed": {
+        "title": "Speed",
+        "text": "Lead times are set realistically and communicated early, especially for business and seasonal work."
+      }
+    }
+  },
+  "process": {
+    "eyebrow": "Process",
+    "title": "From first idea to finished piece without last-minute improvisation.",
+    "description": "We first align size and intended use, prepare the CNC-ready file, finish the edges, and inspect each piece before packing.",
+    "steps": {
+      "define": "We define the product use case, dimensions, and visual direction.",
+      "prepare": "We prepare the CNC-ready file and align material and thickness.",
+      "finish": "We cut, finish the edges, and inspect each piece before dispatch."
+    }
+  }
+}

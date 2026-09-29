@@ -1,0 +1,326 @@
+{
+  "common": {
+    "siteDescription": "Drvenija izrađuje CNC proizvode od pleksiglasa i mediapana za dom, biznis i posebne prilike.",
+    "home": "Početna",
+    "shop": "Shop",
+    "cart": "Korpa",
+    "materials": {
+      "plexiglass": "Pleksiglas",
+      "mediapan": "Mediapan",
+      "mixed": "Kombinovano"
+    },
+    "productTypes": {
+      "standard": "Standardni",
+      "custom": "Personalizirani"
+    },
+    "from": "Od {price}",
+    "decreaseQuantity": "Smanji količinu",
+    "increaseQuantity": "Povećaj količinu",
+    "remove": "Ukloni {name}"
+  },
+  "meta": {
+    "home": "Drvenija | CNC webshop za pleksiglas i mediapan",
+    "shop": "Webshop | Drvenija",
+    "about": "O nama | Drvenija",
+    "custom": "Custom izrada | Drvenija",
+    "cart": "Korpa | Drvenija",
+    "checkout": "Checkout | Drvenija",
+    "success": "Narudžba zaprimljena | Drvenija"
+  },
+  "notFound": {
+    "title": "Stranica nije pronađena",
+    "description": "Ova stranica ne postoji. Vratite se na početnu ili otvorite shop."
+  },
+  "error": {
+    "title": "Webshop je privremeno nedostupan",
+    "description": "Molimo pokušajte ponovo za trenutak.",
+    "retry": "Pokušaj ponovo"
+  },
+  "header": {
+    "freeDelivery": "Besplatna dostava za narudžbe od {amount} KM",
+    "openMenu": "Otvori meni",
+    "closeMenu": "Zatvori meni",
+    "menu": "Meni",
+    "mainNavigation": "Glavna navigacija",
+    "nav": {
+      "allProducts": "Svi proizvodi",
+      "customizable": "Personalizirani proizvodi",
+      "customWork": "Custom izrada",
+      "about": "O nama"
+    },
+    "tagline": "Pleksiglas, mediapan, pokloni i poslovni natpisi izrađeni u Sarajevu.",
+    "searchLabel": "Pretraži proizvode",
+    "searchButton": "Pretraži",
+    "switchLanguage": "EN"
+  },
+  "footer": {
+    "description": "Webshop za CNC proizvode od pleksiglasa i mediapana. Standardne artikle možete naručiti odmah, a za prilagođene komade šaljete kratki upit sa željenim dimenzijama i idejom.",
+    "navigation": "Navigacija",
+    "customWork": "Custom izrada",
+    "about": "O nama",
+    "contact": "Kontakt",
+    "location": "Sarajevo, BiH",
+    "languageNote": "Bosanski je primarni jezik webshopa.",
+    "backHome": "Nazad na početnu"
+  },
+  "home": {
+    "hero": {
+      "imageAlt": "Drvenija dekoracije u enterijeru",
+      "eyebrow": "Dizajnirano i izrađeno u Sarajevu",
+      "title": "Vaša ideja, precizno izrađena.",
+      "description": "Dekoracije, pokloni i poslovni natpisi od pleksiglasa i mediapana — od prvog nacrta do gotovog komada.",
+      "shopCta": "Pogledaj proizvode",
+      "customCta": "Pošalji svoju ideju"
+    },
+    "categories": {
+      "title": "Šta želite da napravimo?",
+      "tiles": {
+        "nameSigns": "Natpisi s imenima",
+        "wallDecor": "Zidne dekoracije",
+        "celebrationDecor": "Dekoracije za proslave",
+        "gifts": "Pokloni i uspomene",
+        "businessSigns": "Poslovni natpisi",
+        "keychains": "Privjesci",
+        "houseNumbers": "Kućni brojevi",
+        "monograms": "Monogrami",
+        "forHome": "Za dom",
+        "yourIdea": "Po vašoj ideji"
+      }
+    },
+    "customStudio": {
+      "imageAlt": "Personalizirani poslovni natpis",
+      "title": "Ne nalazite ono što ste zamislili?",
+      "description": "Pošaljite nam skicu, dimenzije ili samo ideju. Zajedno ćemo odabrati materijal i napraviti komad koji odgovara prostoru.",
+      "cta": "Započni custom projekat"
+    },
+    "products": {
+      "title": "Svi proizvodi",
+      "viewAll": "Pogledaj sve"
+    },
+    "showcase": {
+      "eyebrow": "Ideje iz radionice",
+      "title": "Napravljeno da bude dio vaših trenutaka.",
+      "tiles": {
+        "space": "Detalji koji mijenjaju prostor",
+        "name": "Ime napravljeno samo za vas",
+        "memories": "Uspomene koje ostaju blizu",
+        "celebrations": "Trenuci vrijedni slavlja"
+      }
+    },
+    "craft": {
+      "imageAlt": "Izrada Drvenija proizvoda",
+      "eyebrow": "Materijal i izrada",
+      "title": "Odaberite završnu obradu koja pristaje vašem prostoru.",
+      "description": "Pleksiglas donosi čiste linije i sjaj, a mediapan toplinu i prirodan osjećaj. Svaki komad možemo prilagoditi bojom, veličinom i načinom montaže.",
+      "cta": "Istraži custom izradu"
+    }
+  },
+  "shop": {
+    "allProducts": "Svi proizvodi",
+    "productCount": "({count} proizvoda)",
+    "featured": "Istaknuto",
+    "viewProduct": "Pogledaj proizvod",
+    "filters": {
+      "title": "Filteri",
+      "material": "Materijal",
+      "allMaterials": "Svi materijali",
+      "category": "Kategorija",
+      "allCategories": "Sve kategorije",
+      "productType": "Tip proizvoda",
+      "allTypes": "Svi tipovi",
+      "clearFilters": "Očisti filtere",
+      "close": "Zatvori filtere",
+      "clear": "Očisti",
+      "show": "Prikaži ({count})"
+    },
+    "sort": {
+      "label": "Sortiraj",
+      "featured": "Istaknuto",
+      "nameAsc": "Naziv A–Ž",
+      "priceAsc": "Cijena: niža prvo",
+      "priceDesc": "Cijena: viša prvo"
+    },
+    "view": {
+      "label": "Prikaz",
+      "list": "Prikaži kao listu",
+      "grid": "Prikaži kao mrežu"
+    },
+    "allCategoriesChip": "Sve",
+    "resultsFor": "Rezultati za “{query}” · {count}",
+    "showing": "Prikazano {shown} od {total}",
+    "empty": "Nema proizvoda za odabrane filtere."
+  },
+  "product": {
+    "personalizationAvailable": "Personalizacija dostupna",
+    "readyToOrder": "Spremno za narudžbu",
+    "addedToCart": "Proizvod je dodan u korpu.",
+    "chooseDimensions": "Odaberite dimenzije",
+    "dimensions": "Dimenzije",
+    "leadTime": "Rok izrade",
+    "personalization": "Personalizacija",
+    "personalizationPlaceholder": "Unesite ime, tekst, dimenziju ili kratku napomenu.",
+    "addToCart": "Dodaj u korpu",
+    "details": {
+      "deliveryTitle": "Dostava i rok izrade",
+      "deliveryText": "Procijenjeni rok izrade je {leadTime}. Narudžbu potvrđujemo nakon pregleda svih detalja.",
+      "careTitle": "Materijal i održavanje",
+      "careText": "Čistite mekom, blago navlaženom krpom bez abrazivnih sredstava.",
+      "bulkTitle": "Veće količine i poslovne narudžbe",
+      "bulkText": "Za veće serije pripremamo posebnu ponudu i dogovaramo proizvodni rok."
+    },
+    "showImage": "Prikaži sliku {number}",
+    "breadcrumb": "Putanja",
+    "collectionFallback": "Drvenija kolekcija",
+    "highlights": {
+      "eyebrow": "Kvalitet u detaljima",
+      "title": "Napravljeno da traje.",
+      "cncTitle": "Precizan CNC rez",
+      "cncText": "Čiste linije i dosljedne dimenzije.",
+      "materialTitle": "Odabran materijal",
+      "materialTextMediapan": "Mediapan spreman za urednu završnu obradu.",
+      "materialTextPlexiglass": "Pleksiglas odabran za uredan i moderan izgled.",
+      "finishTitle": "Ručna završna obrada",
+      "finishText": "Svaki komad pregledamo prije pakovanja.",
+      "packagingTitle": "Sigurno pakovanje",
+      "packagingText": "Pripremljeno za siguran transport do vas."
+    },
+    "finish": {
+      "eyebrow": "Materijal i završna obrada",
+      "titleFallback": "Preciznost koju vidite i osjetite.",
+      "text": "Komad izrađujemo od materijala: {material}. CNC obrada osigurava preciznu formu, a završne detalje pregledamo i dorađujemo ručno."
+    },
+    "specs": {
+      "eyebrow": "Precizno",
+      "title": "Specifikacije",
+      "material": "Materijal",
+      "availability": "Dostupnost",
+      "personalizationAvailable": "Dostupna",
+      "personalizationUnavailable": "Nije dostupna"
+    },
+    "related": "Povezani proizvodi"
+  },
+  "cart": {
+    "drawerTitle": "Korpa",
+    "viewCart": "Pogledaj korpu",
+    "closeCart": "Zatvori korpu",
+    "emptyTitle": "Korpa je prazna",
+    "drawerEmptyDescription": "Dodajte standardne proizvode ili personalizirane artikle iz webshopa.",
+    "dimensions": "Dimenzije: {dimensions}",
+    "drawerSubtotal": "Ukupno",
+    "proceedToCheckout": "Nastavi na checkout",
+    "itemCount": "{count} artikala",
+    "pageTitle": "Vaša korpa",
+    "continueShopping": "Nastavi kupovinu",
+    "pageEmptyDescription": "Pronađite proizvod koji vam se sviđa i dodajte ga u korpu.",
+    "startShopping": "Počni kupovinu",
+    "columns": {
+      "product": "Proizvod",
+      "quantity": "Količina",
+      "total": "Ukupno"
+    },
+    "removeButton": "Ukloni",
+    "summaryTitle": "Sažetak narudžbe",
+    "subtotal": "Međuzbir",
+    "shippingNote": "Dostava i konačni detalji narudžbe potvrđuju se na checkoutu.",
+    "repricer": {
+      "removed": "Neki proizvodi više nisu dostupni i uklonjeni su iz korpe.",
+      "repriced": "Cijene u korpi su ažurirane prema aktuelnom katalogu."
+    }
+  },
+  "checkout": {
+    "intro": {
+      "eyebrow": "Checkout",
+      "title": "Pošaljite narudžbu, a detalje potvrđujemo ručno.",
+      "description": "Ovo je prva verzija webshop checkouta. Nakon slanja narudžbe dobijate potvrdu, detalje dostave i upute za manualno plaćanje."
+    },
+    "submitError": "Narudžba nije poslana. Pokušajte ponovo.",
+    "emptyDescription": "Dodajte proizvode prije nego što nastavite na checkout.",
+    "backToShop": "Nazad na shop",
+    "sections": {
+      "contact": "Kontakt",
+      "shipping": "Dostava",
+      "notes": "Napomena"
+    },
+    "fields": {
+      "fullName": "Ime i prezime",
+      "phone": "Telefon",
+      "address": "Adresa",
+      "city": "Grad",
+      "postalCode": "Poštanski broj",
+      "country": "Država",
+      "countryDefault": "Bosna i Hercegovina",
+      "notes": "Dodatne informacije",
+      "notesPlaceholder": "Napomena za dostavu, personalizaciju ili potvrdu narudžbe."
+    },
+    "confirmationNote": "Nakon slanja narudžbe kontaktirat ćemo vas radi potvrde dostupnosti, ukupnog iznosa dostave i detalja manualnog plaćanja.",
+    "submitting": "Slanje...",
+    "submit": "Pošalji narudžbu · {total}",
+    "summary": {
+      "title": "Sažetak",
+      "quantity": "Količina {quantity}",
+      "products": "Proizvodi",
+      "free": "Gratis",
+      "total": "Ukupno"
+    }
+  },
+  "success": {
+    "eyebrow": "Narudžba primljena",
+    "title": "Hvala. Pregledamo vašu narudžbu.",
+    "description": "Poslat ćemo potvrdu dostupnosti. Sačuvajte broj narudžbe za komunikaciju.",
+    "backToShop": "Nazad u shop"
+  },
+  "custom": {
+    "eyebrow": "Custom izrada",
+    "title": "Pošaljite ideju, dimenziju i rok, a mi vraćamo prijedlog izvedbe.",
+    "description": "Ovaj obrazac je namijenjen za komade koji nisu standardni artikli u webshopu: poslovne natpise, serije poklona, oznake i dekoracije po mjeri.",
+    "helpTitle": "Šta nam pomaže da brzo odgovorimo",
+    "bullets": {
+      "signage": "Poslovni natpisi i logo table",
+      "gifts": "Pokloni i event dekoracije po mjeri",
+      "batch": "Mali batch proizvodi za prodaju ili promociju"
+    },
+    "helpNote": "Ako imate vizual, skicu ili logo, spomenite ga u opisu i napišite kako će proizvod biti korišten.",
+    "form": {
+      "fullName": "Ime i prezime",
+      "email": "Email",
+      "phone": "Telefon",
+      "deadline": "Željeni rok",
+      "dimensions": "Dimenzije / količina",
+      "brief": "Opis projekta",
+      "briefPlaceholder": "Opišite proizvod, materijal, boju, količinu i svrhu.",
+      "submit": "Pošalji upit",
+      "sending": "Slanje...",
+      "success": "Upit je poslan. Javljamo se uskoro.",
+      "error": "Upit nije poslan. Provjerite podatke i pokušajte ponovo."
+    }
+  },
+  "about": {
+    "eyebrow": "O nama",
+    "title": "Mala radionica sa ozbiljnim fokusom na završni rezultat.",
+    "description": "Drvenija kombinuje CNC preciznost i ručnu završnu obradu za proizvode koji trebaju izgledati čisto, prodajno i dugotrajno.",
+    "values": {
+      "precision": {
+        "title": "Preciznost",
+        "text": "Svaki komad počinje jasnim tehničkim crtežom i završava ručnom provjerom prije slanja."
+      },
+      "flexibility": {
+        "title": "Prilagodljivost",
+        "text": "Radimo i pojedinačne custom komade i manje serije za prodaju, evente i poslovne prostore."
+      },
+      "speed": {
+        "title": "Brzina",
+        "text": "Rokove postavljamo realno i komuniciramo ih rano, posebno za poslovne i sezonske narudžbe."
+      }
+    }
+  },
+  "process": {
+    "eyebrow": "Proces",
+    "title": "Od ideje do gotovog komada bez improvizacije u zadnjem koraku.",
+    "description": "Prvo usklađujemo dimenzije i primjenu, zatim pripremamo fajl za CNC obradu, završavamo rubove i provjeravamo svaki komad prije pakovanja.",
+    "steps": {
+      "define": "Definišemo dimenzije, namjenu i vizual proizvoda.",
+      "prepare": "Pripremamo CNC fajl i usklađujemo materijal i debljinu.",
+      "finish": "Režemo, obrađujemo rubove i provjeravamo svaki komad prije slanja."
+    }
+  }
+}

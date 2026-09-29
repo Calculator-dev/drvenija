@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedProduct, isSvg } from "@/lib/products"
 
 export function ProductCard({
@@ -13,6 +14,8 @@ export function ProductCard({
 }) {
   const href = `${buildPath(locale, "/product")}/${product.localizedSlug}`
   const price = displayPrice(product)
+  const t = useTranslations("product")
+  const common = useTranslations("common")
 
   return (
     <Link href={href} className="group block">
@@ -39,17 +42,11 @@ export function ProductCard({
             <p className="mt-1 max-w-xs text-sm leading-6 text-muted-foreground">{product.localizedShortDescription}</p>
           </div>
           <p className="font-medium text-foreground">
-            {price.from ? (locale === "bs" ? "Od " : "From ") : ""}{formatPrice(price.amount, locale)}
+            {price.from ? common("from", { price: formatPrice(price.amount, locale) }) : formatPrice(price.amount, locale)}
           </p>
         </div>
         <p className="text-xs text-muted-foreground">
-          {product.type === "custom"
-            ? locale === "bs"
-              ? "Personalizacija dostupna"
-              : "Personalization available"
-            : locale === "bs"
-              ? "Spremno za narudžbu"
-              : "Ready to order"}
+          {product.type === "custom" ? t("personalizationAvailable") : t("readyToOrder")}
         </p>
       </div>
     </Link>

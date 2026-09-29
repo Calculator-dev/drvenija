@@ -182,8 +182,18 @@ to upload, read, and remove a generated test image (needs delete permission).
 ## Storefront
 
 Bosnian is the default language at unprefixed URLs (`/shop`); English lives under `/en`
-(`/en/shop`). Both are served by `app/[locale]`: `proxy.ts` rewrites unprefixed paths to
-the Bosnian locale and redirects `/bs/...` to the canonical unprefixed URL.
+(`/en/shop`). Both are served by `app/[locale]` using [next-intl](https://next-intl.dev):
+`i18n/routing.ts` defines the locales, `proxy.ts` serves unprefixed paths as Bosnian and
+redirects `/bs/...` to the unprefixed URL. The language comes only from the URL.
+
+### Translations
+
+All storefront text lives in `apps/storefront/messages/bs.json` and `messages/en.json`,
+grouped by page or component (`header`, `shop`, `product`, `cart`, `checkout`, ...), with
+shared terms under `common` and page titles under `meta`. To change wording, edit the JSON;
+both files must have the same keys. Keys are type-checked against `bs.json`, so a missing
+or misspelled key fails `pnpm typecheck`. Placeholders use ICU syntax, e.g.
+`"Od {price}"`. Product names and descriptions come from the CRM, not these files.
 
 The storefront loads `GET /public/catalogue` on the server for categories, products,
 translations, SEO, images, and the shipping policy. Catalogue reads happen at request

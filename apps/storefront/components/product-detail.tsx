@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Check, Minus, Plus } from "lucide-react"
 import { toast } from "sonner"
 import { useCart } from "@/components/cart-provider"
@@ -13,11 +14,13 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
   const variants = activeVariants(product)
   const [variantId, setVariantId] = useState(() => variants[0]!.id)
   const selectedVariant = variants.find(variant => variant.id === variantId) ?? variants[0]!
-  const materialName = product.material === "plexiglass" ? (locale === "bs" ? "Pleksiglas" : "Plexiglass") : product.material === "mediapan" ? (locale === "bs" ? "Mediapan" : "MDF") : (locale === "bs" ? "Kombinovano" : "Mixed")
+  const t = useTranslations("product")
+  const common = useTranslations("common")
+  const materialName = common(`materials.${product.material}`)
 
   const handleAdd = () => {
     addItem(product, { quantity, personalization: personalization.trim() || undefined, variantId: selectedVariant.id })
-    toast.success(locale === "bs" ? "Proizvod je dodan u korpu." : "Product added to cart.")
+    toast.success(t("addedToCart"))
   }
 
   return (
@@ -37,7 +40,7 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
 
       {variants.length > 1 && (
         <div className="mt-6">
-          <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{locale === "bs" ? "Odaberite dimenzije" : "Choose dimensions"}</p>
+          <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{t("chooseDimensions")}</p>
           <div className="flex flex-wrap gap-2">
             {variants.map(variant => {
               const active = variant.id === selectedVariant.id
@@ -61,11 +64,11 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
 
       <dl className="mt-7 grid gap-5 border-y border-border/60 py-6 text-sm sm:grid-cols-2">
         <div>
-          <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{locale === "bs" ? "Dimenzije" : "Dimensions"}</dt>
+          <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{t("dimensions")}</dt>
           <dd className="mt-1 text-foreground">{selectedVariant.dimensions}</dd>
         </div>
         <div>
-          <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{locale === "bs" ? "Rok izrade" : "Lead time"}</dt>
+          <dt className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{t("leadTime")}</dt>
           <dd className="mt-1 text-foreground">{product.localizedLeadTime}</dd>
         </div>
       </dl>
@@ -73,18 +76,14 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
       {product.customizable && (
         <div className="mt-7">
           <label htmlFor="personalization" className="block text-sm font-semibold">
-            {locale === "bs" ? "Personalizacija" : "Personalization"}
+            {t("personalization")}
           </label>
           <textarea
             id="personalization"
             rows={3}
             value={personalization}
             onChange={(event) => setPersonalization(event.target.value)}
-            placeholder={
-              locale === "bs"
-                ? "Unesite ime, tekst, dimenziju ili kratku napomenu."
-                : "Enter a name, wording, dimension, or short note."
-            }
+            placeholder={t("personalizationPlaceholder")}
             className="mt-3 w-full resize-none border border-border bg-transparent px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
           />
         </div>
@@ -92,11 +91,11 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
 
       <div className="mt-7 flex flex-col items-stretch gap-3 sm:flex-row">
         <div className="inline-flex items-center justify-between border border-border sm:justify-start">
-          <button type="button" className="flex h-12 w-12 items-center justify-center" onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label={locale === "bs" ? "Smanji količinu" : "Decrease quantity"}>
+          <button type="button" className="flex h-12 w-12 items-center justify-center" onClick={() => setQuantity((value) => Math.max(1, value - 1))} aria-label={common("decreaseQuantity")}>
             <Minus className="h-4 w-4" strokeWidth={1.5} aria-hidden />
           </button>
           <span className="flex h-12 w-12 items-center justify-center text-sm" aria-live="polite">{quantity}</span>
-          <button type="button" className="flex h-12 w-12 items-center justify-center" onClick={() => setQuantity((value) => Math.min(1000, value + 1))} aria-label={locale === "bs" ? "Povećaj količinu" : "Increase quantity"}>
+          <button type="button" className="flex h-12 w-12 items-center justify-center" onClick={() => setQuantity((value) => Math.min(1000, value + 1))} aria-label={common("increaseQuantity")}>
             <Plus className="h-4 w-4" strokeWidth={1.5} aria-hidden />
           </button>
         </div>
@@ -105,14 +104,14 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
           onClick={handleAdd}
           className="min-h-12 flex-1 bg-foreground px-6 text-sm font-semibold tracking-wide text-background transition-colors hover:bg-foreground/90"
         >
-          {locale === "bs" ? "Dodaj u korpu" : "Add to cart"} · {formatPrice(selectedVariant.price * quantity, locale)}
+          {t("addToCart")} · {formatPrice(selectedVariant.price * quantity, locale)}
         </button>
       </div>
 
       <div className="mt-8 divide-y divide-border/60 border-y border-border/60 text-sm">
-        <details className="group py-4" open><summary className="cursor-pointer list-none font-semibold">{locale === "bs" ? "Dostava i rok izrade" : "Delivery and lead time"}</summary><p className="mt-3 leading-6 text-muted-foreground">{locale === "bs" ? `Procijenjeni rok izrade je ${product.localizedLeadTime}. Narudžbu potvrđujemo nakon pregleda svih detalja.` : `The estimated lead time is ${product.localizedLeadTime}. We confirm the order after reviewing all details.`}</p></details>
-        <details className="group py-4"><summary className="cursor-pointer list-none font-semibold">{locale === "bs" ? "Materijal i održavanje" : "Material and care"}</summary><p className="mt-3 leading-6 text-muted-foreground">{locale === "bs" ? "Čistite mekom, blago navlaženom krpom bez abrazivnih sredstava." : "Clean with a soft, lightly damp cloth without abrasive products."}</p></details>
-        <details className="group py-4"><summary className="cursor-pointer list-none font-semibold">{locale === "bs" ? "Veće količine i poslovne narudžbe" : "Bulk and business orders"}</summary><p className="mt-3 leading-6 text-muted-foreground">{locale === "bs" ? "Za veće serije pripremamo posebnu ponudu i dogovaramo proizvodni rok." : "For larger batches, we prepare a tailored quote and production schedule."}</p></details>
+        <details className="group py-4" open><summary className="cursor-pointer list-none font-semibold">{t("details.deliveryTitle")}</summary><p className="mt-3 leading-6 text-muted-foreground">{t("details.deliveryText", { leadTime: product.localizedLeadTime })}</p></details>
+        <details className="group py-4"><summary className="cursor-pointer list-none font-semibold">{t("details.careTitle")}</summary><p className="mt-3 leading-6 text-muted-foreground">{t("details.careText")}</p></details>
+        <details className="group py-4"><summary className="cursor-pointer list-none font-semibold">{t("details.bulkTitle")}</summary><p className="mt-3 leading-6 text-muted-foreground">{t("details.bulkText")}</p></details>
       </div>
     </div>
   )

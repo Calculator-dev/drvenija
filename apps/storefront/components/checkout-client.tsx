@@ -4,6 +4,7 @@ import type React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { toast } from "sonner"
 import { useCart } from "@/components/cart-provider"
@@ -13,6 +14,8 @@ export function CheckoutClient({ locale }: { locale: Locale }) {
   const router = useRouter()
   const { items, subtotal, shippingAmount: shipping, clear } = useCart()
   const [submitting, setSubmitting] = useState(false)
+  const t = useTranslations("checkout")
+  const cart = useTranslations("cart")
 
   const total = subtotal + shipping
 
@@ -52,7 +55,7 @@ export function CheckoutClient({ locale }: { locale: Locale }) {
     } catch (error) {
       // Validation messages from the API are English; show them as detail after the localized summary.
       const detail = error instanceof OrderError && error.message !== "Order submission failed" ? ` (${error.message})` : ""
-      toast.error((locale === "bs" ? "Narudžba nije poslana. Pokušajte ponovo." : "Order submission failed. Please try again.") + detail)
+      toast.error(t("submitError") + detail)
     } finally {
       setSubmitting(false)
     }
@@ -61,17 +64,15 @@ export function CheckoutClient({ locale }: { locale: Locale }) {
   if (items.length === 0) {
     return (
       <div className="mx-auto max-w-3xl border border-border/60 p-10 text-center">
-        <h2 className="font-serif text-4xl">{locale === "bs" ? "Korpa je prazna" : "Your cart is empty"}</h2>
+        <h2 className="font-serif text-4xl">{cart("emptyTitle")}</h2>
         <p className="mt-4 text-sm leading-7 text-muted-foreground">
-          {locale === "bs"
-            ? "Dodajte proizvode prije nego što nastavite na checkout."
-            : "Add products before continuing to checkout."}
+          {t("emptyDescription")}
         </p>
         <Link
           href={locale === "en" ? "/en/shop" : "/shop"}
           className="mt-8 inline-flex h-12 items-center justify-center bg-foreground px-6 text-sm tracking-wide text-background"
         >
-          {locale === "bs" ? "Nazad na shop" : "Back to shop"}
+          {t("backToShop")}
         </Link>
       </div>
     )
@@ -80,40 +81,38 @@ export function CheckoutClient({ locale }: { locale: Locale }) {
   return (
     <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-16 md:grid-cols-[1.15fr_0.85fr] md:px-6 md:pb-24">
       <form onSubmit={handleSubmit} className="space-y-8">
-        <Section title={locale === "bs" ? "Kontakt" : "Contact"}>
-          <Input id="fullName" label={locale === "bs" ? "Ime i prezime" : "Full name"} required />
+        <Section title={t("sections.contact")}>
+          <Input id="fullName" label={t("fields.fullName")} required />
           <div className="grid gap-4 md:grid-cols-2">
             <Input id="email" label="Email" type="email" required />
-            <Input id="phone" label={locale === "bs" ? "Telefon" : "Phone"} />
+            <Input id="phone" label={t("fields.phone")} />
           </div>
         </Section>
 
-        <Section title={locale === "bs" ? "Dostava" : "Shipping"}>
-          <Input id="address" label={locale === "bs" ? "Adresa" : "Address"} required />
+        <Section title={t("sections.shipping")}>
+          <Input id="address" label={t("fields.address")} required />
           <div className="grid gap-4 md:grid-cols-3">
-            <Input id="city" label={locale === "bs" ? "Grad" : "City"} required />
-            <Input id="postalCode" label={locale === "bs" ? "Poštanski broj" : "Postal code"} />
-            <Input id="country" label={locale === "bs" ? "Država" : "Country"} required defaultValue={locale === "bs" ? "Bosna i Hercegovina" : "Bosnia and Herzegovina"} />
+            <Input id="city" label={t("fields.city")} required />
+            <Input id="postalCode" label={t("fields.postalCode")} />
+            <Input id="country" label={t("fields.country")} required defaultValue={t("fields.countryDefault")} />
           </div>
         </Section>
 
-        <Section title={locale === "bs" ? "Napomena" : "Notes"}>
+        <Section title={t("sections.notes")}>
           <label htmlFor="notes" className="block text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-            {locale === "bs" ? "Dodatne informacije" : "Additional information"}
+            {t("fields.notes")}
           </label>
           <textarea
             id="notes"
             name="notes"
             rows={4}
             className="mt-2 w-full border border-border bg-transparent px-3 py-3 text-sm text-foreground outline-none transition-colors focus:border-foreground"
-            placeholder={locale === "bs" ? "Napomena za dostavu, personalizaciju ili potvrdu narudžbe." : "Any extra note for delivery, personalization, or order confirmation."}
+            placeholder={t("fields.notesPlaceholder")}
           />
         </Section>
 
         <div className="border border-border/60 bg-secondary/30 p-5 text-sm leading-7 text-muted-foreground">
-          {locale === "bs"
-            ? "Nakon slanja narudžbe kontaktirat ćemo vas radi potvrde dostupnosti, ukupnog iznosa dostave i detalja manualnog plaćanja."
-            : "After the order is submitted, we will contact you to confirm availability, final delivery cost, and manual payment details."}
+          {t("confirmationNote")}
         </div>
 
         <button
@@ -121,18 +120,12 @@ export function CheckoutClient({ locale }: { locale: Locale }) {
           disabled={submitting}
           className="flex h-12 w-full items-center justify-center bg-foreground text-sm tracking-wide text-background transition-colors hover:bg-foreground/90 disabled:opacity-60"
         >
-          {submitting
-            ? locale === "bs"
-              ? "Slanje..."
-              : "Submitting..."
-            : locale === "bs"
-              ? `Pošalji narudžbu · ${formatPrice(total, locale)}`
-              : `Submit order · ${formatPrice(total, locale)}`}
+          {submitting ? t("submitting") : t("submit", { total: formatPrice(total, locale) })}
         </button>
       </form>
 
       <aside className="h-fit border border-border/60 bg-background p-6 md:sticky md:top-24">
-        <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{locale === "bs" ? "Sažetak" : "Summary"}</p>
+        <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{t("summary.title")}</p>
         <ul className="mt-5 space-y-4">
           {items.map((item) => (
             <li key={item.lineId} className="flex gap-3">
@@ -142,9 +135,9 @@ export function CheckoutClient({ locale }: { locale: Locale }) {
               <div className="min-w-0 flex-1">
                 <p className="font-medium text-foreground">{item.name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {locale === "bs" ? "Količina" : "Qty"} {item.quantity}
+                  {t("summary.quantity", { quantity: item.quantity })}
                 </p>
-                {item.dimensions && <p className="mt-1 text-xs text-muted-foreground">{locale === "bs" ? "Dimenzije" : "Dimensions"}: {item.dimensions}</p>}
+                {item.dimensions && <p className="mt-1 text-xs text-muted-foreground">{cart("dimensions", { dimensions: item.dimensions })}</p>}
                 {item.variantSku && <p className="mt-1 text-xs text-muted-foreground">SKU: {item.variantSku}</p>}
                 {item.personalization && <p className="mt-1 text-xs text-muted-foreground">{item.personalization}</p>}
               </div>
@@ -155,15 +148,15 @@ export function CheckoutClient({ locale }: { locale: Locale }) {
 
         <dl className="mt-6 space-y-3 border-t border-border/60 pt-4 text-sm">
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">{locale === "bs" ? "Proizvodi" : "Products"}</dt>
+            <dt className="text-muted-foreground">{t("summary.products")}</dt>
             <dd>{formatPrice(subtotal, locale)}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">{locale === "bs" ? "Dostava" : "Shipping"}</dt>
-            <dd>{shipping === 0 ? (locale === "bs" ? "Gratis" : "Free") : formatPrice(shipping, locale)}</dd>
+            <dt className="text-muted-foreground">{t("sections.shipping")}</dt>
+            <dd>{shipping === 0 ? t("summary.free") : formatPrice(shipping, locale)}</dd>
           </div>
           <div className="flex justify-between border-t border-border/60 pt-3">
-            <dt>{locale === "bs" ? "Ukupno" : "Total"}</dt>
+            <dt>{t("summary.total")}</dt>
             <dd className="font-serif text-2xl">{formatPrice(total, locale)}</dd>
           </div>
         </dl>
