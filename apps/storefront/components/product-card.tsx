@@ -18,35 +18,32 @@ export function ProductCard({
   const common = useTranslations("common")
 
   return (
-    <Link href={href} className="group block">
-      <div className="relative aspect-4/5 overflow-hidden rounded-sm bg-muted">
+    <Link href={href} className="group flex flex-col gap-3.5">
+      <div className="relative aspect-[4/4.8] overflow-hidden rounded-md bg-muted">
         <Image
           unoptimized={isSvg(product.primaryImage.url)}
           src={product.primaryImage.url}
           alt={product.primaryImage.alt[locale]}
           fill
           priority={priority}
-          sizes="(min-width: 1280px) 25vw, (min-width: 768px) 40vw, 100vw"
+          sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
           placeholder={product.primaryImage.blurDataURL ? "blur" : "empty"}
           blurDataURL={product.primaryImage.blurDataURL}
           className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
+        {product.type === "custom" && (
+          <span className="absolute left-3 top-3 rounded-full bg-night px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] text-gold sm:text-[11px]">
+            {t("personalizationAvailable")}
+          </span>
+        )}
       </div>
-      <div className="mt-4 space-y-2">
-        <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-          {product.categoryName?.[locale] ?? ""} · {product.material}
+      <div className="flex flex-col gap-1">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#6b6458] sm:text-xs">
+          {[product.categoryName?.[locale], common(`materials.${product.material}`)].filter(Boolean).join(" · ")}
         </p>
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h3 className="font-serif text-2xl leading-tight text-foreground">{product.localizedName}</h3>
-            <p className="mt-1 max-w-xs text-sm leading-6 text-muted-foreground">{product.localizedShortDescription}</p>
-          </div>
-          <p className="font-medium text-foreground">
-            {price.from ? common("from", { price: formatPrice(price.amount, locale) }) : formatPrice(price.amount, locale)}
-          </p>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          {product.type === "custom" ? t("personalizationAvailable") : t("readyToOrder")}
+        <h3 className="font-serif text-lg leading-tight text-foreground transition-colors group-hover:text-gold-deep sm:text-[19px]">{product.localizedName}</h3>
+        <p className="text-[15px] font-semibold text-foreground">
+          {price.from ? common("from", { price: formatPrice(price.amount, locale) }) : formatPrice(price.amount, locale)}
         </p>
       </div>
     </Link>

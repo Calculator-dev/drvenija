@@ -40,18 +40,18 @@ export function ProductPageLayout({ locale, product, related }: { locale: Locale
         </div>
       </div>
 
-      <section className="bg-black px-4 py-20 text-center text-white md:px-6 md:py-28">
+      <section className="bg-night px-4 py-20 text-center text-[#f4efe6] md:px-6 md:py-28">
         <Reveal className="mx-auto max-w-4xl">
-          <p className="text-xs uppercase tracking-[0.3em] text-white/55">{product.categoryName?.[locale] ?? t("collectionFallback")}</p>
-          <h2 className="mt-5 text-4xl font-bold leading-tight tracking-[-0.035em] md:text-6xl">{product.localizedName}</h2>
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-white/65 md:text-lg">{product.localizedDescription}</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-gold">{product.categoryName?.[locale] ?? t("collectionFallback")}</p>
+          <h2 className="mt-5 text-4xl font-serif leading-tight md:text-6xl">{product.localizedName}</h2>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-[#c9c1b3] md:text-lg">{product.localizedDescription}</p>
         </Reveal>
       </section>
 
       <section className="mx-auto max-w-375 px-4 py-16 md:px-6 md:py-24">
         <Reveal className="text-center">
           <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">{t("highlights.eyebrow")}</p>
-          <h2 className="mt-4 text-4xl font-bold tracking-[-0.035em] md:text-5xl">{t("highlights.title")}</h2>
+          <h2 className="mt-4 text-4xl font-serif leading-tight md:text-5xl">{t("highlights.title")}</h2>
         </Reveal>
         <div className="mt-12 grid grid-cols-2 border-l border-t border-border/60 md:grid-cols-4">
           {highlights.map((highlight, index) => (
@@ -74,7 +74,7 @@ export function ProductPageLayout({ locale, product, related }: { locale: Locale
           <Reveal className="flex items-center px-7 py-16 md:px-14 lg:px-20">
             <div className="max-w-xl">
               <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">{t("finish.eyebrow")}</p>
-              <h2 className="mt-5 text-4xl font-bold leading-tight tracking-[-0.035em] md:text-5xl">{product.localizedTagline || t("finish.titleFallback")}</h2>
+              <h2 className="mt-5 text-4xl font-serif leading-tight md:text-5xl">{product.localizedTagline || t("finish.titleFallback")}</h2>
               <p className="mt-6 text-base leading-8 text-foreground/65">{t("finish.text", { material: materialName })}</p>
             </div>
           </Reveal>
@@ -84,7 +84,7 @@ export function ProductPageLayout({ locale, product, related }: { locale: Locale
       <section className="mx-auto max-w-5xl px-4 py-16 md:px-6 md:py-24">
         <Reveal>
           <p className="text-center text-xs uppercase tracking-[0.28em] text-muted-foreground">{t("specs.eyebrow")}</p>
-          <h2 className="mt-4 text-center text-4xl font-bold tracking-[-0.035em] md:text-5xl">{t("specs.title")}</h2>
+          <h2 className="mt-4 text-center text-4xl font-serif leading-tight md:text-5xl">{t("specs.title")}</h2>
           <dl className="mt-12 border-t border-border/60">
             <SpecRow label={t("specs.material")} value={materialName} />
             <SpecRow label={t("dimensions")} value={activeVariants(product).map(variant => variant.dimensions).join(" / ")} />
@@ -99,7 +99,7 @@ export function ProductPageLayout({ locale, product, related }: { locale: Locale
       {related.length > 0 && (
         <section className="border-t border-border/60 bg-stone-50 py-16 md:py-24">
           <div className="mx-auto max-w-375 px-4 md:px-6">
-            <h2 className="text-4xl font-bold tracking-[-0.035em] md:text-5xl">{t("related")}</h2>
+            <h2 className="text-4xl font-serif leading-tight md:text-5xl">{t("related")}</h2>
             <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((item) => <ProductCard key={item.id} locale={locale} product={item} />)}
             </div>

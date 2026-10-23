@@ -37,7 +37,7 @@ export function CartPage({ locale }: { locale: Locale }) {
           <p className="mt-3 max-w-md text-sm leading-7 text-muted-foreground">
             {t("pageEmptyDescription")}
           </p>
-          <Link href={shopHref} className="mt-8 flex h-12 items-center justify-center bg-foreground px-8 text-sm text-background transition-opacity hover:opacity-90">
+          <Link href={shopHref} className="rounded-full mt-8 flex h-12 items-center justify-center bg-foreground px-8 text-sm text-background transition-opacity hover:opacity-90 font-semibold">
             {t("startShopping")}
           </Link>
         </section>
@@ -96,7 +96,7 @@ export function CartPage({ locale }: { locale: Locale }) {
             <p className="py-5 text-xs leading-6 text-muted-foreground">
               {t("shippingNote")}
             </p>
-            <Link href={checkoutHref} className="flex h-13 w-full items-center justify-center bg-foreground px-5 text-sm font-medium text-background transition-opacity hover:opacity-90">
+            <Link href={checkoutHref} className="rounded-full flex h-13 w-full items-center justify-center bg-foreground px-5 text-sm font-semibold text-background transition-opacity hover:opacity-90">
               {t("proceedToCheckout")}
             </Link>
             <Link href={shopHref} className="mt-4 flex h-11 w-full items-center justify-center text-sm underline underline-offset-4 sm:hidden">

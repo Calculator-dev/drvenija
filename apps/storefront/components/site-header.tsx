@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -34,11 +35,11 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <div className="bg-black px-3 py-2 text-center text-[9px] font-medium uppercase tracking-[0.14em] text-white sm:text-[11px] sm:tracking-[0.2em]">
+      <div className="bg-gold px-3 py-2 text-center text-[11px] font-semibold tracking-[0.02em] text-accent-foreground sm:text-[13px]">
         {t("freeDelivery", { amount: String(shippingPolicy.freeFrom) })}
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-night-line bg-night/95 text-[#e9e4da] backdrop-blur-xl">
         <div className="mx-auto grid h-17 max-w-375 grid-cols-[1fr_auto] items-center gap-3 px-4 md:h-19 md:grid-cols-[220px_1fr] md:px-6">
           <div className="flex min-w-0 items-center gap-2">
             <button
@@ -49,11 +50,8 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             >
               <Menu className="h-5 w-5" strokeWidth={1.5} />
             </button>
-            <Link
-              href={buildPath(locale)}
-              className="text-xl font-black uppercase tracking-tighter text-foreground sm:text-2xl md:text-[26px]"
-            >
-              {siteName}
+            <Link href={buildPath(locale)} className="min-w-0">
+              <Wordmark className="text-[#f4efe6]" />
             </Link>
           </div>
 
@@ -77,12 +75,12 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           />
         </div>
 
-        <div className="border-t border-border/60 px-4 py-3 md:hidden">
+        <div className="border-t border-night-line px-4 py-3 md:hidden">
           <SearchForm action={shopHref} id="mobile" />
         </div>
 
         <nav
-          className="hidden border-t border-border/60 lg:block"
+          className="hidden border-t border-night-line lg:block"
           aria-label={t("mainNavigation")}
         >
           <div className="mx-auto flex h-12 max-w-375 items-center justify-center gap-8 px-6 xl:gap-11">
@@ -94,9 +92,9 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                   key={item.href}
                   href={`${localePrefix}${item.href}`}
                   className={cn(
-                    "relative flex h-full items-center text-[13px] font-medium text-foreground/80 transition-colors hover:text-foreground",
+                    "relative flex h-full items-center text-sm font-medium text-[#e9e4da] transition-colors hover:text-gold",
                     active &&
-                      "text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-foreground",
+                      "text-gold after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-gold",
                   )}
                 >
                   {item.label}
@@ -134,12 +132,8 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           )}
         >
           <div className="flex items-center justify-between border-b border-border px-5 py-5">
-            <Link
-              href={buildPath(locale)}
-              onClick={() => setMenuOpen(false)}
-              className="text-xl font-black uppercase tracking-tighter"
-            >
-              {siteName}
+            <Link href={buildPath(locale)} onClick={() => setMenuOpen(false)}>
+              <Wordmark />
             </Link>
             <button
               type="button"
@@ -197,7 +191,7 @@ function SearchForm({
       action={action}
       onSubmit={onSubmit}
       className={cn(
-        "flex h-10 w-full items-center border border-border bg-[#f7f7f5] transition-colors focus-within:border-foreground",
+        "flex h-10 w-full items-center rounded-full border border-border bg-background text-foreground transition-colors focus-within:border-foreground",
         className,
       )}
     >
@@ -209,11 +203,11 @@ function SearchForm({
         name="q"
         type="search"
         placeholder={t("searchLabel")}
-        className="min-w-0 flex-1 bg-transparent px-4 text-sm outline-none placeholder:text-muted-foreground"
+        className="min-w-0 flex-1 bg-transparent pl-4.5 text-sm outline-none placeholder:text-muted-foreground"
       />
       <button
         type="submit"
-        className="flex h-full w-11 items-center justify-center"
+        className="flex h-full w-11 items-center justify-center rounded-full"
         aria-label={t("searchButton")}
       >
         <Search className="h-4 w-4" strokeWidth={1.5} />
@@ -254,7 +248,7 @@ function HeaderActions({
         </span>
         <span className="hidden text-sm md:inline">({totalItems})</span>
         {totalItems > 0 && (
-          <span className="absolute right-0 top-0 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-black px-1 text-[10px] text-white md:hidden">
+          <span className="absolute right-0 top-0 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1 text-[10px] font-bold text-accent-foreground md:hidden">
             {totalItems}
           </span>
         )}
@@ -274,9 +268,20 @@ function LanguageLink({ locale, search }: { locale: Locale; search?: string }) {
     <Link
       href={alternateLocalePath(pathname, search)}
       hrefLang={otherLocale[locale]}
-      className="inline-flex h-10 items-center justify-center px-2 text-xs font-medium tracking-[0.16em] text-foreground transition-opacity hover:opacity-60 sm:px-3"
+      className="inline-flex h-10 items-center justify-center px-2 text-xs font-semibold tracking-[0.16em] transition-colors hover:text-gold sm:px-3"
     >
       {t("switchLanguage")}
     </Link>
+  );
+}
+
+function Wordmark({ className }: { className?: string }) {
+  return (
+    <span className={cn("flex items-center gap-2.5", className)}>
+      <Image src="/brand/logo-mark.png" alt="" width={29} height={32} priority />
+      <span className="font-serif text-[23px] leading-none sm:text-[26px]">
+        {siteName.toLowerCase()}<span className="text-gold">.</span>
+      </span>
+    </span>
   );
 }

@@ -28,7 +28,7 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
       <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
         {product.categoryName?.[locale] ?? ""} · {materialName}
       </p>
-      <h1 className="mt-4 wrap-break-word text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-foreground md:text-5xl">{product.localizedName}</h1>
+      <h1 className="mt-4 wrap-break-word font-serif text-4xl leading-[1.08] text-foreground md:text-5xl">{product.localizedName}</h1>
       <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground">{product.localizedTagline}</p>
 
       <p className="mt-5 break-all text-xs text-muted-foreground">SKU: <span className="text-foreground">{selectedVariant.sku}</span></p>
@@ -102,7 +102,7 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
         <button
           type="button"
           onClick={handleAdd}
-          className="min-h-12 flex-1 bg-foreground px-6 text-sm font-semibold tracking-wide text-background transition-colors hover:bg-foreground/90"
+          className="rounded-full min-h-12 flex-1 bg-foreground px-6 text-sm font-semibold text-background transition-colors hover:bg-foreground/90"
         >
           {t("addToCart")} · {formatPrice(selectedVariant.price * quantity, locale)}
         </button>

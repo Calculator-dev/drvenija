@@ -21,7 +21,7 @@ export async function ShopPage({ locale }: { locale: Locale }) {
             <span className="text-foreground">{t("allProducts")}</span>
           </div>
           <div className="mt-16 flex flex-wrap items-end gap-x-4 gap-y-2 md:mt-20">
-            <h1 className="text-5xl font-bold tracking-[-0.045em] md:text-6xl">{t("allProducts")}</h1>
+            <h1 className="font-serif text-5xl leading-[1.05] md:text-6xl">{t("allProducts")}</h1>
             <p className="pb-1 text-sm text-muted-foreground">{t("productCount", { count: products.length })}</p>
           </div>
         </div>

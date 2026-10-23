@@ -65,54 +65,132 @@
   },
   "home": {
     "hero": {
-      "imageAlt": "Drvenija dekoracije u enterijeru",
       "eyebrow": "Dizajnirano i izrađeno u Sarajevu",
-      "title": "Vaša ideja, precizno izrađena.",
-      "description": "Dekoracije, pokloni i poslovni natpisi od pleksiglasa i mediapana — od prvog nacrta do gotovog komada.",
+      "title": "Riječi koje vrijede, izrezane u zlatu i drvetu.",
+      "description": "Islamska kaligrafija, natpisi s imenima i uspomene za posebne trenutke — iz pleksiglasa i mediapana, precizno izrezano na CNC mašini i završeno ručno.",
       "shopCta": "Pogledaj proizvode",
-      "customCta": "Pošalji svoju ideju"
-    },
-    "categories": {
-      "title": "Šta želite da napravimo?",
-      "tiles": {
-        "nameSigns": "Natpisi s imenima",
-        "wallDecor": "Zidne dekoracije",
-        "celebrationDecor": "Dekoracije za proslave",
-        "gifts": "Pokloni i uspomene",
-        "businessSigns": "Poslovni natpisi",
-        "keychains": "Privjesci",
-        "houseNumbers": "Kućni brojevi",
-        "monograms": "Monogrami",
-        "forHome": "Za dom",
-        "yourIdea": "Po vašoj ideji"
+      "customCta": "Pošalji svoju ideju",
+      "imageAlts": {
+        "main": "Kaligrafija Allah od zlatnog ogledala na zidu",
+        "left": "Šehadet zlatnim slovima na crnoj podlozi u okviru",
+        "right": "Mihrab stalak s Bismillom u zlatu"
       }
     },
-    "customStudio": {
-      "imageAlt": "Personalizirani poslovni natpis",
-      "title": "Ne nalazite ono što ste zamislili?",
-      "description": "Pošaljite nam skicu, dimenzije ili samo ideju. Zajedno ćemo odabrati materijal i napraviti komad koji odgovara prostoru.",
-      "cta": "Započni custom projekat"
+    "collections": {
+      "eyebrow": "Kolekcije",
+      "title": "Šta želite da napravimo?",
+      "viewAll": "Sve kategorije",
+      "items": {
+        "calligraphy": {
+          "name": "Kaligrafija",
+          "hint": "Ajeti, dove, imena",
+          "alt": "Ajetul-kursija zlatom u crnom okviru"
+        },
+        "ramadan": {
+          "name": "Ramazan i Bajram",
+          "hint": "Dekor i pokloni",
+          "alt": "Ramazanski polumjesec s džamijom"
+        },
+        "hajj": {
+          "name": "Hadž i umra",
+          "hint": "Čestitke za hadžije",
+          "alt": "Zlatni natpis Hadž s Kabom"
+        },
+        "family": {
+          "name": "Bebe i porodica",
+          "hint": "Imena i uspomene",
+          "alt": "Ploča za bebu s podacima o rođenju"
+        },
+        "clocks": {
+          "name": "Satovi",
+          "hint": "Drvo i ogledalo",
+          "alt": "Drveni zidni sat s kaligrafijom"
+        },
+        "business": {
+          "name": "Poslovni natpisi",
+          "hint": "Logo za firmu",
+          "alt": "Logo firme na zidu ureda"
+        }
+      }
     },
     "products": {
-      "title": "Svi proizvodi",
-      "viewAll": "Pogledaj sve"
+      "eyebrow": "Iz radionice",
+      "title": "Najtraženiji komadi",
+      "filterLabel": "Filtriraj po materijalu",
+      "all": "Sve",
+      "viewAll": "Otvori cijeli shop"
     },
-    "showcase": {
-      "eyebrow": "Ideje iz radionice",
-      "title": "Napravljeno da bude dio vaših trenutaka.",
-      "tiles": {
-        "space": "Detalji koji mijenjaju prostor",
-        "name": "Ime napravljeno samo za vas",
-        "memories": "Uspomene koje ostaju blizu",
-        "celebrations": "Trenuci vrijedni slavlja"
+    "materials": {
+      "eyebrow": "Materijali",
+      "title": "Tri završne obrade. Bezbroj kombinacija.",
+      "description": "Svaki komad možete naručiti u materijalu koji odgovara vašem prostoru — ili ih kombinovati, kao zlato na crnoj podlozi.",
+      "items": {
+        "mirror": {
+          "name": "Zlatno ogledalo",
+          "text": "Akrilno ogledalo koje hvata svjetlo prostorije. Najpopularnije za kaligrafiju i natpise.",
+          "alt": "Ogledalna kaligrafija u kojoj se odražava nebo"
+        },
+        "black": {
+          "name": "Crni pleksiglas",
+          "text": "Dubok, elegantan ton za stalke, mihrabe i podlogu ispod zlatnih slova.",
+          "alt": "Crni mihrab stalak s nazivima sura u zlatu"
+        },
+        "wood": {
+          "name": "Drvo i mediapan",
+          "text": "Topla tekstura drveta za satove, okvire i dekor koji djeluje prirodno.",
+          "alt": "Šehadet izrezan u drvenom okviru"
+        }
       }
     },
-    "craft": {
-      "imageAlt": "Izrada Drvenija proizvoda",
-      "eyebrow": "Materijal i izrada",
-      "title": "Odaberite završnu obradu koja pristaje vašem prostoru.",
-      "description": "Pleksiglas donosi čiste linije i sjaj, a mediapan toplinu i prirodan osjećaj. Svaki komad možemo prilagoditi bojom, veličinom i načinom montaže.",
-      "cta": "Istraži custom izradu"
+    "personal": {
+      "eyebrow": "Personalizirano",
+      "title": "Vaše ime. Vaš datum. Vaša priča.",
+      "description": "Natpisi za vjenčanja, ploče za rođenje bebe, porodični blagoslovi za dom ili logo za vašu firmu — upišite tekst, a mi pripremamo nacrt.",
+      "steps": {
+        "choose": "<b>Odaberite model</b> iz shopa ili opišite svoju ideju.",
+        "write": "<b>Upišite imena, datum ili citat</b> i odaberite materijal.",
+        "approve": "<b>Odobrite nacrt</b> — tek onda režemo i šaljemo."
+      },
+      "shopCta": "Personalizirani proizvodi",
+      "customCta": "Custom upit",
+      "imageAlts": {
+        "wedding": "Vjenčani natpisi s imenima mladenaca",
+        "baby": "Ploča za bebu s imenom, datumom, težinom i dužinom",
+        "draft": "Nacrt kaligrafije u programu prije rezanja"
+      }
+    },
+    "seasonal": {
+      "greeting": "رمضان كريم",
+      "title": "Kolekcija za Ramazan i Bajram",
+      "description": "Polumjeseci, mihrabi i stalci koji unose mir u dom — i pokloni koji se pamte.",
+      "cta": "Pogledaj kolekciju",
+      "imageAlts": {
+        "crescent": "Ramazanski polumjesec s džamijom na drvenom postolju",
+        "stand": "Ramazan Mubarek stalak s mihrabom"
+      }
+    },
+    "promises": {
+      "local": {
+        "title": "Izrađeno u Sarajevu",
+        "text": "Dizajn, rezanje i završna obrada u našoj radionici."
+      },
+      "draft": {
+        "title": "Nacrt prije izrade",
+        "text": "Za personalizirane komade prvo odobravate izgled."
+      },
+      "custom": {
+        "title": "Po vašoj mjeri",
+        "text": "Veličinu, boju i tekst prilagođavamo vašem prostoru."
+      },
+      "delivery": {
+        "title": "Dostava širom BiH",
+        "text": "Besplatna dostava za narudžbe od {amount} KM."
+      }
+    },
+    "instagram": {
+      "title": "Pratite nas na Instagramu",
+      "follow": "Zaprati",
+      "tileLabel": "Drvenija na Instagramu"
     }
   },
   "shop": {
@@ -152,7 +230,6 @@
   },
   "product": {
     "personalizationAvailable": "Personalizacija dostupna",
-    "readyToOrder": "Spremno za narudžbu",
     "addedToCart": "Proizvod je dodan u korpu.",
     "chooseDimensions": "Odaberite dimenzije",
     "dimensions": "Dimenzije",

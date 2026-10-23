@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { Montserrat, Fraunces } from "next/font/google"
+import { Amiri, Marcellus, Montserrat } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { NextIntlClientProvider } from "next-intl"
 import { CartProvider } from "@/components/cart-provider"
@@ -15,10 +15,20 @@ const montserrat = Montserrat({
   display: "swap",
 })
 
-const fraunces = Fraunces({
+const marcellus = Marcellus({
+  weight: "400",
   subsets: ["latin", "latin-ext"],
-  variable: "--font-fraunces",
+  variable: "--font-marcellus",
   display: "swap",
+})
+
+// Only used for short Arabic accents, so it is not preloaded.
+const amiri = Amiri({
+  weight: "400",
+  subsets: ["arabic"],
+  variable: "--font-amiri",
+  display: "swap",
+  preload: false,
 })
 
 export const generateStaticParams = generateLocaleParams
@@ -47,7 +57,7 @@ export default async function RootLayout({
 }: Readonly<LocaleParams & { children: React.ReactNode }>) {
   const locale = await resolveLocale(params)
   return (
-    <html lang={locale} className={`${montserrat.variable} ${fraunces.variable}`}>
+    <html lang={locale} className={`${montserrat.variable} ${marcellus.variable} ${amiri.variable}`}>
       <body suppressHydrationWarning className="min-h-screen bg-background font-sans antialiased">
         <NextIntlClientProvider>
           <CartProvider>

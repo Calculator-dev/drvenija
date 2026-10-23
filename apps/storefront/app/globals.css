@@ -4,26 +4,33 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.978 0.01 82);
-  --foreground: oklch(0.245 0.018 60);
-  --card: oklch(0.986 0.01 82);
-  --card-foreground: oklch(0.245 0.018 60);
-  --popover: oklch(0.986 0.01 82);
-  --popover-foreground: oklch(0.245 0.018 60);
-  --primary: oklch(0.245 0.018 60);
-  --primary-foreground: oklch(0.985 0.008 82);
-  --secondary: oklch(0.944 0.019 80);
-  --secondary-foreground: oklch(0.245 0.018 60);
-  --muted: oklch(0.944 0.019 80);
-  --muted-foreground: oklch(0.49 0.02 62);
-  --accent: oklch(0.58 0.13 47);
-  --accent-foreground: oklch(0.985 0.008 82);
+  /* "Zlato i noć": the gold of the logo on near-black, against light walls. */
+  --background: #f7f5f0;
+  --foreground: #1a1814;
+  --card: #fbfaf7;
+  --card-foreground: #1a1814;
+  --popover: #fbfaf7;
+  --popover-foreground: #1a1814;
+  --primary: #0e0d0b;
+  --primary-foreground: #f7f5f0;
+  --secondary: #ece8e0;
+  --secondary-foreground: #1a1814;
+  --muted: #ece8e0;
+  --muted-foreground: #5e5850;
+  --accent: #e5ae2c;
+  --accent-foreground: #1a1407;
   --destructive: oklch(0.57 0.21 28);
-  --destructive-foreground: oklch(0.985 0.008 82);
-  --border: oklch(0.89 0.019 79);
-  --input: oklch(0.89 0.019 79);
-  --ring: oklch(0.58 0.13 47);
-  --radius: 0.24rem;
+  --destructive-foreground: #f7f5f0;
+  --border: #ddd6ca;
+  --input: #cfc8bb;
+  --ring: #8a5a12;
+  --radius: 0.375rem;
+  --night: #0e0d0b;
+  --night-line: #2a2721;
+  --gold: #e5ae2c;
+  /* Gold dark enough for text and icons on light backgrounds (6:1 on --background). */
+  --gold-deep: #8a5a12;
+  --wood: #c9a27a;
   --sidebar: var(--background);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
@@ -36,7 +43,8 @@
 
 @theme inline {
   --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-serif: var(--font-marcellus), ui-serif, Georgia, serif;
+  --font-arabic: var(--font-amiri), serif;
   --font-mono: ui-monospace, SFMono-Regular, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -57,6 +65,11 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-night: var(--night);
+  --color-night-line: var(--night-line);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-wood: var(--wood);
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 2px);
@@ -82,7 +95,6 @@
 
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "liga", "ss01", "cv11";
   }
 
   a {

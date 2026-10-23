@@ -65,54 +65,132 @@
   },
   "home": {
     "hero": {
-      "imageAlt": "Drvenija decor in an interior",
       "eyebrow": "Designed and made in Sarajevo",
-      "title": "Your idea, precisely made.",
-      "description": "Decor, gifts, and business signage in plexiglass and MDF — from the first sketch to the finished piece.",
-      "shopCta": "Shop products",
-      "customCta": "Send your idea"
-    },
-    "categories": {
-      "title": "What would you like us to make?",
-      "tiles": {
-        "nameSigns": "Name signs",
-        "wallDecor": "Wall decor",
-        "celebrationDecor": "Celebration decor",
-        "gifts": "Gifts and keepsakes",
-        "businessSigns": "Business signage",
-        "keychains": "Keychains",
-        "houseNumbers": "House numbers",
-        "monograms": "Monograms",
-        "forHome": "For the home",
-        "yourIdea": "Made from your idea"
+      "title": "Words that matter, cut in gold and wood.",
+      "description": "Islamic calligraphy, name signs and keepsakes for special moments — in plexiglass and MDF, precisely CNC-cut and finished by hand.",
+      "shopCta": "Browse products",
+      "customCta": "Send us your idea",
+      "imageAlts": {
+        "main": "Gold mirror Allah calligraphy on a wall",
+        "left": "Shahada in gold letters on a black framed panel",
+        "right": "Mihrab stand with Bismillah in gold"
       }
     },
-    "customStudio": {
-      "imageAlt": "Custom business signage",
-      "title": "Can’t find what you have in mind?",
-      "description": "Send us a sketch, dimensions, or simply an idea. We’ll choose the material together and make a piece that fits your space.",
-      "cta": "Start a custom project"
+    "collections": {
+      "eyebrow": "Collections",
+      "title": "What should we make for you?",
+      "viewAll": "All categories",
+      "items": {
+        "calligraphy": {
+          "name": "Calligraphy",
+          "hint": "Verses, duas, names",
+          "alt": "Ayat al-Kursi in gold in a black frame"
+        },
+        "ramadan": {
+          "name": "Ramadan and Eid",
+          "hint": "Decor and gifts",
+          "alt": "Ramadan crescent with a mosque"
+        },
+        "hajj": {
+          "name": "Hajj and Umrah",
+          "hint": "Gifts for pilgrims",
+          "alt": "Gold Hajj lettering with the Kaaba"
+        },
+        "family": {
+          "name": "Babies and family",
+          "hint": "Names and keepsakes",
+          "alt": "Baby birth plaque"
+        },
+        "clocks": {
+          "name": "Clocks",
+          "hint": "Wood and mirror",
+          "alt": "Wooden wall clock with calligraphy"
+        },
+        "business": {
+          "name": "Business signs",
+          "hint": "Your company logo",
+          "alt": "Company logo on an office wall"
+        }
+      }
     },
     "products": {
-      "title": "All products",
-      "viewAll": "View all"
-    },
-    "showcase": {
       "eyebrow": "From the workshop",
-      "title": "Made to become part of your moments.",
-      "tiles": {
-        "space": "Details that change a room",
-        "name": "A name made just for you",
-        "memories": "Memories kept close",
-        "celebrations": "Moments worth celebrating"
+      "title": "Most loved pieces",
+      "filterLabel": "Filter by material",
+      "all": "All",
+      "viewAll": "Open the full shop"
+    },
+    "materials": {
+      "eyebrow": "Materials",
+      "title": "Three finishes. Endless combinations.",
+      "description": "Order each piece in the material that suits your space — or combine them, like gold on a black base.",
+      "items": {
+        "mirror": {
+          "name": "Gold mirror",
+          "text": "Acrylic mirror that catches the light in the room. Our most popular finish for calligraphy and signs.",
+          "alt": "Mirror calligraphy reflecting the sky"
+        },
+        "black": {
+          "name": "Black plexiglass",
+          "text": "A deep, elegant tone for stands, mihrabs and the base beneath gold lettering.",
+          "alt": "Black mihrab stand with surah names in gold"
+        },
+        "wood": {
+          "name": "Wood and MDF",
+          "text": "The warm texture of wood for clocks, frames and decor that feels natural.",
+          "alt": "Shahada cut into a wooden frame"
+        }
       }
     },
-    "craft": {
-      "imageAlt": "Making a Drvenija product",
-      "eyebrow": "Material and craft",
-      "title": "Choose a finish that belongs in your space.",
-      "description": "Plexiglass brings crisp lines and shine, while MDF adds warmth and a natural feel. Each piece can be adjusted in color, size, and mounting style.",
-      "cta": "Explore custom work"
+    "personal": {
+      "eyebrow": "Personalised",
+      "title": "Your name. Your date. Your story.",
+      "description": "Wedding signs, baby birth plaques, family blessings for the home or your company logo — tell us the text and we prepare a draft.",
+      "steps": {
+        "choose": "<b>Choose a design</b> from the shop or describe your idea.",
+        "write": "<b>Add names, a date or a quote</b> and pick the material.",
+        "approve": "<b>Approve the draft</b> — only then do we cut and ship."
+      },
+      "shopCta": "Personalised products",
+      "customCta": "Custom request",
+      "imageAlts": {
+        "wedding": "Wedding signs with the couple's names",
+        "baby": "Baby plaque with name, date, weight and length",
+        "draft": "Calligraphy draft in design software before cutting"
+      }
+    },
+    "seasonal": {
+      "greeting": "رمضان كريم",
+      "title": "The Ramadan and Eid collection",
+      "description": "Crescents, mihrabs and stands that bring calm to the home — and gifts people remember.",
+      "cta": "See the collection",
+      "imageAlts": {
+        "crescent": "Ramadan crescent with a mosque on a wooden base",
+        "stand": "Ramadan Mubarak mihrab stand"
+      }
+    },
+    "promises": {
+      "local": {
+        "title": "Made in Sarajevo",
+        "text": "Design, cutting and finishing in our own workshop."
+      },
+      "draft": {
+        "title": "Draft before production",
+        "text": "For personalised pieces you approve the look first."
+      },
+      "custom": {
+        "title": "Made to measure",
+        "text": "We adapt size, colour and text to your space."
+      },
+      "delivery": {
+        "title": "Delivery across BiH",
+        "text": "Free delivery on orders from {amount} KM."
+      }
+    },
+    "instagram": {
+      "title": "Follow us on Instagram",
+      "follow": "Follow",
+      "tileLabel": "Drvenija on Instagram"
     }
   },
   "shop": {
@@ -152,7 +230,6 @@
   },
   "product": {
     "personalizationAvailable": "Personalization available",
-    "readyToOrder": "Ready to order",
     "addedToCart": "Product added to cart.",
     "chooseDimensions": "Choose dimensions",
     "dimensions": "Dimensions",

@@ -22,7 +22,7 @@ function CollectionProductCard({ locale, product, view }: { locale: Locale; prod
     // In the grid, cards stretch to the row height and the price + button sit at the bottom,
     // so buttons line up regardless of how long names and descriptions are.
     <article className={cn("group", view === "grid" ? "flex h-full flex-col" : "grid gap-5 border-b border-border/60 pb-7 sm:grid-cols-[220px_1fr]")}>
-      <Link href={href} className={cn("relative block overflow-hidden bg-[#f4f4f2]", view === "grid" ? "aspect-square" : "aspect-square sm:aspect-4/3")}>
+      <Link href={href} className={cn("relative block overflow-hidden rounded-md bg-muted", view === "grid" ? "aspect-square" : "aspect-square sm:aspect-4/3")}>
         <Image
           unoptimized={isSvg(product.primaryImage.url)}
           src={product.primaryImage.url}
@@ -31,14 +31,14 @@ function CollectionProductCard({ locale, product, view }: { locale: Locale; prod
           sizes={view === "grid" ? "(min-width: 1280px) 25vw, (min-width: 768px) 40vw, 100vw" : "220px"}
           className="object-cover transition-transform duration-500 group-hover:scale-[1.025]"
         />
-        {product.featured && <span className="absolute left-3 top-3 bg-black px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white">{t("featured")}</span>}
+        {product.featured && <span className="absolute left-3 top-3 rounded-full bg-night px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] text-gold sm:text-[11px]">{t("featured")}</span>}
       </Link>
       <div className={cn("flex flex-col", view === "grid" ? "flex-1 pt-4" : "justify-center py-1")}>
-        <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{product.categoryName?.[locale] ?? ""} · {product.material}</p>
-        <Link href={href} className="mt-2 text-base font-semibold leading-snug transition-opacity hover:opacity-60">{product.localizedName}</Link>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#6b6458]">{[product.categoryName?.[locale], common(`materials.${product.material}`)].filter(Boolean).join(" · ")}</p>
+        <Link href={href} className="mt-2 font-serif text-lg leading-snug transition-colors hover:text-gold-deep">{product.localizedName}</Link>
         <p className={cn("mt-2 text-sm leading-6 text-muted-foreground", view === "grid" && "line-clamp-2")}>{product.localizedShortDescription}</p>
         <p className={cn("mt-3 text-sm font-semibold", view === "grid" && "mt-auto pt-3")}>{displayPrice(product).from ? common("from", { price: formatPrice(displayPrice(product).amount, locale) }) : formatPrice(displayPrice(product).amount, locale)}</p>
-        <Link href={href} className={cn("mt-5 inline-flex h-11 items-center justify-center border border-foreground px-2 text-[10px] font-semibold uppercase tracking-[0.08em] transition-colors hover:bg-foreground hover:text-background sm:px-5 sm:text-xs sm:tracking-[0.12em]", view === "grid" ? "w-full" : "w-fit")}>
+        <Link href={href} className={cn("mt-5 inline-flex h-11 items-center justify-center rounded-full border border-foreground px-2 text-[10px] font-semibold uppercase tracking-[0.08em] transition-colors hover:bg-foreground hover:text-background sm:px-5 sm:text-xs sm:tracking-[0.12em]", view === "grid" ? "w-full" : "w-fit")}>
           {t("viewProduct")}
         </Link>
       </div>
@@ -150,8 +150,8 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
       </div>
 
       <div className="flex gap-2 overflow-x-auto border-b border-border/60 py-4 scrollbar-none [&::-webkit-scrollbar]:hidden">
-        <button type="button" onClick={() => setCategoryId("all")} className={cn("shrink-0 border px-5 py-2.5 text-sm transition-colors", categoryId === "all" ? "border-black bg-black text-white" : "border-border hover:border-foreground")}>{t("allCategoriesChip")}</button>
-        {categories.map((category) => <button key={category.id} type="button" onClick={() => setCategoryId(category.id)} className={cn("shrink-0 border px-5 py-2.5 text-sm transition-colors", categoryId === category.id ? "border-black bg-black text-white" : "border-border hover:border-foreground")}>{category.localizedName}</button>)}
+        <button type="button" onClick={() => setCategoryId("all")} className={cn("shrink-0 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors", categoryId === "all" ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground")}>{t("allCategoriesChip")}</button>
+        {categories.map((category) => <button key={category.id} type="button" onClick={() => setCategoryId(category.id)} className={cn("shrink-0 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors", categoryId === category.id ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground")}>{category.localizedName}</button>)}
       </div>
 
       <div className="grid gap-10 pt-10 lg:grid-cols-[260px_minmax(0,1fr)]">
@@ -183,8 +183,8 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
           <div className="flex items-center justify-between border-b border-border px-5 py-5"><p className="text-lg font-bold">{t("filters.title")}</p><button type="button" onClick={() => setFiltersOpen(false)} className="p-2" aria-label={t("filters.close")}><X className="h-5 w-5" aria-hidden /></button></div>
           <div className="flex-1 overflow-y-auto px-5">{filterPanel("mobile")}</div>
           <div className="grid grid-cols-2 gap-3 border-t border-border p-5">
-            <button type="button" onClick={resetFilters} className="h-12 border border-foreground text-sm font-semibold">{t("filters.clear")}</button>
-            <button type="button" onClick={() => setFiltersOpen(false)} className="h-12 bg-foreground text-sm font-semibold text-background">{t("filters.show", { count: filtered.length })}</button>
+            <button type="button" onClick={resetFilters} className="h-12 rounded-full border border-foreground text-sm font-semibold">{t("filters.clear")}</button>
+            <button type="button" onClick={() => setFiltersOpen(false)} className="rounded-full h-12 bg-foreground text-sm font-semibold text-background">{t("filters.show", { count: filtered.length })}</button>
           </div>
         </div>
       </div>

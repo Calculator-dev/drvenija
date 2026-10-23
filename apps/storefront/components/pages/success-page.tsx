@@ -19,7 +19,7 @@ export function SuccessPage({ locale, orderNumber }: { locale: Locale; orderNumb
           {t("description")}
         </p>
         {orderNumber && orderNumberPattern.test(orderNumber) && <p className="mt-6 font-medium text-foreground">{orderNumber}</p>}
-        <Link href={href} className="mt-8 inline-flex h-12 items-center justify-center bg-foreground px-6 text-sm tracking-wide text-background">
+        <Link href={href} className="rounded-full mt-8 inline-flex h-12 items-center justify-center bg-foreground px-6 text-sm text-background font-semibold">
           {t("backToShop")}
         </Link>
       </div>

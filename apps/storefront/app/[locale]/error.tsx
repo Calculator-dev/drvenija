@@ -8,7 +8,7 @@ export default function ErrorPage({ reset }: { error: Error; reset: () => void }
     <div role="alert" className="mx-auto max-w-3xl px-6 py-24 text-center">
       <h1 className="font-serif text-3xl">{t("title")}</h1>
       <p className="mt-4">{t("description")}</p>
-      <button onClick={reset} className="mt-6 bg-foreground px-6 py-3 text-background">{t("retry")}</button>
+      <button onClick={reset} className="rounded-full mt-6 bg-foreground px-6 py-3 text-background font-semibold">{t("retry")}</button>
     </div>
   )
 }

@@ -23,7 +23,7 @@ export function ProcessSection() {
         {steps.map((step, index) => (
           <Reveal key={step} delay={0.08 * index}>
             <div className="border border-border/60 p-6">
-              <CheckCircle2 className="h-5 w-5 text-accent" strokeWidth={1.8} />
+              <CheckCircle2 className="h-5 w-5 text-gold-deep" strokeWidth={1.8} />
               <p className="mt-4 text-sm leading-7 text-muted-foreground">{t(`steps.${step}`)}</p>
             </div>
           </Reveal>

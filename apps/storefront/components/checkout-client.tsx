@@ -70,7 +70,7 @@ export function CheckoutClient({ locale }: { locale: Locale }) {
         </p>
         <Link
           href={locale === "en" ? "/en/shop" : "/shop"}
-          className="mt-8 inline-flex h-12 items-center justify-center bg-foreground px-6 text-sm tracking-wide text-background"
+          className="rounded-full mt-8 inline-flex h-12 items-center justify-center bg-foreground px-6 text-sm text-background font-semibold"
         >
           {t("backToShop")}
         </Link>
@@ -118,7 +118,7 @@ export function CheckoutClient({ locale }: { locale: Locale }) {
         <button
           type="submit"
           disabled={submitting}
-          className="flex h-12 w-full items-center justify-center bg-foreground text-sm tracking-wide text-background transition-colors hover:bg-foreground/90 disabled:opacity-60"
+          className="rounded-full flex h-12 w-full items-center justify-center bg-foreground text-sm text-background transition-colors hover:bg-foreground/90 disabled:opacity-60 font-semibold"
         >
           {submitting ? t("submitting") : t("submit", { total: formatPrice(total, locale) })}
         </button>

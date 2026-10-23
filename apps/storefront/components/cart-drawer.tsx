@@ -102,7 +102,7 @@ export function CartDrawer({ locale }: { locale: Locale }) {
               <Link
                 href={checkoutHref}
                 onClick={() => setOpen(false)}
-                className="flex h-12 items-center justify-center bg-foreground text-sm tracking-wide text-background transition-colors hover:bg-foreground/90"
+                className="rounded-full flex h-12 items-center justify-center bg-foreground text-sm text-background transition-colors hover:bg-foreground/90 font-semibold"
               >
                 {t("proceedToCheckout")}
               </Link>

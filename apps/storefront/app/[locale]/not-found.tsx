@@ -12,7 +12,7 @@ export default async function NotFound() {
       <h1 className="mt-4 font-serif text-5xl">{t("title")}</h1>
       <p className="mt-4 text-sm leading-7 text-muted-foreground">{t("description")}</p>
       <div className="mt-8 flex justify-center gap-4">
-        <Link href={buildPath(locale)} className="inline-flex h-12 items-center justify-center bg-foreground px-6 text-sm tracking-wide text-background">
+        <Link href={buildPath(locale)} className="rounded-full inline-flex h-12 items-center justify-center bg-foreground px-6 text-sm text-background font-semibold">
           {common("home")}
         </Link>
         <Link href={buildPath(locale, "/shop")} className="inline-flex h-12 items-center justify-center border border-border px-6 text-sm tracking-wide">

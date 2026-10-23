@@ -1,44 +1,53 @@
+import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { buildPath, siteName, type Locale } from "@/lib/products"
 
+const linkClass = "text-[#e9e4da] transition-colors hover:text-gold"
+
 export function SiteFooter({ locale }: { locale: Locale }) {
   const t = useTranslations("footer")
   const common = useTranslations("common")
+  const header = useTranslations("header")
   const prefix = locale === "en" ? "/en" : ""
 
   return (
-    <footer className="bg-black text-white">
-      <div className="mx-auto grid max-w-375 gap-10 px-4 py-16 md:grid-cols-4 md:px-6 md:py-20">
-        <div className="md:col-span-2">
-          <p className="text-2xl font-black uppercase tracking-[-0.04em]">{siteName}</p>
-          <p className="mt-4 max-w-xl text-sm leading-7 text-white/60">
-            {t("description")}
+    <footer className="bg-night text-[#b5ada0]">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:grid-cols-2 md:px-10 md:py-18 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+        <div className="flex max-w-sm flex-col gap-4">
+          <p className="flex items-center gap-3">
+            <Image src="/brand/logo-mark.png" alt="" width={29} height={32} />
+            <span className="font-serif text-[26px] leading-none text-[#f4efe6]">{siteName.toLowerCase()}<span className="text-gold">.</span></span>
           </p>
+          <p className="text-sm leading-6">{t("description")}</p>
         </div>
 
-        <div>
-          <p className="text-xs uppercase tracking-[0.22em] text-white/45">{t("navigation")}</p>
-          <div className="mt-4 flex flex-col gap-3 text-sm text-white/80">
-            <Link href={`${prefix}/shop`}>{common("shop")}</Link>
-            <Link href={`${prefix}/custom`}>{t("customWork")}</Link>
-            <Link href={`${prefix}/about`}>{t("about")}</Link>
-          </div>
-        </div>
+        <nav aria-label={common("shop")} className="flex flex-col gap-2.5 text-sm">
+          <p className="mb-1 font-semibold text-[#f4efe6]">{common("shop")}</p>
+          <Link className={linkClass} href={`${prefix}/shop`}>{header("nav.allProducts")}</Link>
+          <Link className={linkClass} href={`${prefix}/shop?material=plexiglass`}>{common("materials.plexiglass")}</Link>
+          <Link className={linkClass} href={`${prefix}/shop?material=mediapan`}>{common("materials.mediapan")}</Link>
+          <Link className={linkClass} href={`${prefix}/shop?type=custom`}>{header("nav.customizable")}</Link>
+        </nav>
 
-        <div>
-          <p className="text-xs uppercase tracking-[0.22em] text-white/45">{t("contact")}</p>
-          <div className="mt-4 space-y-3 text-sm text-white/60">
-            <p>info@drvenija.ba</p>
-            <p>+387 61 000 000</p>
-            <p>{t("location")}</p>
-          </div>
+        <nav aria-label={t("navigation")} className="flex flex-col gap-2.5 text-sm">
+          <p className="mb-1 font-semibold text-[#f4efe6]">{siteName}</p>
+          <Link className={linkClass} href={`${prefix}/custom`}>{t("customWork")}</Link>
+          <Link className={linkClass} href={`${prefix}/about`}>{t("about")}</Link>
+        </nav>
+
+        <div className="flex flex-col gap-2.5 text-sm">
+          <p className="mb-1 font-semibold text-[#f4efe6]">{t("contact")}</p>
+          <p>info@drvenija.ba</p>
+          <p>+387 61 000 000</p>
+          <p>{t("location")}</p>
+          <a className={linkClass} href="https://www.instagram.com/drvenija/">Instagram</a>
         </div>
       </div>
-      <div className="border-t border-white/15">
-        <div className="mx-auto flex max-w-375 flex-col gap-3 px-4 py-5 text-xs text-white/45 md:flex-row md:items-center md:justify-between md:px-6">
+      <div className="border-t border-night-line">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-[13px] md:flex-row md:items-center md:justify-between md:px-10">
           <p>{t("languageNote")}</p>
-          <Link href={buildPath(locale)}>{t("backHome")}</Link>
+          <Link className={linkClass} href={buildPath(locale)}>{t("backHome")}</Link>
         </div>
       </div>
     </footer>
