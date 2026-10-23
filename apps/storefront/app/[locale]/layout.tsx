@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { Inter, Fraunces } from "next/font/google"
+import { Montserrat, Fraunces } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { NextIntlClientProvider } from "next-intl"
 import { CartProvider } from "@/components/cart-provider"
@@ -9,14 +9,14 @@ import { generateLocaleParams, resolveLocale, type LocaleParams } from "@/lib/lo
 import { getBaseUrl } from "@/lib/seo"
 import "../globals.css"
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
+const montserrat = Montserrat({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-montserrat",
   display: "swap",
 })
 
 const fraunces = Fraunces({
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext"],
   variable: "--font-fraunces",
   display: "swap",
 })
@@ -47,7 +47,7 @@ export default async function RootLayout({
 }: Readonly<LocaleParams & { children: React.ReactNode }>) {
   const locale = await resolveLocale(params)
   return (
-    <html lang={locale} className={`${inter.variable} ${fraunces.variable}`}>
+    <html lang={locale} className={`${montserrat.variable} ${fraunces.variable}`}>
       <body suppressHydrationWarning className="min-h-screen bg-background font-sans antialiased">
         <NextIntlClientProvider>
           <CartProvider>
