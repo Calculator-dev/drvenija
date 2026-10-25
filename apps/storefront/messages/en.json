@@ -238,8 +238,6 @@
     "personalizationPlaceholder": "Enter a name, wording, dimension, or short note.",
     "addToCart": "Add to cart",
     "details": {
-      "deliveryTitle": "Delivery and lead time",
-      "deliveryText": "The estimated lead time is {leadTime}. We confirm the order after reviewing all details.",
       "careTitle": "Material and care",
       "careText": "Clean with a soft, lightly damp cloth without abrasive products.",
       "bulkTitle": "Bulk and business orders",
@@ -247,9 +245,7 @@
     },
     "showImage": "Show image {number}",
     "breadcrumb": "Breadcrumb",
-    "collectionFallback": "Drvenija collection",
     "highlights": {
-      "eyebrow": "Quality in every detail",
       "title": "Made to last.",
       "cncTitle": "Precision CNC cut",
       "cncText": "Clean lines and consistent dimensions.",
@@ -261,20 +257,14 @@
       "packagingTitle": "Secure packaging",
       "packagingText": "Prepared for safe delivery to your door."
     },
-    "finish": {
-      "eyebrow": "Material and finish",
-      "titleFallback": "Precision you can see and feel.",
-      "text": "This piece is made from {material}. CNC production creates its precise form, while the finishing details are checked and completed by hand."
-    },
-    "specs": {
-      "eyebrow": "Precision",
-      "title": "Specifications",
-      "material": "Material",
-      "availability": "Availability",
-      "personalizationAvailable": "Available",
-      "personalizationUnavailable": "Not available"
-    },
-    "related": "Related products"
+    "related": "From the same collection",
+    "featured": "Featured",
+    "quantity": "Quantity",
+    "material": "Material",
+    "delivery": "Delivery",
+    "deliveryValue": "Across BiH · free from {amount} KM",
+    "customNote": "Need another size, colour or extra text? <link>Send a custom request</link> — we reply with a draft and a price.",
+    "viewAll": "All products"
   },
   "cart": {
     "drawerTitle": "Your cart",

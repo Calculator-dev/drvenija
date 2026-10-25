@@ -238,8 +238,6 @@
     "personalizationPlaceholder": "Unesite ime, tekst, dimenziju ili kratku napomenu.",
     "addToCart": "Dodaj u korpu",
     "details": {
-      "deliveryTitle": "Dostava i rok izrade",
-      "deliveryText": "Procijenjeni rok izrade je {leadTime}. Narudžbu potvrđujemo nakon pregleda svih detalja.",
       "careTitle": "Materijal i održavanje",
       "careText": "Čistite mekom, blago navlaženom krpom bez abrazivnih sredstava.",
       "bulkTitle": "Veće količine i poslovne narudžbe",
@@ -247,9 +245,7 @@
     },
     "showImage": "Prikaži sliku {number}",
     "breadcrumb": "Putanja",
-    "collectionFallback": "Drvenija kolekcija",
     "highlights": {
-      "eyebrow": "Kvalitet u detaljima",
       "title": "Napravljeno da traje.",
       "cncTitle": "Precizan CNC rez",
       "cncText": "Čiste linije i dosljedne dimenzije.",
@@ -261,20 +257,14 @@
       "packagingTitle": "Sigurno pakovanje",
       "packagingText": "Pripremljeno za siguran transport do vas."
     },
-    "finish": {
-      "eyebrow": "Materijal i završna obrada",
-      "titleFallback": "Preciznost koju vidite i osjetite.",
-      "text": "Komad izrađujemo od materijala: {material}. CNC obrada osigurava preciznu formu, a završne detalje pregledamo i dorađujemo ručno."
-    },
-    "specs": {
-      "eyebrow": "Precizno",
-      "title": "Specifikacije",
-      "material": "Materijal",
-      "availability": "Dostupnost",
-      "personalizationAvailable": "Dostupna",
-      "personalizationUnavailable": "Nije dostupna"
-    },
-    "related": "Povezani proizvodi"
+    "related": "Iz iste kolekcije",
+    "featured": "Istaknuto",
+    "quantity": "Količina",
+    "material": "Materijal",
+    "delivery": "Dostava",
+    "deliveryValue": "Širom BiH · besplatno od {amount} KM",
+    "customNote": "Treba vam druga veličina, boja ili dodatni tekst? <link>Pošaljite custom upit</link> — odgovaramo s nacrtom i cijenom.",
+    "viewAll": "Svi proizvodi"
   },
   "cart": {
     "drawerTitle": "Korpa",

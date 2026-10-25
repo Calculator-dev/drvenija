@@ -43,7 +43,7 @@ export default async function Page({ params }: Props) {
   const canonicalPath = buildPath(locale, `/product/${product.localizedSlug}`)
   if (slug !== product.localizedSlug) redirect(canonicalPath)
 
-  const related = await getRelatedProducts(locale, product.id)
+  const related = await getRelatedProducts(locale, product.id, 4)
   const price = displayPrice(product)
 
   return (
