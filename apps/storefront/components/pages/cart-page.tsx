@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Minus, Plus, Trash2 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useCart } from "@/components/cart-provider"
+import { FreeShippingProgress } from "@/components/free-shipping-progress"
 import { formatPrice, type Locale, isSvg } from "@/lib/products"
 
 export function CartPage({ locale }: { locale: Locale }) {
@@ -89,6 +90,7 @@ export function CartPage({ locale }: { locale: Locale }) {
 
           <aside className="h-fit border border-border bg-secondary/20 p-5 sm:p-7 lg:sticky lg:top-28">
             <h2 className="font-serif text-3xl">{t("summaryTitle")}</h2>
+            <div className="mt-5"><FreeShippingProgress locale={locale} /></div>
             <div className="mt-7 flex items-center justify-between border-b border-border pb-5 text-sm">
               <span className="text-muted-foreground">{t("subtotal")}</span>
               <span className="font-serif text-2xl">{formatPrice(subtotal, locale)}</span>

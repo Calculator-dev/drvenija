@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Minus, Plus, Trash2, X } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useCart } from "@/components/cart-provider"
+import { FreeShippingProgress } from "@/components/free-shipping-progress"
 import { useModalPanel } from "@/hooks/use-modal-panel"
 import { formatPrice, type Locale, isSvg } from "@/lib/products"
 import { cn } from "@/lib/utils"
@@ -61,6 +62,7 @@ export function CartDrawer({ locale }: { locale: Locale }) {
           </div>
         ) : (
           <>
+            <div className="px-5 pt-5"><FreeShippingProgress locale={locale} /></div>
             <ul className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
               {items.map((item) => (
                 <li key={item.lineId} className="flex gap-3 border-b border-border/50 pb-4">

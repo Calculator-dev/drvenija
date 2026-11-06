@@ -34,8 +34,13 @@ export async function getCategories(locale: Locale) {
 export async function getProductBySlug(locale: Locale, slug: string) {
   return (await getProducts(locale)).find(product => product.localizedSlug === slug || product.slug.bs === slug || product.slug.en === slug) ?? null
 }
-export async function getRelatedProducts(locale: Locale, productId: string, limit = 3) {
+/** Products from the same category first, topped up with bestsellers so the row is full. */
+export async function getRelatedProducts(locale: Locale, productId: string, limit = 4) {
   const products = await getProducts(locale)
   const current = products.find(product => product.id === productId)
-  return current ? products.filter(product => product.id !== productId && product.categoryId === current.categoryId).slice(0, limit) : []
+  if (!current) return []
+  const others = products.filter(product => product.id !== productId)
+  const sameCategory = others.filter(product => product.categoryId === current.categoryId)
+  const rest = others.filter(product => product.categoryId !== current.categoryId).sort((a, b) => Number(b.featured) - Number(a.featured))
+  return [...sameCategory, ...rest].slice(0, limit)
 }

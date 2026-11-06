@@ -2,10 +2,13 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { getTranslations } from "next-intl/server"
-import { ProductCard } from "@/components/product-card"
+import { FaqSection } from "@/components/faq-section"
+import { ProcessSection } from "@/components/process-section"
+import { ProductTabs } from "@/components/product-tabs"
+import { TrustBar } from "@/components/trust-bar"
 import { Reveal } from "@/components/reveal"
-import { getProducts } from "@/lib/catalogue"
-import { buildPath, type Locale } from "@/lib/products"
+import { getCatalogue, getCategories, getProducts } from "@/lib/catalogue"
+import { buildPath, isSvg, type Locale } from "@/lib/products"
 
 const categoryTiles = [
   { image: "/images/product-name-sign.jpg", key: "nameSigns" },
@@ -29,9 +32,28 @@ const showcaseTiles = [
 
 export async function HomePage({ locale }: { locale: Locale }) {
   const t = await getTranslations("home")
-  const products = (await getProducts(locale)).slice(0, 5)
+  const [products, categories, { shipping }] = await Promise.all([getProducts(locale), getCategories(locale), getCatalogue()])
   const shopHref = buildPath(locale, "/shop")
   const customHref = buildPath(locale, "/custom")
+
+  // Categories from the CRM, each shown with a photo of one of its products. Until the
+  // catalogue has categories, the illustrative tiles below link to the whole shop.
+  const categoryTilesFromCatalogue = categories
+    .map(category => {
+      const inCategory = products.filter(product => product.categoryId === category.id)
+      const withPhoto = inCategory.find(product => product.media.length > 0)
+      return {
+        key: category.id,
+        label: category.localizedName,
+        href: `${shopHref}?category=${encodeURIComponent(category.id)}`,
+        image: withPhoto?.primaryImage.url ?? categoryTiles[0].image,
+        count: inCategory.length,
+      }
+    })
+    .filter(tile => tile.count > 0)
+  const tiles: Array<{ key: string; label: string; href: string; image: string; count?: number }> = categoryTilesFromCatalogue.length > 0
+    ? [...categoryTilesFromCatalogue.slice(0, 9), { key: "yourIdea", label: t("categories.tiles.yourIdea"), href: customHref, image: "/images/hero-monogram.jpg" }]
+    : categoryTiles.map((tile, index) => ({ key: tile.key, label: t(`categories.tiles.${tile.key}`), href: index === categoryTiles.length - 1 ? customHref : shopHref, image: tile.image }))
 
   return (
     <>
@@ -53,16 +75,19 @@ export async function HomePage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
+      <TrustBar freeFrom={shipping.freeFrom} />
+
       <section className="mx-auto max-w-375 px-4 py-16 md:px-6 md:py-24">
         <Reveal><h2 className="text-center font-serif text-4xl tracking-tight md:text-5xl">{t("categories.title")}</h2></Reveal>
         <div className="mt-10 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 md:gap-x-5 lg:grid-cols-5">
-          {categoryTiles.map((tile, index) => (
-            <Reveal key={`${tile.key}-${index}`} delay={Math.min(index * 0.035, 0.2)}>
-              <Link href={index === categoryTiles.length - 1 ? customHref : shopHref} className="group block">
-                <div className="relative aspect-[1.24/1] overflow-hidden bg-muted">
-                  <Image src={tile.image} alt={t(`categories.tiles.${tile.key}`)} fill sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.035]" />
+          {tiles.map((tile, index) => (
+            <Reveal key={tile.key} delay={Math.min(index * 0.035, 0.2)}>
+              <Link href={tile.href} className="group block">
+                <div className="relative aspect-[1.24/1] overflow-hidden rounded-sm bg-muted">
+                  <Image unoptimized={isSvg(tile.image)} src={tile.image} alt={tile.label} fill sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.035]" />
                 </div>
-                <p className="mt-3 text-center text-sm font-medium md:text-base">{t(`categories.tiles.${tile.key}`)}</p>
+                <p className="mt-3 text-center text-sm font-medium md:text-base">{tile.label}</p>
+                {tile.count !== undefined && <p className="text-center text-xs text-muted-foreground">{t("categories.count", { count: tile.count })}</p>}
               </Link>
             </Reveal>
           ))}
@@ -75,7 +100,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
             <Image src="/images/product-business-sign.jpg" alt={t("customStudio.imageAlt")} fill sizes="100vw" className="object-cover" />
             <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/20 to-transparent" />
             <div className="relative flex min-h-140 max-w-xl flex-col justify-center p-7 text-white md:min-h-162.5 md:p-16">
-              <p className="text-xs uppercase tracking-[0.28em] text-white/70">Custom studio</p>
+              <p className="text-xs uppercase tracking-[0.28em] text-white/70">{t("customStudio.eyebrow")}</p>
               <h2 className="mt-5 font-serif text-5xl leading-[1.02] md:text-6xl">{t("customStudio.title")}</h2>
               <p className="mt-6 max-w-md text-base leading-7 text-white/80">{t("customStudio.description")}</p>
               <Link href={customHref} className="mt-8 inline-flex w-fit items-center gap-2 border-b border-white pb-1 text-sm font-semibold">{t("customStudio.cta")} <ArrowRight className="h-4 w-4" /></Link>
@@ -85,16 +110,9 @@ export async function HomePage({ locale }: { locale: Locale }) {
       </section>
 
       {products.length > 0 && (
-        <section className="border-y border-border/60 bg-stone-50 py-16 md:py-24">
+        <section className="border-y border-border/60 bg-secondary py-16 md:py-24">
           <div className="mx-auto max-w-375 px-4 md:px-6">
-            <Reveal className="flex items-end justify-between gap-6">
-              <div><p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Webshop</p><h2 className="mt-3 font-serif text-4xl tracking-tight md:text-5xl">{t("products.title")}</h2></div>
-              <Link href={shopHref} className="hidden items-center gap-2 border-b border-foreground pb-1 text-sm font-medium sm:flex">{t("products.viewAll")} <ArrowRight className="h-4 w-4" /></Link>
-            </Reveal>
-            <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
-              {products.map((product, index) => <Reveal key={product.id} delay={index * 0.05}><ProductCard locale={locale} product={product} priority={index < 2} /></Reveal>)}
-            </div>
-            <Link href={shopHref} className="mt-10 inline-flex items-center gap-2 border-b border-foreground pb-1 text-sm font-medium sm:hidden">{t("products.viewAll")} <ArrowRight className="h-4 w-4" /></Link>
+            <ProductTabs locale={locale} products={products} shopHref={shopHref} />
           </div>
         </section>
       )}
@@ -116,7 +134,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="bg-[#efe9df]">
+      <section className="bg-sand">
         <div className="mx-auto grid max-w-375 md:grid-cols-2">
           <div className="relative min-h-107.5 md:min-h-155"><Image src="/images/hero-monogram.jpg" alt={t("craft.imageAlt")} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" /></div>
           <Reveal className="flex items-center px-7 py-16 md:px-16 md:py-20">
@@ -129,6 +147,9 @@ export async function HomePage({ locale }: { locale: Locale }) {
           </Reveal>
         </div>
       </section>
+
+      <ProcessSection />
+      <FaqSection freeFrom={shipping.freeFrom} fee={shipping.fee} />
     </>
   )
 }

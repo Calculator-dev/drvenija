@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/components/cart-provider";
 import { CartDrawer } from "@/components/cart-drawer";
+import { Logo } from "@/components/logo";
 import { alternateLocalePath, buildPath, siteName, type Locale } from "@/lib/products";
 import { cn } from "@/lib/utils";
 
@@ -34,11 +35,11 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <div className="bg-black px-3 py-2 text-center text-[9px] font-medium uppercase tracking-[0.14em] text-white sm:text-[11px] sm:tracking-[0.2em]">
+      <div className="bg-primary px-3 py-2 text-center text-[9px] font-medium uppercase tracking-[0.14em] text-primary-foreground sm:text-[11px] sm:tracking-[0.2em]">
         {t("freeDelivery", { amount: String(shippingPolicy.freeFrom) })}
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xl">
         <div className="mx-auto grid h-17 max-w-375 grid-cols-[1fr_auto] items-center gap-3 px-4 md:h-19 md:grid-cols-[220px_1fr] md:px-6">
           <div className="flex min-w-0 items-center gap-2">
             <button
@@ -51,9 +52,10 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             </button>
             <Link
               href={buildPath(locale)}
-              className="text-xl font-black uppercase tracking-tighter text-foreground sm:text-2xl md:text-[26px]"
+              aria-label={siteName}
+              className="min-w-0 text-foreground"
             >
-              {siteName}
+              <Logo markClassName="h-8 w-8 sm:h-9 sm:w-9" />
             </Link>
           </div>
 
@@ -137,9 +139,9 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             <Link
               href={buildPath(locale)}
               onClick={() => setMenuOpen(false)}
-              className="text-xl font-black uppercase tracking-tighter"
+              aria-label={siteName}
             >
-              {siteName}
+              <Logo />
             </Link>
             <button
               type="button"
@@ -197,7 +199,7 @@ function SearchForm({
       action={action}
       onSubmit={onSubmit}
       className={cn(
-        "flex h-10 w-full items-center border border-border bg-[#f7f7f5] transition-colors focus-within:border-foreground",
+        "flex h-10 w-full items-center border border-border bg-secondary transition-colors focus-within:border-foreground",
         className,
       )}
     >
@@ -254,7 +256,7 @@ function HeaderActions({
         </span>
         <span className="hidden text-sm md:inline">({totalItems})</span>
         {totalItems > 0 && (
-          <span className="absolute right-0 top-0 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-black px-1 text-[10px] text-white md:hidden">
+          <span className="absolute right-0 top-0 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] text-accent-foreground md:hidden">
             {totalItems}
           </span>
         )}

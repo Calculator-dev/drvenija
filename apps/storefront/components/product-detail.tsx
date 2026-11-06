@@ -1,14 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
-import { Check, Minus, Plus } from "lucide-react"
+import { Check, ChevronDown, Minus, Plus } from "lucide-react"
 import { toast } from "sonner"
 import { useCart } from "@/components/cart-provider"
-import { activeVariants, formatPrice, type Locale, type LocalizedProduct } from "@/lib/products"
+import { TrustBar } from "@/components/trust-bar"
+import { activeVariants, formatPrice, isSvg, type Locale, type LocalizedProduct } from "@/lib/products"
+import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 export function ProductDetail({ locale, product }: { locale: Locale; product: LocalizedProduct }) {
-  const { addItem } = useCart()
+  const { addItem, shippingPolicy } = useCart()
+  const addButton = useRef<HTMLButtonElement | null>(null)
+  const [showStickyBar, setShowStickyBar] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [personalization, setPersonalization] = useState("")
   const variants = activeVariants(product)
@@ -17,6 +22,15 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
   const t = useTranslations("product")
   const common = useTranslations("common")
   const materialName = common(`materials.${product.material}`)
+
+  // The bottom bar appears on small screens once the main button has scrolled out of view.
+  useEffect(() => {
+    const target = addButton.current
+    if (!target) return
+    const observer = new IntersectionObserver(([entry]) => setShowStickyBar(!entry.isIntersecting && entry.boundingClientRect.top < 0))
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [])
 
   const handleAdd = () => {
     addItem(product, { quantity, personalization: personalization.trim() || undefined, variantId: selectedVariant.id })
@@ -28,7 +42,7 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
       <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
         {product.categoryName?.[locale] ?? ""} · {materialName}
       </p>
-      <h1 className="mt-4 wrap-break-word text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-foreground md:text-5xl">{product.localizedName}</h1>
+      <h1 className="mt-4 wrap-break-word font-serif text-4xl leading-[1.05] tracking-tight text-foreground md:text-5xl">{product.localizedName}</h1>
       <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground">{product.localizedTagline}</p>
 
       <p className="mt-5 break-all text-xs text-muted-foreground">SKU: <span className="text-foreground">{selectedVariant.sku}</span></p>
@@ -100,19 +114,55 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
           </button>
         </div>
         <button
+          ref={addButton}
           type="button"
           onClick={handleAdd}
-          className="min-h-12 flex-1 bg-foreground px-6 text-sm font-semibold tracking-wide text-background transition-colors hover:bg-foreground/90"
+          className="min-h-12 flex-1 bg-primary px-6 text-sm font-semibold tracking-wide text-primary-foreground transition-colors hover:bg-primary/90"
         >
           {t("addToCart")} · {formatPrice(selectedVariant.price * quantity, locale)}
         </button>
       </div>
 
+      <TrustBar variant="compact" freeFrom={shippingPolicy.freeFrom} className="mt-6 border border-border/70 bg-secondary/60 p-4" />
+
       <div className="mt-8 divide-y divide-border/60 border-y border-border/60 text-sm">
-        <details className="group py-4" open><summary className="cursor-pointer list-none font-semibold">{t("details.deliveryTitle")}</summary><p className="mt-3 leading-6 text-muted-foreground">{t("details.deliveryText", { leadTime: product.localizedLeadTime })}</p></details>
-        <details className="group py-4"><summary className="cursor-pointer list-none font-semibold">{t("details.careTitle")}</summary><p className="mt-3 leading-6 text-muted-foreground">{t("details.careText")}</p></details>
-        <details className="group py-4"><summary className="cursor-pointer list-none font-semibold">{t("details.bulkTitle")}</summary><p className="mt-3 leading-6 text-muted-foreground">{t("details.bulkText")}</p></details>
+        <Accordion title={t("details.deliveryTitle")} open>{t("details.deliveryText", { leadTime: product.localizedLeadTime })}</Accordion>
+        <Accordion title={t("details.careTitle")}>{t("details.careText")}</Accordion>
+        <Accordion title={t("details.bulkTitle")}>{t("details.bulkText")}</Accordion>
+      </div>
+
+      <div
+        className={cn(
+          "fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 py-3 backdrop-blur-xl transition-transform duration-300 lg:hidden",
+          showStickyBar ? "translate-y-0" : "translate-y-full",
+        )}
+        inert={!showStickyBar}
+      >
+        <div className="flex items-center gap-3">
+          <div className="relative h-12 w-12 shrink-0 overflow-hidden bg-secondary">
+            <Image unoptimized={isSvg(product.primaryImage.url)} src={product.primaryImage.url} alt="" fill sizes="48px" className="object-cover" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold">{product.localizedName}</p>
+            <p className="truncate text-xs text-muted-foreground">{selectedVariant.dimensions} · {formatPrice(selectedVariant.price, locale)}</p>
+          </div>
+          <button type="button" onClick={handleAdd} className="h-11 shrink-0 bg-primary px-4 text-sm font-semibold text-primary-foreground">
+            {t("addToCart")}
+          </button>
+        </div>
       </div>
     </div>
+  )
+}
+
+function Accordion({ title, open = false, children }: { title: string; open?: boolean; children: React.ReactNode }) {
+  return (
+    <details className="group py-4" open={open}>
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
+        {title}
+        <ChevronDown className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180" strokeWidth={1.5} aria-hidden />
+      </summary>
+      <p className="mt-3 leading-6 text-muted-foreground">{children}</p>
+    </details>
   )
 }

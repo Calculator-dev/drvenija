@@ -209,5 +209,17 @@ private storage with a one-day cache, which lets `next/image` resize and convert
 AVIF/WebP. All saved products are public (there is no draft/publish switch yet).
 Cart and checkout pages are excluded from search indexing and the sitemap.
 
+### Merchandising
+
+- The home page lists CRM categories that have products (each with a product photo and a
+  link to the filtered shop), and a product row with tabs for bestsellers (products marked
+  **featured** in the CRM), personalised, mediapan and plexiglass items. Empty tabs are hidden.
+- Product cards show the second product image on hover and "Bestseller" / "Personalised" badges.
+- Product pages have gallery arrows, a sticky add-to-cart bar on phones, a drawn
+  "on your wall" scene with selectable wall colours (it uses the primary product photo),
+  and up to four related products (same category first, then bestsellers).
+- The cart drawer and cart page show progress towards free delivery from the shipping policy.
+- FAQ answers live in `messages/*.json` under `faq`; the shipping answer uses the live policy.
+
 The legacy localized `/public/products`, `/public/products/:slug`, and
 `/public/categories` API endpoints remain available alongside `/public/catalogue`.

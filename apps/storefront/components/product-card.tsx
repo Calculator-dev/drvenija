@@ -1,7 +1,7 @@
-import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedProduct, isSvg } from "@/lib/products"
+import { ProductCardMedia } from "@/components/product-card-media"
+import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedProduct } from "@/lib/products"
 
 export function ProductCard({
   locale,
@@ -18,36 +18,22 @@ export function ProductCard({
   const common = useTranslations("common")
 
   return (
-    <Link href={href} className="group block">
-      <div className="relative aspect-4/5 overflow-hidden rounded-sm bg-muted">
-        <Image
-          unoptimized={isSvg(product.primaryImage.url)}
-          src={product.primaryImage.url}
-          alt={product.primaryImage.alt[locale]}
-          fill
-          priority={priority}
-          sizes="(min-width: 1280px) 25vw, (min-width: 768px) 40vw, 100vw"
-          placeholder={product.primaryImage.blurDataURL ? "blur" : "empty"}
-          blurDataURL={product.primaryImage.blurDataURL}
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-        />
-      </div>
-      <div className="mt-4 space-y-2">
-        <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-          {product.categoryName?.[locale] ?? ""} · {product.material}
+    <Link href={href} className="group flex h-full flex-col">
+      <ProductCardMedia locale={locale} product={product} priority={priority} sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 50vw" className="aspect-4/5 rounded-sm" />
+      <div className="mt-4 flex flex-1 flex-col">
+        <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+          {product.categoryName?.[locale] ?? ""} · {common(`materials.${product.material}`)}
         </p>
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h3 className="font-serif text-2xl leading-tight text-foreground">{product.localizedName}</h3>
-            <p className="mt-1 max-w-xs text-sm leading-6 text-muted-foreground">{product.localizedShortDescription}</p>
-          </div>
-          <p className="font-medium text-foreground">
+        <h3 className="mt-2 font-serif text-lg leading-snug text-foreground transition-opacity group-hover:opacity-70 md:text-xl">{product.localizedName}</h3>
+        <p className="mt-1 hidden text-sm leading-6 text-muted-foreground line-clamp-2 sm:block">{product.localizedShortDescription}</p>
+        <div className="mt-auto flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 pt-3">
+          <p className="font-semibold text-foreground">
             {price.from ? common("from", { price: formatPrice(price.amount, locale) }) : formatPrice(price.amount, locale)}
           </p>
+          <p className="text-xs text-muted-foreground">
+            {product.type === "custom" ? t("personalizationAvailable") : t("readyToOrder")}
+          </p>
         </div>
-        <p className="text-xs text-muted-foreground">
-          {product.type === "custom" ? t("personalizationAvailable") : t("readyToOrder")}
-        </p>
       </div>
     </Link>
   )

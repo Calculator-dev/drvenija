@@ -61,7 +61,8 @@
     "contact": "Contact",
     "location": "Sarajevo, Bosnia and Herzegovina",
     "languageNote": "English is available as a secondary storefront language.",
-    "backHome": "Back to home"
+    "information": "Information",
+    "copyright": "© {year} Drvenija. All rights reserved."
   },
   "home": {
     "hero": {
@@ -85,17 +86,26 @@
         "monograms": "Monograms",
         "forHome": "For the home",
         "yourIdea": "Made from your idea"
-      }
+      },
+      "count": "{count, plural, one {# product} other {# products}}"
     },
     "customStudio": {
       "imageAlt": "Custom business signage",
       "title": "Can’t find what you have in mind?",
       "description": "Send us a sketch, dimensions, or simply an idea. We’ll choose the material together and make a piece that fits your space.",
-      "cta": "Start a custom project"
+      "cta": "Start a custom project",
+      "eyebrow": "Custom studio"
     },
     "products": {
-      "title": "All products",
-      "viewAll": "View all"
+      "title": "Workshop favourites",
+      "viewAll": "View all products",
+      "eyebrow": "Webshop",
+      "tabs": {
+        "bestsellers": "Bestsellers",
+        "personalised": "Personalised",
+        "mediapan": "MDF",
+        "plexiglass": "Plexiglass"
+      }
     },
     "showcase": {
       "eyebrow": "From the workshop",
@@ -118,7 +128,6 @@
   "shop": {
     "allProducts": "All products",
     "productCount": "({count} products)",
-    "featured": "Featured",
     "viewProduct": "View product",
     "filters": {
       "title": "Filters",
@@ -148,7 +157,9 @@
     "allCategoriesChip": "All",
     "resultsFor": "Results for “{query}” · {count}",
     "showing": "Showing {shown} of {total}",
-    "empty": "No products match these filters."
+    "empty": "No products match these filters.",
+    "bestseller": "Bestseller",
+    "personalised": "Personalised"
   },
   "product": {
     "personalizationAvailable": "Personalization available",
@@ -197,7 +208,15 @@
       "personalizationAvailable": "Available",
       "personalizationUnavailable": "Not available"
     },
-    "related": "Related products"
+    "related": "Related products",
+    "previousImage": "Previous image",
+    "nextImage": "Next image",
+    "mockup": {
+      "eyebrow": "On your wall",
+      "title": "Picture it in your space.",
+      "text": "Try a few wall colours and see how the piece looks above a sofa. Need another size or colour? We will make it to measure.",
+      "cta": "Ask for another size"
+    }
   },
   "cart": {
     "drawerTitle": "Your cart",
@@ -225,7 +244,10 @@
     "repricer": {
       "removed": "Some products are no longer available and were removed from your cart.",
       "repriced": "Cart prices were updated to match the current catalogue."
-    }
+    },
+    "freeShippingRemaining": "<strong>{amount}</strong> away from free delivery",
+    "freeShippingReached": "You have unlocked free delivery",
+    "freeShippingLabel": "Progress towards free delivery"
   },
   "checkout": {
     "intro": {
@@ -322,5 +344,56 @@
       "prepare": "We prepare the CNC-ready file and align material and thickness.",
       "finish": "We cut, finish the edges, and inspect each piece before dispatch."
     }
+  },
+  "trust": {
+    "label": "Why shop with us",
+    "shippingTitle": "Free delivery from {amount} KM",
+    "shippingText": "We deliver anywhere in Bosnia and Herzegovina.",
+    "madeTitle": "Hand-finished in Sarajevo",
+    "madeText": "Every piece is made to order.",
+    "personalTitle": "Personalised your way",
+    "personalText": "Name, text, colour or size.",
+    "confirmTitle": "Pay after confirmation",
+    "confirmText": "You pay nothing until we confirm the details."
+  },
+  "faq": {
+    "eyebrow": "Questions and answers",
+    "title": "Frequently asked questions",
+    "items": {
+      "production": {
+        "q": "How long does production take?",
+        "a": "Each product page shows its production time. Most standard items are made within a few working days; for larger or custom orders we agree the timeline when confirming."
+      },
+      "shipping": {
+        "q": "How much is delivery?",
+        "a": "Delivery is free for orders from {freeFrom} KM. Smaller orders have a {fee} KM delivery fee."
+      },
+      "payment": {
+        "q": "How do I pay for my order?",
+        "a": "After you place an order we review the details and email a confirmation with payment instructions. You pay nothing before that confirmation."
+      },
+      "personalization": {
+        "q": "Can I add a name or my own text?",
+        "a": "Yes. On products marked “Personalised”, enter your text in the personalisation field. We check that everything looks right before production."
+      },
+      "mounting": {
+        "q": "How do wall pieces hang?",
+        "a": "Wall decor ships ready to mount. With your order you can tell us whether you prefer double-sided tape or screw holes."
+      },
+      "custom": {
+        "q": "Can you work from my sketch or logo?",
+        "a": "Yes. Send a request through the Custom work page with your idea, size and deadline, and we will reply with a proposal and price."
+      }
+    }
+  },
+  "mockup": {
+    "wallColour": "Wall colour",
+    "walls": {
+      "linen": "Linen",
+      "sage": "Sage",
+      "clay": "Clay",
+      "charcoal": "Charcoal"
+    },
+    "note": "The illustration is a guide only; the real size depends on the dimensions you choose."
   }
 }

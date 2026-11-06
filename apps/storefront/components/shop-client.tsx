@@ -1,13 +1,13 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { ChevronDown, Grid2X2, List, SlidersHorizontal, X } from "lucide-react"
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
+import { ProductCardMedia } from "@/components/product-card-media"
 import { useModalPanel } from "@/hooks/use-modal-panel"
-import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedCategory, type LocalizedProduct, type Material, type ProductType, isSvg } from "@/lib/products"
+import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedCategory, type LocalizedProduct, type Material, type ProductType } from "@/lib/products"
 import { cn } from "@/lib/utils"
 
 type SortKey = "featured" | "name-asc" | "price-asc" | "price-desc"
@@ -22,16 +22,13 @@ function CollectionProductCard({ locale, product, view }: { locale: Locale; prod
     // In the grid, cards stretch to the row height and the price + button sit at the bottom,
     // so buttons line up regardless of how long names and descriptions are.
     <article className={cn("group", view === "grid" ? "flex h-full flex-col" : "grid gap-5 border-b border-border/60 pb-7 sm:grid-cols-[220px_1fr]")}>
-      <Link href={href} className={cn("relative block overflow-hidden bg-[#f4f4f2]", view === "grid" ? "aspect-square" : "aspect-square sm:aspect-4/3")}>
-        <Image
-          unoptimized={isSvg(product.primaryImage.url)}
-          src={product.primaryImage.url}
-          alt={product.primaryImage.alt[locale]}
-          fill
-          sizes={view === "grid" ? "(min-width: 1280px) 25vw, (min-width: 768px) 40vw, 100vw" : "220px"}
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+      <Link href={href} className="block">
+        <ProductCardMedia
+          locale={locale}
+          product={product}
+          sizes={view === "grid" ? "(min-width: 1280px) 25vw, (min-width: 768px) 40vw, 50vw" : "220px"}
+          className={view === "grid" ? "aspect-square" : "aspect-square sm:aspect-4/3"}
         />
-        {product.featured && <span className="absolute left-3 top-3 bg-black px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white">{t("featured")}</span>}
       </Link>
       <div className={cn("flex flex-col", view === "grid" ? "flex-1 pt-4" : "justify-center py-1")}>
         <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{product.categoryName?.[locale] ?? ""} · {product.material}</p>
@@ -150,8 +147,8 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
       </div>
 
       <div className="flex gap-2 overflow-x-auto border-b border-border/60 py-4 scrollbar-none [&::-webkit-scrollbar]:hidden">
-        <button type="button" onClick={() => setCategoryId("all")} className={cn("shrink-0 border px-5 py-2.5 text-sm transition-colors", categoryId === "all" ? "border-black bg-black text-white" : "border-border hover:border-foreground")}>{t("allCategoriesChip")}</button>
-        {categories.map((category) => <button key={category.id} type="button" onClick={() => setCategoryId(category.id)} className={cn("shrink-0 border px-5 py-2.5 text-sm transition-colors", categoryId === category.id ? "border-black bg-black text-white" : "border-border hover:border-foreground")}>{category.localizedName}</button>)}
+        <button type="button" onClick={() => setCategoryId("all")} className={cn("shrink-0 border px-5 py-2.5 text-sm transition-colors", categoryId === "all" ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground")}>{t("allCategoriesChip")}</button>
+        {categories.map((category) => <button key={category.id} type="button" onClick={() => setCategoryId(category.id)} className={cn("shrink-0 border px-5 py-2.5 text-sm transition-colors", categoryId === category.id ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground")}>{category.localizedName}</button>)}
       </div>
 
       <div className="grid gap-10 pt-10 lg:grid-cols-[260px_minmax(0,1fr)]">

@@ -61,7 +61,8 @@
     "contact": "Kontakt",
     "location": "Sarajevo, BiH",
     "languageNote": "Bosanski je primarni jezik webshopa.",
-    "backHome": "Nazad na početnu"
+    "information": "Informacije",
+    "copyright": "© {year} Drvenija. Sva prava zadržana."
   },
   "home": {
     "hero": {
@@ -85,17 +86,26 @@
         "monograms": "Monogrami",
         "forHome": "Za dom",
         "yourIdea": "Po vašoj ideji"
-      }
+      },
+      "count": "{count, plural, one {# proizvod} few {# proizvoda} other {# proizvoda}}"
     },
     "customStudio": {
       "imageAlt": "Personalizirani poslovni natpis",
       "title": "Ne nalazite ono što ste zamislili?",
       "description": "Pošaljite nam skicu, dimenzije ili samo ideju. Zajedno ćemo odabrati materijal i napraviti komad koji odgovara prostoru.",
-      "cta": "Započni custom projekat"
+      "cta": "Započni custom projekat",
+      "eyebrow": "Custom studio"
     },
     "products": {
-      "title": "Svi proizvodi",
-      "viewAll": "Pogledaj sve"
+      "title": "Najprodavanije iz radionice",
+      "viewAll": "Pogledaj sve proizvode",
+      "eyebrow": "Webshop",
+      "tabs": {
+        "bestsellers": "Bestseleri",
+        "personalised": "Personalizirano",
+        "mediapan": "Mediapan",
+        "plexiglass": "Pleksiglas"
+      }
     },
     "showcase": {
       "eyebrow": "Ideje iz radionice",
@@ -118,7 +128,6 @@
   "shop": {
     "allProducts": "Svi proizvodi",
     "productCount": "({count} proizvoda)",
-    "featured": "Istaknuto",
     "viewProduct": "Pogledaj proizvod",
     "filters": {
       "title": "Filteri",
@@ -148,7 +157,9 @@
     "allCategoriesChip": "Sve",
     "resultsFor": "Rezultati za “{query}” · {count}",
     "showing": "Prikazano {shown} od {total}",
-    "empty": "Nema proizvoda za odabrane filtere."
+    "empty": "Nema proizvoda za odabrane filtere.",
+    "bestseller": "Bestseler",
+    "personalised": "Personalizirano"
   },
   "product": {
     "personalizationAvailable": "Personalizacija dostupna",
@@ -197,7 +208,15 @@
       "personalizationAvailable": "Dostupna",
       "personalizationUnavailable": "Nije dostupna"
     },
-    "related": "Povezani proizvodi"
+    "related": "Povezani proizvodi",
+    "previousImage": "Prethodna slika",
+    "nextImage": "Sljedeća slika",
+    "mockup": {
+      "eyebrow": "Na vašem zidu",
+      "title": "Zamislite ga u svom prostoru.",
+      "text": "Isprobajte nekoliko boja zida i pogledajte kako komad djeluje iznad sofe. Trebate drugu veličinu ili boju? Napravit ćemo je po mjeri.",
+      "cta": "Zatraži drugu veličinu"
+    }
   },
   "cart": {
     "drawerTitle": "Korpa",
@@ -225,7 +244,10 @@
     "repricer": {
       "removed": "Neki proizvodi više nisu dostupni i uklonjeni su iz korpe.",
       "repriced": "Cijene u korpi su ažurirane prema aktuelnom katalogu."
-    }
+    },
+    "freeShippingRemaining": "Još <strong>{amount}</strong> do besplatne dostave",
+    "freeShippingReached": "Ostvarili ste besplatnu dostavu",
+    "freeShippingLabel": "Napredak do besplatne dostave"
   },
   "checkout": {
     "intro": {
@@ -322,5 +344,56 @@
       "prepare": "Pripremamo CNC fajl i usklađujemo materijal i debljinu.",
       "finish": "Režemo, obrađujemo rubove i provjeravamo svaki komad prije slanja."
     }
+  },
+  "trust": {
+    "label": "Zašto kupovati kod nas",
+    "shippingTitle": "Besplatna dostava od {amount} KM",
+    "shippingText": "Dostavljamo na adrese širom BiH.",
+    "madeTitle": "Ručno završeno u Sarajevu",
+    "madeText": "Svaki komad izrađujemo po narudžbi.",
+    "personalTitle": "Personalizacija po želji",
+    "personalText": "Ime, tekst, boja ili dimenzija.",
+    "confirmTitle": "Plaćanje nakon potvrde",
+    "confirmText": "Ništa ne plaćate dok ne potvrdimo detalje."
+  },
+  "faq": {
+    "eyebrow": "Pitanja i odgovori",
+    "title": "Česta pitanja",
+    "items": {
+      "production": {
+        "q": "Koliko traje izrada?",
+        "a": "Rok izrade piše na stranici svakog proizvoda. Većinu standardnih artikala izrađujemo u roku od nekoliko radnih dana, a za veće ili custom narudžbe rok dogovaramo pri potvrdi."
+      },
+      "shipping": {
+        "q": "Koliko košta dostava?",
+        "a": "Dostava je besplatna za narudžbe od {freeFrom} KM. Za manje narudžbe dostava iznosi {fee} KM."
+      },
+      "payment": {
+        "q": "Kako plaćam narudžbu?",
+        "a": "Nakon slanja narudžbe pregledamo detalje i šaljemo potvrdu emailom, zajedno s uputama za plaćanje. Ništa ne plaćate prije te potvrde."
+      },
+      "personalization": {
+        "q": "Mogu li dodati ime ili vlastiti tekst?",
+        "a": "Da. Kod proizvoda s oznakom „Personalizirano“ upišite tekst u polje za personalizaciju. Prije izrade provjeravamo da sve izgleda kako treba."
+      },
+      "mounting": {
+        "q": "Kako se zidne dekoracije kače?",
+        "a": "Zidne dekoracije šaljemo pripremljene za montažu. Uz narudžbu možete navesti želite li dvostrano ljepljivu traku ili otvore za šarafe."
+      },
+      "custom": {
+        "q": "Radite li po mojoj skici ili logotipu?",
+        "a": "Da. Pošaljite upit preko stranice Custom izrada s idejom, dimenzijama i rokom, a mi vam vraćamo prijedlog izvedbe i cijenu."
+      }
+    }
+  },
+  "mockup": {
+    "wallColour": "Boja zida",
+    "walls": {
+      "linen": "Lan",
+      "sage": "Žalfija",
+      "clay": "Glina",
+      "charcoal": "Grafit"
+    },
+    "note": "Ilustracija služi kao orijentacija; stvarna veličina zavisi od odabranih dimenzija."
   }
 }

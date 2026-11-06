@@ -4,26 +4,27 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.978 0.01 82);
-  --foreground: oklch(0.245 0.018 60);
+  --background: oklch(0.982 0.009 85);
+  --foreground: oklch(0.255 0.03 55);
   --card: oklch(0.986 0.01 82);
-  --card-foreground: oklch(0.245 0.018 60);
+  --card-foreground: oklch(0.255 0.03 55);
   --popover: oklch(0.986 0.01 82);
-  --popover-foreground: oklch(0.245 0.018 60);
-  --primary: oklch(0.245 0.018 60);
+  --popover-foreground: oklch(0.255 0.03 55);
+  --primary: oklch(0.33 0.048 52);
   --primary-foreground: oklch(0.985 0.008 82);
-  --secondary: oklch(0.944 0.019 80);
-  --secondary-foreground: oklch(0.245 0.018 60);
-  --muted: oklch(0.944 0.019 80);
+  --secondary: oklch(0.948 0.02 78);
+  --secondary-foreground: oklch(0.255 0.03 55);
+  --muted: oklch(0.948 0.02 78);
   --muted-foreground: oklch(0.49 0.02 62);
-  --accent: oklch(0.58 0.13 47);
+  --accent: oklch(0.6 0.115 58);
   --accent-foreground: oklch(0.985 0.008 82);
   --destructive: oklch(0.57 0.21 28);
   --destructive-foreground: oklch(0.985 0.008 82);
   --border: oklch(0.89 0.019 79);
   --input: oklch(0.89 0.019 79);
-  --ring: oklch(0.58 0.13 47);
+  --ring: oklch(0.6 0.115 58);
   --radius: 0.24rem;
+  --sand: oklch(0.93 0.025 75);
   --sidebar: var(--background);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
@@ -50,6 +51,7 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-sand: var(--sand);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
