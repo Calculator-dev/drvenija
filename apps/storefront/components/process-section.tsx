@@ -10,7 +10,7 @@ export function ProcessSection() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-24">
       <Reveal>
-        <p className="text-xs uppercase tracking-[0.26em] text-muted-foreground">{t("eyebrow")}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.26em] text-gold-deep">{t("eyebrow")}</p>
       </Reveal>
       <Reveal delay={0.06}>
         <div className="mt-4 grid gap-8 md:grid-cols-[1.2fr_1fr]">
@@ -23,7 +23,7 @@ export function ProcessSection() {
         {steps.map((step, index) => (
           <Reveal key={step} delay={0.08 * index}>
             <div className="border border-border/60 p-6">
-              <CheckCircle2 className="h-5 w-5 text-accent" strokeWidth={1.8} />
+              <CheckCircle2 className="h-5 w-5 text-gold-deep" strokeWidth={1.8} />
               <p className="mt-4 text-sm leading-7 text-muted-foreground">{t(`steps.${step}`)}</p>
             </div>
           </Reveal>

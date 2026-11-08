@@ -32,7 +32,7 @@ export function ProductTabs({ locale, products, shopHref }: { locale: Locale; pr
     <div>
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">{t("eyebrow")}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-deep">{t("eyebrow")}</p>
           <h2 className="mt-3 font-serif text-4xl tracking-tight md:text-5xl">{t("title")}</h2>
         </div>
         <div role="tablist" aria-label={t("title")} className="-mx-4 flex gap-2 overflow-x-auto px-4 [&::-webkit-scrollbar]:hidden md:mx-0 md:px-0">

@@ -62,14 +62,14 @@ export async function HomePage({ locale }: { locale: Locale }) {
         <div className="absolute inset-0 bg-linear-to-r from-black/75 via-black/25 to-black/55" />
         <div className="relative mx-auto flex min-h-155 max-w-7xl items-end px-4 pb-16 pt-28 md:min-h-190 md:items-center md:px-6 md:pb-24">
           <Reveal className="max-w-xl text-white" y={18}>
-            <p className="mb-5 text-xs font-medium uppercase tracking-[0.3em] text-white/75">{t("hero.eyebrow")}</p>
+            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.3em] text-gold">{t("hero.eyebrow")}</p>
             <h1 className="font-serif text-4xl leading-[0.98] tracking-[-0.035em] min-[390px]:text-5xl sm:text-6xl md:text-7xl">{t("hero.title")}</h1>
             <p className="mt-6 max-w-lg text-base leading-7 text-white/80 md:text-lg">
               {t("hero.description")}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href={shopHref} className="inline-flex min-h-12 items-center bg-white px-6 text-sm font-semibold text-black transition-colors hover:bg-white/85">{t("hero.shopCta")}</Link>
-              <Link href={customHref} className="inline-flex min-h-12 items-center border border-white/70 px-6 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black">{t("hero.customCta")}</Link>
+              <Link href={shopHref} className="inline-flex min-h-12 items-center rounded-sm bg-gold px-6 text-sm font-bold text-accent-foreground transition-colors hover:bg-[#f0bf47]">{t("hero.shopCta")}</Link>
+              <Link href={customHref} className="inline-flex min-h-12 items-center rounded-sm border border-white/70 px-6 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-black">{t("hero.customCta")}</Link>
             </div>
           </Reveal>
         </div>
@@ -100,7 +100,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
             <Image src="/images/product-business-sign.jpg" alt={t("customStudio.imageAlt")} fill sizes="100vw" className="object-cover" />
             <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/20 to-transparent" />
             <div className="relative flex min-h-140 max-w-xl flex-col justify-center p-7 text-white md:min-h-162.5 md:p-16">
-              <p className="text-xs uppercase tracking-[0.28em] text-white/70">{t("customStudio.eyebrow")}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-gold">{t("customStudio.eyebrow")}</p>
               <h2 className="mt-5 font-serif text-5xl leading-[1.02] md:text-6xl">{t("customStudio.title")}</h2>
               <p className="mt-6 max-w-md text-base leading-7 text-white/80">{t("customStudio.description")}</p>
               <Link href={customHref} className="mt-8 inline-flex w-fit items-center gap-2 border-b border-white pb-1 text-sm font-semibold">{t("customStudio.cta")} <ArrowRight className="h-4 w-4" /></Link>
@@ -119,7 +119,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
 
       <section className="mx-auto max-w-375 px-4 py-16 md:px-6 md:py-24">
         <Reveal className="mx-auto max-w-3xl text-center">
-          <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">{t("showcase.eyebrow")}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-gold-deep">{t("showcase.eyebrow")}</p>
           <h2 className="mt-4 font-serif text-4xl leading-tight tracking-tight md:text-5xl">{t("showcase.title")}</h2>
         </Reveal>
         <div className="mt-10 grid gap-3 md:grid-cols-2 md:gap-5">
@@ -139,7 +139,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
           <div className="relative min-h-107.5 md:min-h-155"><Image src="/images/hero-monogram.jpg" alt={t("craft.imageAlt")} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" /></div>
           <Reveal className="flex items-center px-7 py-16 md:px-16 md:py-20">
             <div className="max-w-lg">
-              <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">{t("craft.eyebrow")}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-gold-deep">{t("craft.eyebrow")}</p>
               <h2 className="mt-5 font-serif text-4xl leading-tight tracking-tight md:text-5xl">{t("craft.title")}</h2>
               <p className="mt-6 text-base leading-8 text-foreground/65">{t("craft.description")}</p>
               <Link href={customHref} className="mt-8 inline-flex items-center gap-2 border-b border-foreground pb-1 text-sm font-semibold">{t("craft.cta")} <ArrowRight className="h-4 w-4" /></Link>
