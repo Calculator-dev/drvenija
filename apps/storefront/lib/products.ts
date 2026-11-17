@@ -139,6 +139,12 @@ export function alternateLocalePath(pathname: string, search = "") {
 export const defaultLocale: Locale = "bs"
 
 export const siteName = "Drvenija"
+export const instagramUrl = "https://www.instagram.com/drvenija/"
+
+/** The category's own shop page, e.g. /shop/kaligrafija or /en/shop/calligraphy. */
+export function categoryPath(locale: Locale, category: Pick<Category, "slug">) {
+  return buildPath(locale, `/shop/${encodeURIComponent(getLocalizedField(category.slug, locale))}`)
+}
 
 export function getLocalizedField(field: LocalizedField, locale: Locale) {
   return field[locale] ?? field[defaultLocale]

@@ -49,7 +49,7 @@ export async function createMetadata(args: {
         : (await getTranslations({ locale, namespace: "common" }))("siteDescription")
   const canonicalPath = locale === "en" ? buildPath("en", args.path === "/" ? "" : args.path) : args.path
 
-  const image = args.image ?? "/images/hero-lifestyle.jpg"
+  const image = args.image ?? "/images/og-default.jpg"
 
   return {
     title,

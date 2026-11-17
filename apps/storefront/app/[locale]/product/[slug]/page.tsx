@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
 import { ProductPageLayout } from "@/components/product-page-layout"
-import { getProductBySlug, getRelatedProducts } from "@/lib/catalogue"
+import { getCategories, getProductBySlug, getRelatedProducts } from "@/lib/catalogue"
 import { resolveLocale } from "@/lib/locale-params"
 import { activeVariants, buildPath, displayPrice } from "@/lib/products"
 import { createMetadata, getAbsoluteUrl } from "@/lib/seo"
@@ -43,12 +43,13 @@ export default async function Page({ params }: Props) {
   const canonicalPath = buildPath(locale, `/product/${product.localizedSlug}`)
   if (slug !== product.localizedSlug) redirect(canonicalPath)
 
-  const related = await getRelatedProducts(locale, product.id)
+  const [related, categories] = await Promise.all([getRelatedProducts(locale, product.id), getCategories(locale)])
+  const category = categories.find(item => item.id === product.categoryId)
   const price = displayPrice(product)
 
   return (
     <>
-      <ProductPageLayout locale={locale} product={product} related={related} />
+      <ProductPageLayout locale={locale} product={product} related={related} category={category} />
 
       <script
         type="application/ld+json"

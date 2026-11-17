@@ -7,9 +7,9 @@ import { ProductDetail } from "@/components/product-detail"
 import { ProductGallery } from "@/components/product-gallery"
 import { Reveal } from "@/components/reveal"
 import { WallMockup } from "@/components/wall-mockup"
-import { activeVariants, buildPath, type Locale, type LocalizedProduct, isSvg } from "@/lib/products"
+import { activeVariants, buildPath, categoryPath, type Locale, type LocalizedCategory, type LocalizedProduct, isSvg } from "@/lib/products"
 
-export function ProductPageLayout({ locale, product, related }: { locale: Locale; product: LocalizedProduct; related: LocalizedProduct[] }) {
+export function ProductPageLayout({ locale, product, related, category }: { locale: Locale; product: LocalizedProduct; related: LocalizedProduct[]; category?: LocalizedCategory }) {
   const t = useTranslations("product")
   const shop = useTranslations("shop")
   const common = useTranslations("common")
@@ -32,6 +32,7 @@ export function ProductPageLayout({ locale, product, related }: { locale: Locale
           <span aria-hidden="true">›</span>
           <Link href={buildPath(locale, "/shop")} className="shrink-0 transition-colors hover:text-foreground">{shop("allProducts")}</Link>
           <span aria-hidden="true">›</span>
+          {category && <><Link href={categoryPath(locale, category)} className="shrink-0 transition-colors hover:text-foreground">{category.localizedName}</Link><span aria-hidden="true">›</span></>}
           <span className="truncate text-foreground">{product.localizedName}</span>
         </nav>
 

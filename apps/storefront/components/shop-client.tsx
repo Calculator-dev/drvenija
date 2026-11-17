@@ -7,7 +7,7 @@ import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { ProductCardMedia } from "@/components/product-card-media"
 import { useModalPanel } from "@/hooks/use-modal-panel"
-import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedCategory, type LocalizedProduct, type Material, type ProductType } from "@/lib/products"
+import { buildPath, categoryPath, displayPrice, formatPrice, type Locale, type LocalizedCategory, type LocalizedProduct, type Material, type ProductType } from "@/lib/products"
 import { cn } from "@/lib/utils"
 
 type SortKey = "featured" | "name-asc" | "price-asc" | "price-desc"
@@ -43,7 +43,11 @@ function CollectionProductCard({ locale, product, view }: { locale: Locale; prod
   )
 }
 
-export function ShopClient({ locale, products, categories }: { locale: Locale; products: LocalizedProduct[]; categories: LocalizedCategory[] }) {
+/**
+ * Product listing with filters. On a category page (`currentCategoryId`) the category comes from
+ * the URL path; choosing another category navigates to that category's page.
+ */
+export function ShopClient({ locale, products, categories, currentCategoryId }: { locale: Locale; products: LocalizedProduct[]; categories: LocalizedCategory[]; currentCategoryId?: string }) {
   const t = useTranslations("shop")
   const common = useTranslations("common")
   const router = useRouter()
@@ -56,7 +60,7 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
   const query = searchParams.get("q")?.trim().toLocaleLowerCase(locale) ?? ""
   const material: "all" | Material = requestedMaterial === "plexiglass" || requestedMaterial === "mediapan" || requestedMaterial === "mixed" ? requestedMaterial : "all"
   const productType: "all" | ProductType = requestedType === "standard" || requestedType === "custom" ? requestedType : "all"
-  const categoryId = categories.some(category => category.id === requestedCategory) ? requestedCategory! : "all"
+  const categoryId = currentCategoryId ?? (categories.some(category => category.id === requestedCategory) ? requestedCategory! : "all")
   const setFilters = (changes: Record<string, string>) => {
     const next = new URLSearchParams(searchParams.toString())
     for (const [key, value] of Object.entries(changes)) {
@@ -67,7 +71,14 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
     router.replace(search ? `${pathname}?${search}` : pathname, { scroll: false })
   }
   const setMaterial = (value: "all" | Material) => setFilters({ material: value })
-  const setCategoryId = (value: string) => setFilters({ category: value })
+  const setCategoryId = (value: string) => {
+    const next = new URLSearchParams(searchParams.toString())
+    next.delete("category")
+    const category = categories.find(item => item.id === value)
+    const path = category ? categoryPath(locale, category) : buildPath(locale, "/shop")
+    const search = next.toString()
+    router.push(search ? `${path}?${search}` : path, { scroll: false })
+  }
   const setProductType = (value: "all" | ProductType) => setFilters({ type: value })
   const [sort, setSort] = useState<SortKey>("featured")
   const [view, setView] = useState<ViewMode>("grid")
@@ -96,7 +107,10 @@ export function ShopClient({ locale, products, categories }: { locale: Locale; p
   const countByCategory = (id: string) => products.filter((product) => product.categoryId === id).length
   const activeFilterCount = Number(material !== "all") + Number(categoryId !== "all") + Number(productType !== "all")
 
-  const resetFilters = () => setFilters({ material: "all", category: "all", type: "all" })
+  const resetFilters = () => {
+    if (categoryId !== "all") router.push(buildPath(locale, "/shop"), { scroll: false })
+    else setFilters({ material: "all", type: "all" })
+  }
 
   // Rendered in the desktop sidebar and the mobile drawer; `id` keeps radio groups separate.
   const filterPanel = (id: string) => (
