@@ -72,6 +72,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
+      data-scroll-behavior="smooth"
       className={`${montserrat.variable} ${marcellus.variable} ${amiri.variable} ${greatVibes.variable}`}
     >
       <body
