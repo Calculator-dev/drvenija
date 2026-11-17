@@ -18,7 +18,14 @@ export function createApp() {
     }
     const failure = error as { statusCode?: number; code?: string; message?: string }
     const status = failure.statusCode ?? 500
-    if (status >= 500) request.log.error({ code: failure.code }, "Request failed")
+    if (status >= 500) {
+      // Drizzle wraps driver errors (whose message embeds query parameters), so log the
+      // innermost cause, e.g. 42703 "column \"published\" does not exist" when a migration is missing.
+      let cause: unknown = error
+      while (cause instanceof Error && cause.cause instanceof Error) cause = cause.cause
+      const root = cause as { code?: string; message?: string }
+      request.log.error({ code: root.code ?? failure.code, cause: root === error ? undefined : root.message }, "Request failed")
+    }
     return reply.code(status).send({ message: status >= 500 ? "Internal server error" : failure.message })
   })
 

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 export function Logo({ className, priority = false }: { className?: string; priority?: boolean }) {
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <Image src="/brand/logo-mark.png" alt="" width={29} height={32} priority={priority} className="h-8 w-auto" />
+      <Image src="/brand/logo-mark.png" alt="" width={29} height={32} priority={priority} className="h-8" style={{ width: "auto" }} />
       <span className="font-serif text-[23px] leading-none tracking-tight sm:text-[26px]">
         {siteName.toLowerCase()}<span className="text-accent">.</span>
       </span>

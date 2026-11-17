@@ -222,38 +222,6 @@ export async function HomePage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="mx-auto max-w-375 px-4 pb-16 md:px-6 md:pb-24">
-        <Reveal>
-          <div className="relative min-h-140 overflow-hidden bg-stone-900 md:min-h-162.5">
-            <Image
-              src="/images/product-business-sign.jpg"
-              alt={t("customStudio.imageAlt")}
-              fill
-              sizes="(min-width: 1500px) 1452px, 100vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/20 to-transparent" />
-            <div className="relative flex min-h-140 max-w-xl flex-col justify-center p-7 text-white md:min-h-162.5 md:p-16">
-              <p className="text-xs uppercase tracking-[0.28em] text-white/70">
-                Custom studio
-              </p>
-              <h2 className="mt-5 font-serif text-5xl leading-[1.02] md:text-6xl">
-                {t("customStudio.title")}
-              </h2>
-              <p className="mt-6 max-w-md text-base leading-7 text-white/80">
-                {t("customStudio.description")}
-              </p>
-              <Link
-                href={customHref}
-                className="mt-8 inline-flex w-fit items-center gap-2 border-b border-white pb-1 text-sm font-semibold"
-              >
-                {t("customStudio.cta")} <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </Reveal>
-      </section>
-
       {products.length > 0 && (
         <section className="mx-auto max-w-375 px-4 py-16 md:px-6 md:py-22">
           <ProductTabs
