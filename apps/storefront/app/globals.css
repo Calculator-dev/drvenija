@@ -46,6 +46,7 @@
   --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-marcellus), ui-serif, Georgia, serif;
   --font-arabic: var(--font-amiri), serif;
+  --font-script: var(--font-great-vibes), cursive;
   --font-mono: ui-monospace, SFMono-Regular, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);

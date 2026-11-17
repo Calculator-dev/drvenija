@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl"
 import { Check, ChevronDown, Minus, Plus } from "lucide-react"
 import { toast } from "sonner"
 import { useCart } from "@/components/cart-provider"
+import { PersonalizationDesigner, personalizationNote, type PersonalizationDesign } from "@/components/personalization-designer"
 import { TrustBar } from "@/components/trust-bar"
 import { WishlistButton } from "@/components/wishlist-button"
 import { activeVariants, formatPrice, isSvg, type Locale, type LocalizedProduct } from "@/lib/products"
@@ -16,7 +17,8 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
   const addButton = useRef<HTMLButtonElement | null>(null)
   const [showStickyBar, setShowStickyBar] = useState(false)
   const [quantity, setQuantity] = useState(1)
-  const [personalization, setPersonalization] = useState("")
+  const [design, setDesign] = useState<PersonalizationDesign>({ text: "", font: "script", finish: "gold" })
+  const personalize = useTranslations("personalize")
   const variants = activeVariants(product)
   const [variantId, setVariantId] = useState(() => variants[0]!.id)
   const selectedVariant = variants.find(variant => variant.id === variantId) ?? variants[0]!
@@ -41,7 +43,8 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
   }, [showStickyBar])
 
   const handleAdd = () => {
-    addItem(product, { quantity, personalization: personalization.trim() || undefined, variantId: selectedVariant.id })
+    const personalization = personalizationNote(design, { font: personalize(`fonts.${design.font}`), finish: personalize(`finishes.${design.finish}`) })
+    addItem(product, { quantity, personalization: personalization || undefined, variantId: selectedVariant.id })
     toast.success(t("addedToCart"))
   }
 
@@ -95,21 +98,7 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
         </div>
       </dl>
 
-      {product.customizable && (
-        <div className="mt-7">
-          <label htmlFor="personalization" className="block text-sm font-semibold">
-            {t("personalization")}
-          </label>
-          <textarea
-            id="personalization"
-            rows={3}
-            value={personalization}
-            onChange={(event) => setPersonalization(event.target.value)}
-            placeholder={t("personalizationPlaceholder")}
-            className="mt-3 w-full resize-none border border-border bg-transparent px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
-          />
-        </div>
-      )}
+      {product.customizable && <PersonalizationDesigner design={design} onChange={setDesign} />}
 
       <div className="mt-7 flex flex-col items-stretch gap-3 sm:flex-row">
         <div className="inline-flex items-center justify-between border border-border sm:justify-start">

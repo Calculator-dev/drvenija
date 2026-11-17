@@ -225,7 +225,6 @@
     "dimensions": "Dimensions",
     "leadTime": "Lead time",
     "personalization": "Personalization",
-    "personalizationPlaceholder": "Enter a name, wording, dimension, or short note.",
     "addToCart": "Add to cart",
     "details": {
       "deliveryTitle": "Delivery and lead time",
@@ -473,5 +472,24 @@
     "removeLabel": "Remove {name} from saved",
     "added": "{name} saved.",
     "removed": "{name} removed from saved."
+  },
+  "personalize": {
+    "label": "Your text",
+    "placeholder": "E.g. The Hodžić Family or Amina & Tarik · 12.06.2026",
+    "fontLabel": "Lettering",
+    "fonts": {
+      "script": "Script",
+      "classic": "Classic",
+      "modern": "Modern"
+    },
+    "finishLabel": "Finish",
+    "finishes": {
+      "gold": "Gold mirror",
+      "black": "Black plexiglass",
+      "wood": "Wood"
+    },
+    "previewLabel": "Preview",
+    "previewEmpty": "Type your text to see how it will look.",
+    "previewNote": "The preview is a guide. We email you a draft to approve before cutting."
   }
 }

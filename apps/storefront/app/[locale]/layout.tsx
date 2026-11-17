@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { Amiri, Marcellus, Montserrat } from "next/font/google"
+import { Amiri, Great_Vibes, Marcellus, Montserrat } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { NextIntlClientProvider } from "next-intl"
 import { CartProvider } from "@/components/cart-provider"
@@ -32,6 +32,15 @@ const amiri = Amiri({
   preload: false,
 })
 
+// Lettering style in the personalisation preview; only needed on product pages.
+const greatVibes = Great_Vibes({
+  weight: "400",
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-great-vibes",
+  display: "swap",
+  preload: false,
+})
+
 export const generateStaticParams = generateLocaleParams
 
 export const metadata: Metadata = {
@@ -57,7 +66,7 @@ export default async function RootLayout({
 }: Readonly<LocaleParams & { children: React.ReactNode }>) {
   const locale = await resolveLocale(params)
   return (
-    <html lang={locale} className={`${montserrat.variable} ${marcellus.variable} ${amiri.variable}`}>
+    <html lang={locale} className={`${montserrat.variable} ${marcellus.variable} ${amiri.variable} ${greatVibes.variable}`}>
       <body suppressHydrationWarning className="min-h-screen bg-background font-sans antialiased">
         <NextIntlClientProvider>
           <CartProvider>

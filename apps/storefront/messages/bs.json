@@ -225,7 +225,6 @@
     "dimensions": "Dimenzije",
     "leadTime": "Rok izrade",
     "personalization": "Personalizacija",
-    "personalizationPlaceholder": "Unesite ime, tekst, dimenziju ili kratku napomenu.",
     "addToCart": "Dodaj u korpu",
     "details": {
       "deliveryTitle": "Dostava i rok izrade",
@@ -473,5 +472,24 @@
     "removeLabel": "Ukloni {name} iz sačuvanih",
     "added": "{name} je sačuvan.",
     "removed": "{name} je uklonjen iz sačuvanih."
+  },
+  "personalize": {
+    "label": "Vaš tekst",
+    "placeholder": "Npr. Porodica Hodžić ili Amina & Tarik · 12.06.2026",
+    "fontLabel": "Stil slova",
+    "fonts": {
+      "script": "Rukopis",
+      "classic": "Klasično",
+      "modern": "Moderno"
+    },
+    "finishLabel": "Završna obrada",
+    "finishes": {
+      "gold": "Zlatno ogledalo",
+      "black": "Crni pleksiglas",
+      "wood": "Drvo"
+    },
+    "previewLabel": "Pregled",
+    "previewEmpty": "Upišite tekst da vidite kako će izgledati.",
+    "previewNote": "Pregled je orijentacioni. Prije izrade šaljemo vam nacrt na odobrenje."
   }
 }
