@@ -22,7 +22,7 @@ export function WishlistButton({ productId, productName, className, variant = "i
   if (variant === "full") {
     return (
       <button type="button" onClick={onClick} aria-pressed={saved} className={cn("inline-flex min-h-12 items-center justify-center gap-2 border border-border px-4 text-sm font-semibold transition-colors hover:border-foreground", className)}>
-        <Heart className={cn("h-4.5 w-4.5", saved && "fill-gold text-gold-deep")} strokeWidth={1.6} aria-hidden />
+        <Heart className={cn("h-4.5 w-4.5", saved && "fill-accent text-accent-ink")} strokeWidth={1.6} aria-hidden />
         {saved ? t("saved") : t("save")}
       </button>
     )
@@ -36,7 +36,7 @@ export function WishlistButton({ productId, productName, className, variant = "i
       aria-label={saved ? t("removeLabel", { name: productName }) : t("saveLabel", { name: productName })}
       className={cn("flex h-9 w-9 items-center justify-center rounded-full bg-background/90 shadow-sm transition-transform hover:scale-110", className)}
     >
-      <Heart className={cn("h-4.5 w-4.5", saved ? "fill-gold text-gold-deep" : "text-foreground")} strokeWidth={1.6} aria-hidden />
+      <Heart className={cn("h-4.5 w-4.5", saved ? "fill-accent text-accent-ink" : "text-foreground")} strokeWidth={1.6} aria-hidden />
     </button>
   )
 }

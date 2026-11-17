@@ -16,17 +16,17 @@ export function WishlistPage({ locale, products }: { locale: Locale; products: L
   return (
     <div className="mx-auto max-w-375 px-4 pb-20 pt-10 md:px-6 md:pb-28 md:pt-14">
       <div className="border-b border-border pb-6 md:pb-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.26em] text-gold-deep">{t("eyebrow")}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.26em] text-accent-ink">{t("eyebrow")}</p>
         <h1 className="mt-3 font-serif text-5xl leading-none sm:text-6xl">{t("title")}</h1>
         <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">{t("description")}</p>
       </div>
 
       {saved.length === 0 ? (
         <section className="flex min-h-90 flex-col items-center justify-center text-center">
-          <Heart className="h-10 w-10 text-gold-deep" strokeWidth={1.2} aria-hidden />
+          <Heart className="h-10 w-10 text-accent-ink" strokeWidth={1.2} aria-hidden />
           <h2 className="mt-5 font-serif text-3xl">{t("emptyTitle")}</h2>
           <p className="mt-3 max-w-md text-sm leading-7 text-muted-foreground">{t("emptyText")}</p>
-          <Link href={buildPath(locale, "/shop")} className="mt-8 flex h-12 items-center justify-center rounded-full bg-primary px-8 text-sm font-semibold text-primary-foreground">
+          <Link href={buildPath(locale, "/shop")} className="mt-8 flex h-12 items-center justify-center rounded-full bg-accent px-8 text-sm font-semibold text-accent-foreground hover:bg-accent-hover">
             {t("browse")}
           </Link>
         </section>

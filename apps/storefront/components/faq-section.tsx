@@ -9,7 +9,7 @@ export function FaqSection({ freeFrom, fee }: { freeFrom: number; fee: number })
   return (
     <section className="mx-auto max-w-4xl px-4 py-16 md:px-6 md:py-24">
       <Reveal className="text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-gold-deep">{t("eyebrow")}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent-ink">{t("eyebrow")}</p>
         <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">{t("title")}</h2>
       </Reveal>
       <div className="mt-10 divide-y divide-border border-y border-border">

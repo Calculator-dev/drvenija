@@ -45,14 +45,14 @@ export function OrderStatusPage({ locale, initialNumber }: { locale: Locale; ini
 
   return (
     <div className="mx-auto max-w-4xl px-4 pb-20 pt-10 md:px-6 md:pb-28 md:pt-14">
-      <p className="text-xs font-semibold uppercase tracking-[0.26em] text-gold-deep">{t("eyebrow")}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.26em] text-accent-ink">{t("eyebrow")}</p>
       <h1 className="mt-3 font-serif text-5xl leading-none sm:text-6xl">{t("title")}</h1>
       <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">{t("description")}</p>
 
       <form onSubmit={find} className="mt-8 grid gap-3 border border-border bg-card p-5 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
         <Field id="orderNumber" label={t("orderNumber")} value={number} onChange={setNumber} placeholder="DRV-260101-1A2B3C4D" required />
         <Field id="orderEmail" label="Email" type="email" value={email} onChange={setEmail} required />
-        <button type="submit" disabled={state === "loading"} className="inline-flex h-12 items-center justify-center gap-2 bg-primary px-6 text-sm font-semibold text-primary-foreground disabled:opacity-60">
+        <button type="submit" disabled={state === "loading"} className="inline-flex h-12 items-center justify-center gap-2 bg-accent px-6 text-sm font-semibold text-accent-foreground hover:bg-accent-hover disabled:opacity-60">
           <Search className="h-4 w-4" aria-hidden /> {state === "loading" ? t("searching") : t("find")}
         </button>
         {state === "not_found" && <p role="alert" className="text-sm text-destructive sm:col-span-3">{t("notFound")}</p>}
@@ -77,7 +77,7 @@ export function OrderStatusPage({ locale, initialNumber }: { locale: Locale; ini
 
           {order.trackingNumber && (
             <p className="mt-6 flex items-center gap-2 border border-border bg-secondary/60 p-4 text-sm">
-              <Truck className="h-4 w-4 text-gold-deep" aria-hidden /> {t("tracking")}: <strong className="font-semibold">{order.trackingNumber}</strong>
+              <Truck className="h-4 w-4 text-accent-ink" aria-hidden /> {t("tracking")}: <strong className="font-semibold">{order.trackingNumber}</strong>
             </p>
           )}
 
@@ -87,13 +87,13 @@ export function OrderStatusPage({ locale, initialNumber }: { locale: Locale; ini
                 <li key={item.productId} className="py-5">
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
-                      <Link href={buildPath(locale, `/product/${item.slug}`)} className="font-serif text-xl hover:text-gold-deep">{item.name}</Link>
+                      <Link href={buildPath(locale, `/product/${item.slug}`)} className="font-serif text-xl hover:text-accent-ink">{item.name}</Link>
                       <p className="mt-1 text-sm text-muted-foreground">{t("quantity", { quantity: item.quantity })}</p>
                       {customerNote(item.personalization) && <p className="mt-1 whitespace-pre-line text-xs text-muted-foreground">{customerNote(item.personalization)}</p>}
                     </div>
                     <p className="shrink-0 text-sm">{formatPrice(item.unitPrice * item.quantity, locale)}</p>
                   </div>
-                  {item.reviewed && <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-gold-deep"><Check className="h-3.5 w-3.5" aria-hidden />{t("review.thanks")}</p>}
+                  {item.reviewed && <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-accent-ink"><Check className="h-3.5 w-3.5" aria-hidden />{t("review.thanks")}</p>}
                   {item.canReview && <ReviewForm locale={locale} orderNumber={order.orderNumber} email={email} productId={item.productId} onDone={() => setOrder(current => current && ({ ...current, items: current.items.map(entry => entry.productId === item.productId ? { ...entry, canReview: false, reviewed: true } : entry) }))} />}
                 </li>
               ))}
@@ -123,8 +123,8 @@ function Timeline({ status }: { status: OrderStatus }) {
         const Icon = step === "shipped" ? Truck : step === "packed" ? Package : Check
         return (
           <li key={step} className="relative flex flex-col items-center text-center" aria-current={index === current ? "step" : undefined}>
-            {index > 0 && <span aria-hidden className={cn("absolute right-1/2 top-4.5 h-0.5 w-full -translate-y-1/2", index <= current ? "bg-gold" : "bg-border")} />}
-            <span className={cn("relative z-10 flex h-9 w-9 items-center justify-center rounded-full border-2", done ? "border-gold bg-night text-gold" : "border-border bg-background text-muted-foreground")}>
+            {index > 0 && <span aria-hidden className={cn("absolute right-1/2 top-4.5 h-0.5 w-full -translate-y-1/2", index <= current ? "bg-accent" : "bg-border")} />}
+            <span className={cn("relative z-10 flex h-9 w-9 items-center justify-center rounded-full border-2", done ? "border-accent bg-brown text-accent" : "border-border bg-background text-muted-foreground")}>
               <Icon className="h-4 w-4" aria-hidden />
             </span>
             <span className={cn("mt-2 px-1 text-xs leading-4", index === current ? "font-semibold" : done ? "" : "text-muted-foreground")}>{t(`statuses.${step}`)}</span>
@@ -146,7 +146,7 @@ function ReviewForm({ locale, orderNumber, email, productId, onDone }: { locale:
 
   if (!open) {
     return (
-      <button type="button" onClick={() => setOpen(true)} className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-gold-deep underline-offset-4 hover:underline">
+      <button type="button" onClick={() => setOpen(true)} className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-ink underline-offset-4 hover:underline">
         <Star className="h-4 w-4" aria-hidden /> {t("write")}
       </button>
     )
@@ -171,7 +171,7 @@ function ReviewForm({ locale, orderNumber, email, productId, onDone }: { locale:
         <div className="mt-2 flex gap-1">
           {[1, 2, 3, 4, 5].map(value => (
             <button key={value} type="button" onClick={() => setRating(value)} aria-pressed={rating === value} aria-label={t("stars", { count: value })} className="p-0.5">
-              <Star className={cn("h-7 w-7", value <= rating ? "fill-gold text-gold" : "text-border")} strokeWidth={1.5} aria-hidden />
+              <Star className={cn("h-7 w-7", value <= rating ? "fill-accent text-accent-ink" : "text-border")} strokeWidth={1.5} aria-hidden />
             </button>
           ))}
         </div>
@@ -184,7 +184,7 @@ function ReviewForm({ locale, orderNumber, email, productId, onDone }: { locale:
       <p className="text-xs text-muted-foreground">{t("moderation")}</p>
       {status === "error" && <p role="alert" className="text-sm text-destructive">{t("error")}{error ? ` (${error})` : ""}</p>}
       <div className="flex gap-2">
-        <button type="submit" disabled={status === "sending"} className="h-11 bg-primary px-5 text-sm font-semibold text-primary-foreground disabled:opacity-60">{status === "sending" ? t("sending") : t("submit")}</button>
+        <button type="submit" disabled={status === "sending"} className="h-11 bg-accent px-5 text-sm font-semibold text-accent-foreground hover:bg-accent-hover disabled:opacity-60">{status === "sending" ? t("sending") : t("submit")}</button>
         <button type="button" onClick={() => setOpen(false)} className="h-11 px-4 text-sm">{t("cancel")}</button>
       </div>
     </form>

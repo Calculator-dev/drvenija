@@ -12,7 +12,7 @@ export function ProductReviews({ locale, product }: { locale: Locale; product: L
     <section id="recenzije" className="mx-auto max-w-5xl px-4 py-16 md:px-6 md:py-20">
       <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-gold-deep">{t("eyebrow")}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent-ink">{t("eyebrow")}</p>
           <h2 className="mt-3 font-serif text-4xl tracking-tight md:text-5xl">{t("title")}</h2>
         </div>
         <div className="text-right">
@@ -30,7 +30,7 @@ export function ProductReviews({ locale, product }: { locale: Locale; product: L
             </div>
             <StarRating value={review.rating} className="mt-1" />
             <p className="mt-3 max-w-3xl whitespace-pre-line text-sm leading-7 text-foreground/80">{review.body}</p>
-            <p className="mt-2 text-xs text-gold-deep">{t("verified")}</p>
+            <p className="mt-2 text-xs text-accent-ink">{t("verified")}</p>
           </li>
         ))}
       </ul>

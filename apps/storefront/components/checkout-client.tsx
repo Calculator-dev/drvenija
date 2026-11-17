@@ -103,7 +103,7 @@ export function CheckoutClient({ locale, settings }: { locale: Locale; settings:
         </p>
         <Link
           href={locale === "en" ? "/en/shop" : "/shop"}
-          className="mt-8 inline-flex h-12 items-center justify-center bg-foreground px-6 text-sm tracking-wide text-background"
+          className="mt-8 inline-flex h-12 items-center justify-center bg-accent px-6 text-sm font-semibold tracking-wide text-accent-foreground transition-colors hover:bg-accent-hover"
         >
           {t("backToShop")}
         </Link>
@@ -150,9 +150,9 @@ export function CheckoutClient({ locale, settings }: { locale: Locale; settings:
               const Icon = method === "cash_on_delivery" ? Banknote : Landmark
               return (
                 <label key={method} className={cn("flex cursor-pointer gap-3 border p-4 transition-colors", paymentMethod === method ? "border-foreground bg-secondary/60" : "border-border hover:border-foreground/60")}>
-                  <input type="radio" name="paymentMethod" value={method} checked={paymentMethod === method} onChange={() => setPaymentMethod(method)} className="mt-1 accent-[var(--gold-deep)]" />
+                  <input type="radio" name="paymentMethod" value={method} checked={paymentMethod === method} onChange={() => setPaymentMethod(method)} className="mt-1 accent-[var(--accent-ink)]" />
                   <span>
-                    <span className="flex items-center gap-2 text-sm font-semibold"><Icon className="h-4 w-4 text-gold-deep" aria-hidden />{t(`payment.${method}.title`)}</span>
+                    <span className="flex items-center gap-2 text-sm font-semibold"><Icon className="h-4 w-4 text-accent-ink" aria-hidden />{t(`payment.${method}.title`)}</span>
                     <span className="mt-1 block text-xs leading-5 text-muted-foreground">{t(`payment.${method}.text`)}</span>
                   </span>
                 </label>
@@ -163,9 +163,9 @@ export function CheckoutClient({ locale, settings }: { locale: Locale; settings:
 
         <Section title={t("sections.gift")}>
           <label className="flex cursor-pointer items-start gap-3 border border-border p-4">
-            <input type="checkbox" checked={giftWrap} onChange={event => setGiftWrap(event.target.checked)} className="mt-1 accent-[var(--gold-deep)]" />
+            <input type="checkbox" checked={giftWrap} onChange={event => setGiftWrap(event.target.checked)} className="mt-1 accent-[var(--accent-ink)]" />
             <span>
-              <span className="flex items-center gap-2 text-sm font-semibold"><Gift className="h-4 w-4 text-gold-deep" aria-hidden />{t("gift.label", { price: formatPrice(settings.giftWrapPrice, locale) })}</span>
+              <span className="flex items-center gap-2 text-sm font-semibold"><Gift className="h-4 w-4 text-accent-ink" aria-hidden />{t("gift.label", { price: formatPrice(settings.giftWrapPrice, locale) })}</span>
               <span className="mt-1 block text-xs leading-5 text-muted-foreground">{t("gift.text")}</span>
             </span>
           </label>
@@ -184,7 +184,7 @@ export function CheckoutClient({ locale, settings }: { locale: Locale; settings:
         <button
           type="submit"
           disabled={submitting}
-          className="flex h-12 w-full items-center justify-center bg-foreground text-sm tracking-wide text-background transition-colors hover:bg-foreground/90 disabled:opacity-60"
+          className="flex h-12 w-full items-center justify-center bg-accent text-sm font-semibold tracking-wide text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-60"
         >
           {submitting ? t("submitting") : t("submit", { total: formatPrice(total, locale) })}
         </button>
@@ -246,7 +246,7 @@ export function CheckoutClient({ locale, settings }: { locale: Locale; settings:
                 <button type="button" onClick={() => setDiscount(null)} className="ml-2 inline-flex items-center align-middle text-muted-foreground hover:text-foreground" aria-label={t("discount.remove")}><X className="h-3.5 w-3.5" aria-hidden /></button>
                 {discountBelowMinimum && <span className="block text-xs text-destructive">{t("discount.errors.min_subtotal", { amount: formatPrice(discount.minSubtotal, locale) })}</span>}
               </dt>
-              <dd className="text-gold-deep">−{formatPrice(discountValue, locale)}</dd>
+              <dd className="text-accent-ink">−{formatPrice(discountValue, locale)}</dd>
             </div>
           )}
           {giftWrapAmount > 0 && (

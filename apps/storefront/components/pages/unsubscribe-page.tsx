@@ -32,7 +32,7 @@ export function UnsubscribePage({ token }: { token: string }) {
                 setState("error")
               }
             }}
-            className="mt-8 h-12 bg-primary px-6 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+            className="mt-8 h-12 bg-accent px-6 text-sm font-semibold text-accent-foreground hover:bg-accent-hover disabled:opacity-60"
           >
             {t("unsubscribeButton")}
           </button>

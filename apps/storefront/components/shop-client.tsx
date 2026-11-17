@@ -195,7 +195,7 @@ export function ShopClient({ locale, products, categories, currentCategoryId }: 
           <div className="flex-1 overflow-y-auto px-5">{filterPanel("mobile")}</div>
           <div className="grid grid-cols-2 gap-3 border-t border-border p-5">
             <button type="button" onClick={resetFilters} className="h-12 border border-foreground text-sm font-semibold">{t("filters.clear")}</button>
-            <button type="button" onClick={() => setFiltersOpen(false)} className="h-12 bg-foreground text-sm font-semibold text-background">{t("filters.show", { count: filtered.length })}</button>
+            <button type="button" onClick={() => setFiltersOpen(false)} className="h-12 bg-accent text-sm font-semibold text-accent-foreground hover:bg-accent-hover">{t("filters.show", { count: filtered.length })}</button>
           </div>
         </div>
       </div>

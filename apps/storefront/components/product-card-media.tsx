@@ -37,7 +37,7 @@ export function ProductCardMedia({ locale, product, sizes, priority = false, cla
       )}
       <WishlistButton productId={product.id} productName={product.localizedName} className="absolute right-3 top-3" />
       <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
-        {product.featured && <span className="bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-accent-foreground">{t("bestseller")}</span>}
+        {product.featured && <span className="bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-accent-foreground">{t("bestseller")}</span>}
         {product.customizable && <span className="bg-background/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground">{t("personalised")}</span>}
       </div>
     </div>

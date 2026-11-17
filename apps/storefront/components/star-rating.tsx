@@ -7,7 +7,7 @@ export function StarRating({ value, className, label }: { value: number; classNa
   return (
     <span className={cn("inline-flex items-center gap-0.5", className)} role="img" aria-label={label ?? `${value} / 5`}>
       {[1, 2, 3, 4, 5].map(star => (
-        <Star key={star} className={cn("h-4 w-4", star <= filled ? "fill-gold text-gold" : "fill-transparent text-border")} strokeWidth={1.5} aria-hidden />
+        <Star key={star} className={cn("h-4 w-4", star <= filled ? "fill-accent text-accent-ink" : "fill-transparent text-border")} strokeWidth={1.5} aria-hidden />
       ))}
     </span>
   )

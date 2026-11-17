@@ -36,11 +36,11 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <div className="bg-gold px-3 py-2 text-center text-[9px] font-semibold uppercase tracking-[0.14em] text-accent-foreground sm:text-[11px] sm:tracking-[0.2em]">
+      <div className="bg-accent px-3 py-2 text-center text-[9px] font-semibold uppercase tracking-[0.14em] text-accent-foreground sm:text-[11px] sm:tracking-[0.2em]">
         {t("freeDelivery", { amount: String(shippingPolicy.freeFrom) })}
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-night-line bg-night/95 text-[#e9e4da] backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-brown-line bg-brown/95 text-cream backdrop-blur-xl">
         <div className="mx-auto grid h-17 max-w-375 grid-cols-[1fr_auto] items-center gap-3 px-4 md:h-19 md:grid-cols-[220px_1fr] md:px-6">
           <div className="flex min-w-0 items-center gap-2">
             <button
@@ -54,7 +54,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             <Link
               href={buildPath(locale)}
               aria-label={siteName}
-              className="min-w-0 text-[#f7f5f0]"
+              className="min-w-0 text-cream"
             >
               <Logo priority />
             </Link>
@@ -80,12 +80,12 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           />
         </div>
 
-        <div className="border-t border-night-line px-4 py-3 md:hidden">
+        <div className="border-t border-brown-line px-4 py-3 md:hidden">
           <SearchForm action={shopHref} id="mobile" dark />
         </div>
 
         <nav
-          className="hidden border-t border-night-line lg:block"
+          className="hidden border-t border-brown-line lg:block"
           aria-label={t("mainNavigation")}
         >
           <div className="mx-auto flex h-12 max-w-375 items-center justify-center gap-8 px-6 xl:gap-11">
@@ -97,9 +97,9 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                   key={item.href}
                   href={`${localePrefix}${item.href}`}
                   className={cn(
-                    "relative flex h-full items-center text-[13px] font-medium text-[#e9e4da]/85 transition-colors hover:text-gold",
+                    "relative flex h-full items-center text-[13px] font-medium text-cream/85 transition-colors hover:text-accent",
                     active &&
-                      "text-gold after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-gold",
+                      "text-accent after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-accent",
                   )}
                 >
                   {item.label}
@@ -204,7 +204,7 @@ function SearchForm({
       onSubmit={onSubmit}
       className={cn(
         "flex h-10 w-full items-center rounded-sm border transition-colors",
-        dark ? "border-night-line bg-white/8 text-[#f7f5f0] focus-within:border-gold" : "border-border bg-secondary focus-within:border-foreground",
+        dark ? "border-brown-line bg-cream/10 text-cream focus-within:border-accent" : "border-border bg-secondary focus-within:border-foreground",
         className,
       )}
     >
@@ -216,7 +216,7 @@ function SearchForm({
         name="q"
         type="search"
         placeholder={t("searchLabel")}
-        className={cn("min-w-0 flex-1 bg-transparent px-4 text-sm outline-none", dark ? "placeholder:text-white/50" : "placeholder:text-muted-foreground")}
+        className={cn("min-w-0 flex-1 bg-transparent px-4 text-sm outline-none", dark ? "placeholder:text-cream/55" : "placeholder:text-muted-foreground")}
       />
       <button
         type="submit"
@@ -253,7 +253,7 @@ function HeaderActions({
       <button
         type="button"
         onClick={onCartOpen}
-        className="relative flex h-10 items-center justify-center gap-2 px-2 transition-colors hover:text-gold sm:px-3"
+        className="relative flex h-10 items-center justify-center gap-2 px-2 transition-colors hover:text-accent sm:px-3"
         aria-label={common("cart")}
       >
         <ShoppingBag className="h-5 w-5" strokeWidth={1.5} />
@@ -262,7 +262,7 @@ function HeaderActions({
         </span>
         <span className="hidden text-sm md:inline">({totalItems})</span>
         {totalItems > 0 && (
-          <span className="absolute right-0 top-0 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1 text-[10px] font-bold text-accent-foreground md:hidden">
+          <span className="absolute right-0 top-0 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground md:hidden">
             {totalItems}
           </span>
         )}
@@ -282,7 +282,7 @@ function LanguageLink({ locale, search }: { locale: Locale; search?: string }) {
     <Link
       href={alternateLocalePath(pathname, search)}
       hrefLang={otherLocale[locale]}
-      className="inline-flex h-10 items-center justify-center px-2 text-xs font-semibold tracking-[0.16em] transition-colors hover:text-gold sm:px-3"
+      className="inline-flex h-10 items-center justify-center px-2 text-xs font-semibold tracking-[0.16em] transition-colors hover:text-accent sm:px-3"
     >
       {t("switchLanguage")}
     </Link>
@@ -296,11 +296,11 @@ function WishlistLink({ locale }: { locale: Locale }) {
     <Link
       href={buildPath(locale, "/wishlist")}
       aria-label={t("title")}
-      className="relative flex h-10 w-10 items-center justify-center transition-colors hover:text-gold"
+      className="relative flex h-10 w-10 items-center justify-center transition-colors hover:text-accent"
     >
       <Heart className="h-5 w-5" strokeWidth={1.5} aria-hidden />
       {ids.length > 0 && (
-        <span className="absolute right-0 top-0 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1 text-[10px] font-bold text-accent-foreground">
+        <span className="absolute right-0 top-0 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground">
           {ids.length}
         </span>
       )}

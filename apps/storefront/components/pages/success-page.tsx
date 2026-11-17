@@ -25,7 +25,7 @@ export function SuccessPage({ locale, orderNumber }: { locale: Locale; orderNumb
               {t("trackOrder")}
             </Link>
           )}
-          <Link href={href} className="inline-flex h-12 items-center justify-center bg-foreground px-6 text-sm tracking-wide text-background">
+          <Link href={href} className="inline-flex h-12 items-center justify-center bg-accent px-6 text-sm font-semibold tracking-wide text-accent-foreground transition-colors hover:bg-accent-hover">
             {t("backToShop")}
           </Link>
         </div>

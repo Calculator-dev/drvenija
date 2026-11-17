@@ -21,7 +21,7 @@ const collections = [
 ] as const
 
 const materials = [
-  { key: "mirror", image: "/images/products/mirror-sky.webp", swatch: "bg-gold" },
+  { key: "mirror", image: "/images/products/mirror-sky.webp", swatch: "bg-accent" },
   { key: "black", image: "/images/products/surah-arch.webp", swatch: "bg-black" },
   { key: "wood", image: "/images/products/wood-frame.webp", swatch: "bg-wood" },
 ] as const
@@ -44,11 +44,11 @@ export async function HomePage({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-night text-[#f4efe6]">
+      <section className="relative isolate overflow-hidden bg-brown text-cream">
         <svg aria-hidden className="absolute inset-0 -z-10 h-full w-full opacity-[0.07]">
           <defs>
             <pattern id="hero-lattice" width="64" height="64" patternUnits="userSpaceOnUse">
-              <g fill="none" stroke="var(--gold)" strokeWidth="1">
+              <g fill="none" stroke="var(--accent)" strokeWidth="1">
                 <rect x="16" y="16" width="32" height="32" />
                 <rect x="16" y="16" width="32" height="32" transform="rotate(45 32 32)" />
               </g>
@@ -58,24 +58,24 @@ export async function HomePage({ locale }: { locale: Locale }) {
         </svg>
         <div className="mx-auto grid max-w-375 items-center gap-12 px-4 pb-20 pt-16 md:grid-cols-[1.05fr_1fr] md:gap-14 md:px-6 md:pb-24 md:pt-22">
           <Reveal className="flex flex-col gap-7" y={18}>
-            <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-gold">
+            <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-accent">
               <Rosette className="h-4.5 w-4.5" />
               {t("hero.eyebrow")}
             </p>
             <h1 className="font-serif text-[40px] leading-[1.04] tracking-[-0.01em] sm:text-6xl lg:text-[70px]">{t("hero.title")}</h1>
-            <p className="max-w-130 text-base leading-7 text-[#c9c1b3] md:text-lg">{t("hero.description")}</p>
+            <p className="max-w-130 text-base leading-7 text-cream/75 md:text-lg">{t("hero.description")}</p>
             <div className="flex flex-wrap gap-3 pt-1">
-              <Link href={shopHref} className="inline-flex min-h-13 items-center gap-2.5 rounded-full bg-gold px-6.5 text-[15px] font-bold text-accent-foreground transition-colors hover:bg-[#f0c24f]">
+              <Link href={shopHref} className="inline-flex min-h-13 items-center gap-2.5 rounded-full bg-accent px-6.5 text-[15px] font-bold text-accent-foreground transition-colors hover:bg-accent-hover">
                 {t("hero.shopCta")} <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link href={customHref} className="inline-flex min-h-13 items-center rounded-full border border-[#4a443a] px-6.5 text-[15px] font-semibold transition-colors hover:border-gold hover:text-gold">
+              <Link href={customHref} className="inline-flex min-h-13 items-center rounded-full border border-cream/30 px-6.5 text-[15px] font-semibold transition-colors hover:border-accent hover:text-accent">
                 {t("hero.customCta")}
               </Link>
             </div>
           </Reveal>
           <div className="flex items-end justify-center gap-4.5">
             <ArchImage src="/images/products/shahada-black.webp" alt={t("hero.imageAlts.left")} className="mb-10 hidden w-[26%] opacity-90 sm:block" sizes="20vw" />
-            <ArchImage src="/images/products/allah-gold.webp" alt={t("hero.imageAlts.main")} className="w-3/5 outline outline-offset-10 outline-gold sm:w-[44%]" sizes="(min-width: 768px) 22vw, 60vw" priority />
+            <ArchImage src="/images/products/allah-gold.webp" alt={t("hero.imageAlts.main")} className="w-3/5 outline outline-offset-10 outline-accent sm:w-[44%]" sizes="(min-width: 768px) 22vw, 60vw" priority />
             <ArchImage src="/images/products/mihrab-gold.webp" alt={t("hero.imageAlts.right")} className="mb-24 hidden w-[26%] opacity-90 sm:block" sizes="20vw" />
           </div>
         </div>
@@ -85,7 +85,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
 
       <section className="mx-auto max-w-375 px-4 pb-6 pt-16 md:px-6 md:pt-22">
         <SectionHeading eyebrow={t("collections.eyebrow")} title={t("collections.title")}>
-          <Link href={shopHref} className="text-[15px] font-semibold text-gold-deep hover:text-foreground">{t("collections.viewAll")} →</Link>
+          <Link href={shopHref} className="text-[15px] font-semibold text-accent-ink hover:text-foreground">{t("collections.viewAll")} →</Link>
         </SectionHeading>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 lg:gap-5">
           {collections.map((collection, index) => (
@@ -95,7 +95,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
                   <Image src={collection.image} alt={t(`collections.items.${collection.key}.alt`)} fill sizes="(min-width: 1024px) 16vw, (min-width: 640px) 33vw, 50vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
                 </span>
                 <span className="flex flex-col gap-0.5">
-                  <span className="font-serif text-[19px] transition-colors group-hover:text-gold-deep">{t(`collections.items.${collection.key}.name`)}</span>
+                  <span className="font-serif text-[19px] transition-colors group-hover:text-accent-ink">{t(`collections.items.${collection.key}.name`)}</span>
                   <span className="text-[13px] text-muted-foreground">{t(`collections.items.${collection.key}.hint`)}</span>
                 </span>
               </Link>
@@ -110,12 +110,12 @@ export async function HomePage({ locale }: { locale: Locale }) {
         </section>
       )}
 
-      <section className="bg-night py-20 text-[#f4efe6] md:py-24">
+      <section className="bg-brown py-20 text-cream md:py-24">
         <div className="mx-auto max-w-375 px-4 md:px-6">
           <Reveal className="mb-12 max-w-160">
-            <p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-gold">{t("materials.eyebrow")}</p>
+            <p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-accent">{t("materials.eyebrow")}</p>
             <h2 className="mb-4 font-serif text-[32px] leading-[1.1] md:text-[44px]">{t("materials.title")}</h2>
-            <p className="text-base leading-7 text-[#c9c1b3] md:text-[17px]">{t("materials.description")}</p>
+            <p className="text-base leading-7 text-cream/75 md:text-[17px]">{t("materials.description")}</p>
           </Reveal>
           <div className="grid gap-10 md:grid-cols-3 md:gap-6">
             {materials.map((material, index) => (
@@ -124,10 +124,10 @@ export async function HomePage({ locale }: { locale: Locale }) {
                   <Image src={material.image} alt={t(`materials.items.${material.key}.alt`)} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
                 </span>
                 <h3 className="flex items-center gap-2.5 font-serif text-2xl">
-                  <span aria-hidden className={`h-3.5 w-3.5 rounded-full border border-[#5a5448] ${material.swatch}`} />
+                  <span aria-hidden className={`h-3.5 w-3.5 rounded-full border border-cream/30 ${material.swatch}`} />
                   {t(`materials.items.${material.key}.name`)}
                 </h3>
-                <p className="text-[15px] leading-6 text-[#b5ada0]">{t(`materials.items.${material.key}.text`)}</p>
+                <p className="text-[15px] leading-6 text-cream/65">{t(`materials.items.${material.key}.text`)}</p>
               </Reveal>
             ))}
           </div>
@@ -148,19 +148,19 @@ export async function HomePage({ locale }: { locale: Locale }) {
             </div>
           </div>
           <Reveal className="flex flex-col gap-6.5">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold-deep">{t("personal.eyebrow")}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-ink">{t("personal.eyebrow")}</p>
             <h2 className="font-serif text-[32px] leading-[1.1] md:text-[44px]">{t("personal.title")}</h2>
-            <p className="text-base leading-7 text-[#4a453d] md:text-[17px]">{t("personal.description")}</p>
+            <p className="text-base leading-7 text-foreground/80 md:text-[17px]">{t("personal.description")}</p>
             <ol className="flex flex-col gap-4.5">
               {(["choose", "write", "approve"] as const).map((step, index) => (
                 <li key={step} className="flex items-start gap-4">
-                  <span aria-hidden className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-night font-serif text-[17px] text-gold">{index + 1}</span>
+                  <span aria-hidden className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-brown font-serif text-[17px] text-accent">{index + 1}</span>
                   <span className="pt-1.5 text-base leading-6">{t.rich(`personal.steps.${step}`, { b: chunks => <strong className="font-semibold">{chunks}</strong> })}</span>
                 </li>
               ))}
             </ol>
             <div className="flex flex-wrap gap-3">
-              <Link href={`${shopHref}?type=custom`} className="inline-flex min-h-13 items-center rounded-full bg-primary px-6.5 text-[15px] font-bold text-primary-foreground transition-colors hover:bg-[#2a2721]">{t("personal.shopCta")}</Link>
+              <Link href={`${shopHref}?type=custom`} className="inline-flex min-h-13 items-center rounded-full bg-accent px-6.5 text-[15px] font-bold text-accent-foreground transition-colors hover:bg-accent-hover">{t("personal.shopCta")}</Link>
               <Link href={customHref} className="inline-flex min-h-13 items-center rounded-full border border-foreground px-6.5 text-[15px] font-semibold transition-colors hover:bg-foreground hover:text-background">{t("personal.customCta")}</Link>
             </div>
           </Reveal>
@@ -169,12 +169,12 @@ export async function HomePage({ locale }: { locale: Locale }) {
 
       <section className="mx-auto max-w-375 px-4 py-20 md:px-6 md:py-24">
         <Reveal>
-          <div className="grid overflow-hidden rounded-xl bg-night text-[#f4efe6] md:grid-cols-2">
+          <div className="grid overflow-hidden rounded-xl bg-brown text-cream md:grid-cols-2">
             <div className="flex flex-col gap-5 px-7 py-12 md:px-12 md:py-14">
-              <span lang="ar" dir="rtl" className="self-start font-arabic text-[40px] leading-none text-gold">{t("seasonal.greeting")}</span>
+              <span lang="ar" dir="rtl" className="self-start font-arabic text-[40px] leading-none text-accent">{t("seasonal.greeting")}</span>
               <h2 className="font-serif text-[32px] leading-[1.1] md:text-[44px]">{t("seasonal.title")}</h2>
-              <p className="max-w-110 text-base leading-7 text-[#c9c1b3]">{t("seasonal.description")}</p>
-              <Link href={collectionHref(collections[1].keywords)} className="inline-flex min-h-13 items-center self-start rounded-full bg-gold px-6.5 text-[15px] font-bold text-accent-foreground transition-colors hover:bg-[#f0c24f]">{t("seasonal.cta")}</Link>
+              <p className="max-w-110 text-base leading-7 text-cream/75">{t("seasonal.description")}</p>
+              <Link href={collectionHref(collections[1].keywords)} className="inline-flex min-h-13 items-center self-start rounded-full bg-accent px-6.5 text-[15px] font-bold text-accent-foreground transition-colors hover:bg-accent-hover">{t("seasonal.cta")}</Link>
             </div>
             <div className="grid min-h-90 grid-cols-2 gap-1">
               <span className="relative block"><Image src="/images/products/crescent.webp" alt={t("seasonal.imageAlts.crescent")} fill sizes="(min-width: 768px) 25vw, 50vw" className="object-cover" /></span>
@@ -188,7 +188,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
 
       <section className="mx-auto max-w-375 px-4 pb-20 md:px-6 md:pb-24">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <h2 className="font-serif text-[26px] md:text-[30px]">{t("instagram.title")} <span className="text-gold-deep">@drvenija</span></h2>
+          <h2 className="font-serif text-[26px] md:text-[30px]">{t("instagram.title")} <span className="text-accent-ink">@drvenija</span></h2>
           <a href={instagramUrl} className="inline-flex min-h-11 items-center rounded-full border border-foreground px-5 text-sm font-semibold transition-colors hover:bg-foreground hover:text-background">{t("instagram.follow")}</a>
         </div>
         <div className="grid grid-cols-3 gap-2 md:grid-cols-6">
@@ -207,7 +207,7 @@ function SectionHeading({ eyebrow, title, children }: { eyebrow: string; title: 
   return (
     <Reveal className="mb-9 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-gold-deep">{eyebrow}</p>
+        <p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-accent-ink">{eyebrow}</p>
         <h2 className="font-serif text-[32px] leading-[1.1] md:text-[44px]">{title}</h2>
       </div>
       {children}

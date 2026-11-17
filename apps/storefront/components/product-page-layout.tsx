@@ -45,7 +45,7 @@ export function ProductPageLayout({ locale, product, related, category }: { loca
 
       <section className="bg-primary px-4 py-20 text-center text-primary-foreground md:px-6 md:py-28">
         <Reveal className="mx-auto max-w-4xl">
-          <p className="text-xs uppercase tracking-[0.3em] text-gold">{product.categoryName?.[locale] ?? t("collectionFallback")}</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-accent">{product.categoryName?.[locale] ?? t("collectionFallback")}</p>
           <h2 className="mt-5 font-serif text-4xl leading-tight tracking-tight md:text-6xl">{product.localizedName}</h2>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-white/65 md:text-lg">{product.localizedDescription}</p>
         </Reveal>
@@ -53,7 +53,7 @@ export function ProductPageLayout({ locale, product, related, category }: { loca
 
       <section className="mx-auto max-w-375 px-4 py-16 md:px-6 md:py-24">
         <Reveal className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-gold-deep">{t("highlights.eyebrow")}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent-ink">{t("highlights.eyebrow")}</p>
           <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">{t("highlights.title")}</h2>
         </Reveal>
         <div className="mt-12 grid grid-cols-2 border-l border-t border-border/60 md:grid-cols-4">
@@ -73,7 +73,7 @@ export function ProductPageLayout({ locale, product, related, category }: { loca
         <div className="mx-auto grid max-w-375 items-center gap-10 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:gap-16">
           <WallMockup image={product.primaryImage} locale={locale} />
           <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-gold-deep">{t("mockup.eyebrow")}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent-ink">{t("mockup.eyebrow")}</p>
             <h2 className="mt-4 font-serif text-4xl leading-tight tracking-tight md:text-5xl">{t("mockup.title")}</h2>
             <p className="mt-5 max-w-md text-base leading-8 text-foreground/70">{t("mockup.text")}</p>
             <Link href={buildPath(locale, "/custom")} className="mt-7 inline-flex items-center gap-2 border-b border-foreground pb-1 text-sm font-semibold">{t("mockup.cta")}</Link>
@@ -88,7 +88,7 @@ export function ProductPageLayout({ locale, product, related, category }: { loca
           </div>
           <Reveal className="flex items-center px-7 py-16 md:px-14 lg:px-20">
             <div className="max-w-xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-gold-deep">{t("finish.eyebrow")}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent-ink">{t("finish.eyebrow")}</p>
               <h2 className="mt-5 font-serif text-4xl leading-tight tracking-tight md:text-5xl">{product.localizedTagline || t("finish.titleFallback")}</h2>
               <p className="mt-6 text-base leading-8 text-foreground/65">{t("finish.text", { material: materialName })}</p>
             </div>
@@ -98,7 +98,7 @@ export function ProductPageLayout({ locale, product, related, category }: { loca
 
       <section className="mx-auto max-w-5xl px-4 py-16 md:px-6 md:py-24">
         <Reveal>
-          <p className="text-center text-xs font-semibold uppercase tracking-[0.28em] text-gold-deep">{t("specs.eyebrow")}</p>
+          <p className="text-center text-xs font-semibold uppercase tracking-[0.28em] text-accent-ink">{t("specs.eyebrow")}</p>
           <h2 className="mt-4 text-center font-serif text-4xl tracking-tight md:text-5xl">{t("specs.title")}</h2>
           <dl className="mt-12 border-t border-border/60">
             <SpecRow label={t("specs.material")} value={materialName} />

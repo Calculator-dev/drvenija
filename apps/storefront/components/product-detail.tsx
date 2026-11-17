@@ -121,7 +121,7 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
           ref={addButton}
           type="button"
           onClick={handleAdd}
-          className="min-h-12 flex-1 bg-primary px-6 text-sm font-semibold tracking-wide text-primary-foreground transition-colors hover:bg-primary/90"
+          className="min-h-12 flex-1 bg-accent px-6 text-sm font-semibold tracking-wide text-accent-foreground transition-colors hover:bg-accent-hover"
         >
           {t("addToCart")} · {formatPrice(selectedVariant.price * quantity, locale)}
         </button>
@@ -151,7 +151,7 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
             <p className="truncate text-sm font-semibold">{product.localizedName}</p>
             <p className="truncate text-xs text-muted-foreground">{selectedVariant.dimensions} · {formatPrice(selectedVariant.price, locale)}</p>
           </div>
-          <button type="button" onClick={handleAdd} className="h-11 shrink-0 bg-primary px-4 text-sm font-semibold text-primary-foreground">
+          <button type="button" onClick={handleAdd} className="h-11 shrink-0 bg-accent px-4 text-sm font-semibold text-accent-foreground">
             {t("addToCart")}
           </button>
         </div>

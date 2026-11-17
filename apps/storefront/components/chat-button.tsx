@@ -57,9 +57,9 @@ export function ChatButton() {
         onClick={() => setOpen(value => !value)}
         aria-expanded={open}
         aria-label={open ? t("close") : t("open")}
-        className="flex h-14 items-center gap-2 rounded-full bg-night px-5 text-sm font-semibold text-[#f7f5f0] shadow-lg ring-1 ring-gold/40 transition-transform hover:scale-105"
+        className="flex h-14 items-center gap-2 rounded-full bg-brown px-5 text-sm font-semibold text-cream shadow-lg ring-1 ring-accent/40 transition-transform hover:scale-105"
       >
-        {open ? <X className="h-5 w-5 text-gold" aria-hidden /> : <MessageCircle className="h-5 w-5 text-gold" aria-hidden />}
+        {open ? <X className="h-5 w-5 text-accent" aria-hidden /> : <MessageCircle className="h-5 w-5 text-accent" aria-hidden />}
         <span className="hidden sm:inline">{t("open")}</span>
       </button>
     </div>
