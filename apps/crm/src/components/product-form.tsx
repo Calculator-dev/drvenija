@@ -341,6 +341,21 @@ export function ProductForm({
             </Card>
             <Card className="space-y-4 p-6">
               <h3 className="font-serif text-2xl">Opcije</h3>
+              <label className="flex items-start gap-3 text-sm">
+                <input
+                  type="checkbox"
+                  name="published"
+                  defaultChecked={product?.published ?? true}
+                  aria-describedby="published-hint"
+                  className="mt-0.5 h-4 w-4 accent-primary"
+                />
+                <span>
+                  Objavljeno na webshopu
+                  <span id="published-hint" className="block text-xs leading-5 text-muted-foreground">
+                    Isključite da sačuvate proizvod kao skicu koju kupci ne vide.
+                  </span>
+                </span>
+              </label>
               <label className="flex items-center gap-3 text-sm">
                 <input
                   type="checkbox"

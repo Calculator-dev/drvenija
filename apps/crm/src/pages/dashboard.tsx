@@ -10,12 +10,20 @@ export function DashboardPage() {
   const query = useQuery({ queryKey: ["dashboard"], queryFn: getDashboard })
   return (
     <>
-      <PageHeader eyebrow="Upravljanje" title="Pregled" description="Današnje stanje narudžbi, proizvodnje i upita." />
+      <PageHeader eyebrow="Upravljanje" title="Pregled" description="Današnje stanje narudžbi, proizvodnje, upita i recenzija." />
       {query.isError && !query.data && (
         <div className="mt-6"><p role="alert" className="text-destructive">Pregled nije moguće učitati: {query.error.message}</p><Button variant="outline" className="mt-3" onClick={() => void query.refetch()}>Pokušaj ponovo</Button></div>
       )}
-      <div className="mt-6 grid gap-4 md:grid-cols-3 xl:grid-cols-5">
-        {query.data?.totals.map(item => (
+      <div className="mt-6 grid gap-4 md:grid-cols-3 2xl:grid-cols-6">
+        {query.data?.totals.map(item => item.href ? (
+          <Link key={item.label} to={item.href} className="rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <Card className="h-full p-5 transition-colors hover:bg-muted/60">
+              <p className="text-sm text-muted-foreground">{item.label}</p>
+              <p className="mt-3 font-serif text-4xl">{item.value}</p>
+              <p className="mt-2 text-xs underline underline-offset-4">Pregledaj</p>
+            </Card>
+          </Link>
+        ) : (
           <Card key={item.label} className="p-5">
             <p className="text-sm text-muted-foreground">{item.label}</p>
             <p className="mt-3 font-serif text-4xl">{item.value}</p>

@@ -15,7 +15,8 @@ function render(client: QueryClient, element: React.ReactElement | null, path = 
 
 test('API odgovor kontrolne ploče prikazuje se bez greške', () => {
   const data = dashboardView(seedDashboard)
-  assert.equal(data.totals.length, 5)
+  assert.equal(data.totals.length, 6)
+  assert.deepEqual(data.totals[5], { label: 'Recenzije na čekanju', value: '2', href: '/reviews' })
   assert.equal(data.totals[0].value, '4')
   const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } })
   client.setQueryData(['dashboard'], data)
@@ -25,6 +26,8 @@ test('API odgovor kontrolne ploče prikazuje se bez greške', () => {
   assert.match(html, /Današnje narudžbe/)
   assert.match(html, /DRV-104251/)
   assert.match(html, /98,00\u00a0KM/)
+  assert.match(html, /Recenzije na čekanju/)
+  assert.match(html, /href="\/reviews"/)
   client.clear()
 })
 
@@ -111,4 +114,7 @@ test('nacrt proizvoda zadržava ID-eve varijanti i gradi API tijelo zahtjeva', a
   assert.equal(body.translations.en.name, 'Monogram')
   assert.equal(body.featured, true)
   assert.equal(body.customizable, false)
+  assert.equal(body.published, false)
+  form.set('published', 'on')
+  assert.equal(productPayload({ form, category: 'category-id', images: [], variants: drafts, mainDimensions: '35 cm' }).published, true)
 })
