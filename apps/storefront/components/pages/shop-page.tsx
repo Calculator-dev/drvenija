@@ -3,9 +3,9 @@ import { Suspense } from "react"
 import { getTranslations } from "next-intl/server"
 import { ShopClient } from "@/components/shop-client"
 import { getCategories, getProducts } from "@/lib/catalogue"
-import { buildPath, type Locale } from "@/lib/products"
+import { buildPath, type Locale, type LocalizedCategory } from "@/lib/products"
 
-export async function ShopPage({ locale }: { locale: Locale }) {
+export async function ShopPage({ locale, category }: { locale: Locale; category?: LocalizedCategory }) {
   const products = await getProducts(locale)
   const categories = await getCategories(locale)
   const t = await getTranslations("shop")
@@ -18,16 +18,23 @@ export async function ShopPage({ locale }: { locale: Locale }) {
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Link href={buildPath(locale)} className="transition-colors hover:text-foreground">{common("home")}</Link>
             <span aria-hidden="true">›</span>
-            <span className="text-foreground">{t("allProducts")}</span>
+            {category ? (
+              <>
+                <Link href={buildPath(locale, "/shop")} className="transition-colors hover:text-foreground">{t("allProducts")}</Link>
+                <span aria-hidden="true">›</span>
+                <span className="text-foreground">{category.localizedName}</span>
+              </>
+            ) : <span className="text-foreground">{t("allProducts")}</span>}
           </div>
           <div className="mt-16 flex flex-wrap items-end gap-x-4 gap-y-2 md:mt-20">
-            <h1 className="text-5xl font-bold tracking-[-0.045em] md:text-6xl">{t("allProducts")}</h1>
-            <p className="pb-1 text-sm text-muted-foreground">{t("productCount", { count: products.length })}</p>
+            <h1 className="font-serif text-5xl tracking-tight md:text-6xl">{category?.localizedName ?? t("allProducts")}</h1>
+            <p className="pb-1 text-sm text-muted-foreground">{t("productCount", { count: category ? products.filter(product => product.categoryId === category.id).length : products.length })}</p>
           </div>
+          {category?.localizedDescription && <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">{category.localizedDescription}</p>}
         </div>
       </section>
       <Suspense fallback={<div className="mx-auto min-h-120 max-w-375 px-4 py-10 md:px-6" />}>
-        <ShopClient locale={locale} products={products} categories={categories} />
+        <ShopClient locale={locale} products={products} categories={categories} currentCategoryId={category?.id} />
       </Suspense>
     </>
   )

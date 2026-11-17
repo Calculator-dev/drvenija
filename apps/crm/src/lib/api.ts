@@ -1,5 +1,6 @@
-import { dashboardView, inquiryRows, orderRows, productRows, type AdminDashboard, type AdminInquiry, type AdminInquiryDetail, type AdminOrder, type AdminOrderDetail, type AdminProduct, type OrderDecisionResult, type ProductDetails } from "./admin-data"
+import { dashboardView, inquiryRows, orderRows, productRows, type AdminDashboard, type AdminInquiry, type AdminInquiryDetail, type AdminOrder, type AdminOrderDetail, type AdminProduct, type FulfilmentTarget, type OrderDecisionResult, type OrderStatusResult, type PaymentStatus, type ProductDetails } from "./admin-data"
 import { apiUrl as API_URL, supabase } from "./auth"
+import type { AdminDiscount, AdminReview, DiscountInput, NewsletterSubscriber, ReviewStatus } from "./marketing"
 
 export class ApiError extends Error {
   constructor(message: string, readonly status: number) {
@@ -7,16 +8,17 @@ export class ApiError extends Error {
   }
 }
 
-async function fetchJson<T>(path: string, options?: { method: "POST" | "PUT"; body: unknown }): Promise<T> {
+async function fetchJson<T>(path: string, options?: { method: "POST" | "PUT" | "PATCH" | "DELETE"; body?: unknown }): Promise<T> {
   if (!API_URL || !supabase) throw new Error("Administratorski servis nije konfigurisan")
   const { data, error } = await supabase.auth.getSession()
   if (error || !data.session) throw new Error("Potrebna je prijava")
 
   const response = await fetch(`${API_URL}${path}`, {
     method: options?.method ?? "GET",
-    body: options ? JSON.stringify(options.body) : undefined,
+    body: options?.body === undefined ? undefined : JSON.stringify(options.body),
+    // The API rejects an empty body declared as JSON, so only bodies get a content type.
     headers: {
-      "Content-Type": "application/json",
+      ...(options?.body === undefined ? {} : { "Content-Type": "application/json" }),
       Authorization: `Bearer ${data.session.access_token}`,
     },
   })
@@ -28,6 +30,7 @@ async function fetchJson<T>(path: string, options?: { method: "POST" | "PUT"; bo
     throw new ApiError(`${body?.message ?? "Zahtjev nije uspio"}${fields}`, response.status)
   }
 
+  if (response.status === 204) return undefined as T
   return response.json() as Promise<T>
 }
 
@@ -51,6 +54,14 @@ export function decideOrder(id: string, body: { decision: "accept" } | { decisio
   return fetchJson<OrderDecisionResult>(`/admin/orders/${encodeURIComponent(id)}/decision`, { method: "PUT", body })
 }
 
+export function updateOrderStatus(id: string, body: { status: FulfilmentTarget; trackingNumber?: string; notify: boolean }) {
+  return fetchJson<OrderStatusResult>(`/admin/orders/${encodeURIComponent(id)}/status`, { method: "PUT", body })
+}
+
+export function updateOrderPayment(id: string, paymentStatus: Exclude<PaymentStatus, "cancelled">) {
+  return fetchJson<{ order: { id: string; paymentStatus: PaymentStatus } }>(`/admin/orders/${encodeURIComponent(id)}/payment`, { method: "PUT", body: { paymentStatus } })
+}
+
 export function getInquiries() {
   return fetchJson<AdminInquiry[]>("/admin/inquiries").then(inquiryRows)
 }
@@ -72,6 +83,33 @@ export function getProduct(id: string) {
 }
 export function updateProduct(id: string, body: unknown) {
   return fetchJson<ProductDetails>(`/admin/products/${encodeURIComponent(id)}`, { method: "PUT", body })
+}
+
+export function setProductPublished(id: string, published: boolean) {
+  return fetchJson<{ id: string; published: boolean }>(`/admin/products/${encodeURIComponent(id)}/published`, { method: "PATCH", body: { published } })
+}
+
+export function getDiscounts() {
+  return fetchJson<AdminDiscount[]>("/admin/discounts")
+}
+export function saveDiscount(id: string | undefined, body: DiscountInput) {
+  return id
+    ? fetchJson<AdminDiscount>(`/admin/discounts/${encodeURIComponent(id)}`, { method: "PUT", body })
+    : fetchJson<AdminDiscount>("/admin/discounts", { method: "POST", body })
+}
+export function deleteDiscount(id: string) {
+  return fetchJson<void>(`/admin/discounts/${encodeURIComponent(id)}`, { method: "DELETE" })
+}
+
+export function getReviews() {
+  return fetchJson<AdminReview[]>("/admin/reviews")
+}
+export function updateReview(id: string, status: ReviewStatus) {
+  return fetchJson<AdminReview>(`/admin/reviews/${encodeURIComponent(id)}`, { method: "PUT", body: { status } })
+}
+
+export function getNewsletterSubscribers() {
+  return fetchJson<NewsletterSubscriber[]>("/admin/newsletter")
 }
 
 export async function uploadProductImage(file: File): Promise<import("./admin-data").ProductImage> {

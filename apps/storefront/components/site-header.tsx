@@ -4,11 +4,13 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { useModalPanel } from "@/hooks/use-modal-panel";
-import { Menu, Search, ShoppingBag, X } from "lucide-react";
+import { Heart, Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/components/cart-provider";
+import { useWishlist } from "@/components/wishlist-provider";
 import { CartDrawer } from "@/components/cart-drawer";
+import { Logo } from "@/components/logo";
 import { alternateLocalePath, buildPath, siteName, type Locale } from "@/lib/products";
 import { cn } from "@/lib/utils";
 
@@ -34,11 +36,11 @@ export function SiteHeader({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <div className="bg-black px-3 py-2 text-center text-[9px] font-medium uppercase tracking-[0.14em] text-white sm:text-[11px] sm:tracking-[0.2em]">
+      <div className="bg-accent px-3 py-2 text-center text-[9px] font-semibold uppercase tracking-[0.14em] text-accent-foreground sm:text-[11px] sm:tracking-[0.2em]">
         {t("freeDelivery", { amount: String(shippingPolicy.freeFrom) })}
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-brown-line bg-brown/95 text-cream backdrop-blur-xl">
         <div className="mx-auto grid h-17 max-w-375 grid-cols-[1fr_auto] items-center gap-3 px-4 md:h-19 md:grid-cols-[220px_1fr] md:px-6">
           <div className="flex min-w-0 items-center gap-2">
             <button
@@ -51,15 +53,16 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             </button>
             <Link
               href={buildPath(locale)}
-              className="text-xl font-black uppercase tracking-tighter text-foreground sm:text-2xl md:text-[26px]"
+              aria-label={siteName}
+              className="min-w-0 text-cream"
             >
-              {siteName}
+              <Logo priority />
             </Link>
           </div>
 
           <div className="hidden md:flex md:items-center md:justify-evenly md:gap-6">
             <div className="w-full max-w-140">
-              <SearchForm action={shopHref} id="desktop" />
+              <SearchForm action={shopHref} id="desktop" dark />
             </div>
             <HeaderActions
               locale={locale}
@@ -77,12 +80,12 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           />
         </div>
 
-        <div className="border-t border-border/60 px-4 py-3 md:hidden">
-          <SearchForm action={shopHref} id="mobile" />
+        <div className="border-t border-brown-line px-4 py-3 md:hidden">
+          <SearchForm action={shopHref} id="mobile" dark />
         </div>
 
         <nav
-          className="hidden border-t border-border/60 lg:block"
+          className="hidden border-t border-brown-line lg:block"
           aria-label={t("mainNavigation")}
         >
           <div className="mx-auto flex h-12 max-w-375 items-center justify-center gap-8 px-6 xl:gap-11">
@@ -94,9 +97,9 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                   key={item.href}
                   href={`${localePrefix}${item.href}`}
                   className={cn(
-                    "relative flex h-full items-center text-[13px] font-medium text-foreground/80 transition-colors hover:text-foreground",
+                    "relative flex h-full items-center text-[13px] font-medium text-cream/85 transition-colors hover:text-accent",
                     active &&
-                      "text-foreground after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-foreground",
+                      "text-accent after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-accent",
                   )}
                 >
                   {item.label}
@@ -137,9 +140,9 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             <Link
               href={buildPath(locale)}
               onClick={() => setMenuOpen(false)}
-              className="text-xl font-black uppercase tracking-tighter"
+              aria-label={siteName}
             >
-              {siteName}
+              <Logo />
             </Link>
             <button
               type="button"
@@ -185,11 +188,14 @@ function SearchForm({
   className,
   onSubmit,
   id,
+  dark = false,
 }: {
   action: string;
   className?: string;
   onSubmit?: () => void;
   id: string;
+  /** Styles the field for the dark header bar; the menu drawer is light. */
+  dark?: boolean;
 }) {
   const t = useTranslations("header");
   return (
@@ -197,7 +203,8 @@ function SearchForm({
       action={action}
       onSubmit={onSubmit}
       className={cn(
-        "flex h-10 w-full items-center border border-border bg-[#f7f7f5] transition-colors focus-within:border-foreground",
+        "flex h-10 w-full items-center rounded-sm border transition-colors",
+        dark ? "border-brown-line bg-cream/10 text-cream focus-within:border-accent" : "border-border bg-secondary focus-within:border-foreground",
         className,
       )}
     >
@@ -209,7 +216,7 @@ function SearchForm({
         name="q"
         type="search"
         placeholder={t("searchLabel")}
-        className="min-w-0 flex-1 bg-transparent px-4 text-sm outline-none placeholder:text-muted-foreground"
+        className={cn("min-w-0 flex-1 bg-transparent px-4 text-sm outline-none", dark ? "placeholder:text-cream/55" : "placeholder:text-muted-foreground")}
       />
       <button
         type="submit"
@@ -242,10 +249,11 @@ function HeaderActions({
       <Suspense fallback={<LanguageLink locale={locale} />}>
         <LanguageLinkWithQuery locale={locale} />
       </Suspense>
+      <WishlistLink locale={locale} />
       <button
         type="button"
         onClick={onCartOpen}
-        className="relative flex h-10 items-center justify-center gap-2 px-2 sm:px-3"
+        className="relative flex h-10 items-center justify-center gap-2 px-2 transition-colors hover:text-accent sm:px-3"
         aria-label={common("cart")}
       >
         <ShoppingBag className="h-5 w-5" strokeWidth={1.5} />
@@ -254,7 +262,7 @@ function HeaderActions({
         </span>
         <span className="hidden text-sm md:inline">({totalItems})</span>
         {totalItems > 0 && (
-          <span className="absolute right-0 top-0 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-black px-1 text-[10px] text-white md:hidden">
+          <span className="absolute right-0 top-0 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground md:hidden">
             {totalItems}
           </span>
         )}
@@ -274,9 +282,28 @@ function LanguageLink({ locale, search }: { locale: Locale; search?: string }) {
     <Link
       href={alternateLocalePath(pathname, search)}
       hrefLang={otherLocale[locale]}
-      className="inline-flex h-10 items-center justify-center px-2 text-xs font-medium tracking-[0.16em] text-foreground transition-opacity hover:opacity-60 sm:px-3"
+      className="inline-flex h-10 items-center justify-center px-2 text-xs font-semibold tracking-[0.16em] transition-colors hover:text-accent sm:px-3"
     >
       {t("switchLanguage")}
+    </Link>
+  );
+}
+
+function WishlistLink({ locale }: { locale: Locale }) {
+  const { ids } = useWishlist();
+  const t = useTranslations("wishlist");
+  return (
+    <Link
+      href={buildPath(locale, "/wishlist")}
+      aria-label={t("title")}
+      className="relative flex h-10 w-10 items-center justify-center transition-colors hover:text-accent"
+    >
+      <Heart className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+      {ids.length > 0 && (
+        <span className="absolute right-0 top-0 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground">
+          {ids.length}
+        </span>
+      )}
     </Link>
   );
 }

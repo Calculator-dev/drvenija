@@ -15,8 +15,21 @@ type ConfirmationEmail = {
   orderNumber: string
   locale: "bs" | "en"
   items: Array<{ name: string; quantity: number; unitPrice: number }>
-  shippingAmount: number
+  totals: { subtotal: number; discountAmount: number; shippingAmount: number; giftWrapAmount: number; total: number }
+  paymentMethod: "bank_transfer" | "cash_on_delivery"
+  giftMessage?: string
   shipping: { address: string; city: string; postalCode?: string; country: string }
+}
+
+export type FulfilmentStatus = "in_production" | "packed" | "shipped" | "completed"
+
+type StatusEmail = {
+  to: string
+  fullName: string
+  orderNumber: string
+  locale: "bs" | "en"
+  status: FulfilmentStatus
+  trackingNumber?: string | null
 }
 
 type InquiryNotification = {
@@ -49,24 +62,82 @@ async function sendEmail(input: { to: string; subject: string; html: string; rep
   }
 }
 
+/** Link to the storefront's order status page, or null when STOREFRONT_URL is not set. */
+export function orderStatusLink(locale: "bs" | "en", orderNumber: string) {
+  if (!env.STOREFRONT_URL) return null
+  const base = env.STOREFRONT_URL.replace(/\/$/, "")
+  return `${base}${locale === "en" ? "/en" : ""}/order?number=${encodeURIComponent(orderNumber)}`
+}
+
+const row = (label: string, value: string, bold = false) =>
+  `<tr><td style="padding:10px 0;border-bottom:1px solid #e5e5e5">${bold ? `<strong>${label}</strong>` : label}</td><td style="padding:10px 0;border-bottom:1px solid #e5e5e5;text-align:right">${bold ? `<strong>${value}</strong>` : value}</td></tr>`
+
 export async function sendOrderConfirmationEmail(input: ConfirmationEmail): Promise<EmailResult> {
   const bosnian = input.locale === "bs"
-  const subtotal = input.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
-  const total = subtotal + input.shippingAmount
-  const rows = input.items.map(item => `<tr><td style="padding:10px 0;border-bottom:1px solid #e5e5e5">${escapeHtml(item.name)} × ${item.quantity}</td><td style="padding:10px 0;border-bottom:1px solid #e5e5e5;text-align:right">${item.unitPrice * item.quantity} KM</td></tr>`).join("")
-    + `<tr><td style="padding:10px 0;border-bottom:1px solid #e5e5e5">${bosnian ? "Dostava" : "Delivery"}</td><td style="padding:10px 0;border-bottom:1px solid #e5e5e5;text-align:right">${input.shippingAmount === 0 ? (bosnian ? "Besplatna" : "Free") : `${input.shippingAmount} KM`}</td></tr>`
+  const { totals } = input
+  const rows = input.items.map(item => row(`${escapeHtml(item.name)} × ${item.quantity}`, `${item.unitPrice * item.quantity} KM`)).join("")
+    + (totals.discountAmount > 0 ? row(bosnian ? "Popust" : "Discount", `−${totals.discountAmount} KM`) : "")
+    + (totals.giftWrapAmount > 0 ? row(bosnian ? "Poklon pakovanje" : "Gift wrapping", `${totals.giftWrapAmount} KM`) : "")
+    + row(bosnian ? "Dostava" : "Delivery", totals.shippingAmount === 0 ? (bosnian ? "Besplatna" : "Free") : `${totals.shippingAmount} KM`)
+    + row(bosnian ? "Ukupno" : "Total", `${totals.total} KM`, true)
   const location = [input.shipping.postalCode, input.shipping.city].filter(Boolean).join(" ")
+  const payment = input.paymentMethod === "cash_on_delivery"
+    ? bosnian ? "Plaćanje pouzećem — iznos plaćate kuriru pri preuzimanju." : "Cash on delivery — you pay the courier when the parcel arrives."
+    : bosnian ? "Uplata na račun — podatke za uplatu šaljemo nakon što potvrdimo narudžbu." : "Bank transfer — we send payment details once we confirm the order."
+  const link = orderStatusLink(input.locale, input.orderNumber)
   const subject = bosnian ? `Primili smo vašu narudžbu ${input.orderNumber}` : `We received your order ${input.orderNumber}`
   const html = `<div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#222">
     <h1 style="font-size:26px">${bosnian ? "Hvala na narudžbi" : "Thank you for your order"}</h1>
     <p>${escapeHtml(bosnian ? `Poštovani/a ${input.fullName},` : `Dear ${input.fullName},`)}</p>
     <p>${bosnian ? "Vaša narudžba je uspješno zaprimljena. Pregledat ćemo dostupnost i javiti vam se uskoro." : "Your order has been received successfully. We will review availability and contact you shortly."}</p>
     <p><strong>${bosnian ? "Broj narudžbe" : "Order number"}:</strong> ${escapeHtml(input.orderNumber)}</p>
-    <table style="width:100%;border-collapse:collapse;margin:24px 0"><tbody>${rows}<tr><td style="padding-top:14px"><strong>${bosnian ? "Ukupno" : "Total"}</strong></td><td style="padding-top:14px;text-align:right"><strong>${total} KM</strong></td></tr></tbody></table>
+    <table style="width:100%;border-collapse:collapse;margin:24px 0"><tbody>${rows}</tbody></table>
+    <p><strong>${bosnian ? "Plaćanje" : "Payment"}</strong><br>${payment}</p>
+    ${input.giftMessage ? `<p><strong>${bosnian ? "Poruka na čestitki" : "Gift card message"}</strong><br>${escapeHtml(input.giftMessage)}</p>` : ""}
     <p><strong>${bosnian ? "Dostava" : "Shipping"}</strong><br>${escapeHtml(input.shipping.address)}<br>${escapeHtml(location)}<br>${escapeHtml(input.shipping.country)}</p>
+    ${link ? `<p><a href="${link}" style="color:#3b2418">${bosnian ? "Pratite status narudžbe" : "Track your order"}</a></p>` : ""}
     <p>${bosnian ? "Srdačno," : "Kind regards,"}<br>Drvenija</p>
   </div>`
   return sendEmail({ to: input.to, subject, html })
+}
+
+const statusCopy: Record<FulfilmentStatus, { bs: [string, string]; en: [string, string] }> = {
+  in_production: {
+    bs: ["Vaša narudžba {n} je u izradi", "Počeli smo s izradom vaše narudžbe. Javit ćemo vam se kada bude poslana."],
+    en: ["Your order {n} is in production", "We have started making your order. We will let you know when it ships."],
+  },
+  packed: {
+    bs: ["Vaša narudžba {n} je spakovana", "Narudžba je gotova i spakovana. Uskoro je predajemo kuriru."],
+    en: ["Your order {n} is packed", "Your order is finished and packed. We will hand it to the courier shortly."],
+  },
+  shipped: {
+    bs: ["Vaša narudžba {n} je poslana", "Narudžba je predana kuriru i stiže uskoro."],
+    en: ["Your order {n} has shipped", "Your order is with the courier and will arrive soon."],
+  },
+  completed: {
+    bs: ["Hvala vam — narudžba {n}", "Nadamo se da ste zadovoljni. Bilo bi nam drago da ostavite recenziju — pomaže drugim kupcima i nama."],
+    en: ["Thank you — order {n}", "We hope you love it. We would be grateful for a review — it helps other customers and us."],
+  },
+}
+
+export async function sendOrderStatusEmail(input: StatusEmail): Promise<EmailResult> {
+  const bosnian = input.locale === "bs"
+  const [subjectTemplate, message] = statusCopy[input.status][input.locale]
+  const link = orderStatusLink(input.locale, input.orderNumber)
+  const tracking = input.trackingNumber
+    ? `<p><strong>${bosnian ? "Broj za praćenje pošiljke" : "Tracking number"}:</strong> ${escapeHtml(input.trackingNumber)}</p>`
+    : ""
+  const linkText = input.status === "shipped" || input.status === "completed"
+    ? bosnian ? "Status narudžbe i recenzija" : "Order status and review"
+    : bosnian ? "Status narudžbe" : "Order status"
+  const html = `<div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#222">
+    <p>${escapeHtml(bosnian ? `Poštovani/a ${input.fullName},` : `Dear ${input.fullName},`)}</p>
+    <p>${message}</p>
+    ${tracking}
+    ${link ? `<p><a href="${link}" style="color:#3b2418">${linkText}</a></p>` : ""}
+    <p>${bosnian ? "Srdačno," : "Kind regards,"}<br>Drvenija</p>
+  </div>`
+  return sendEmail({ to: input.to, subject: subjectTemplate.replace("{n}", input.orderNumber), html })
 }
 
 export async function sendOrderDecisionEmail(input: DecisionEmail): Promise<EmailResult> {

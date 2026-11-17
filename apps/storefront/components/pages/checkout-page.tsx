@@ -1,11 +1,14 @@
+import { getTranslations } from "next-intl/server"
 import { CartCatalogueSync } from "@/components/cart-catalogue-sync"
 import { CheckoutClient } from "@/components/checkout-client"
-import { useTranslations } from "next-intl"
 import { PageIntro } from "@/components/page-intro"
-import { type Locale } from "@/lib/products"
+import { getCatalogue } from "@/lib/catalogue"
+import { defaultCheckoutSettings, type Locale } from "@/lib/products"
 
-export function CheckoutPage({ locale }: { locale: Locale }) {
-  const t = useTranslations("checkout")
+export async function CheckoutPage({ locale }: { locale: Locale }) {
+  const t = await getTranslations("checkout")
+  // Checkout stays usable if the catalogue is briefly unavailable; the API prices the order.
+  const settings = await getCatalogue().then(catalogue => catalogue.checkout, () => defaultCheckoutSettings)
   return (
     <>
       <PageIntro
@@ -14,7 +17,7 @@ export function CheckoutPage({ locale }: { locale: Locale }) {
         description={t("intro.description")}
       />
       <CartCatalogueSync />
-      <CheckoutClient locale={locale} />
+      <CheckoutClient locale={locale} settings={settings} />
     </>
   )
 }

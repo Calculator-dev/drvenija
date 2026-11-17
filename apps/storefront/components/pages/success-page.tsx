@@ -19,9 +19,16 @@ export function SuccessPage({ locale, orderNumber }: { locale: Locale; orderNumb
           {t("description")}
         </p>
         {orderNumber && orderNumberPattern.test(orderNumber) && <p className="mt-6 font-medium text-foreground">{orderNumber}</p>}
-        <Link href={href} className="mt-8 inline-flex h-12 items-center justify-center bg-foreground px-6 text-sm tracking-wide text-background">
-          {t("backToShop")}
-        </Link>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          {orderNumber && orderNumberPattern.test(orderNumber) && (
+            <Link href={`${locale === "en" ? "/en" : ""}/order?number=${encodeURIComponent(orderNumber)}`} className="inline-flex h-12 items-center justify-center border border-foreground px-6 text-sm font-semibold">
+              {t("trackOrder")}
+            </Link>
+          )}
+          <Link href={href} className="inline-flex h-12 items-center justify-center bg-accent px-6 text-sm font-semibold tracking-wide text-accent-foreground transition-colors hover:bg-accent-hover">
+            {t("backToShop")}
+          </Link>
+        </div>
       </div>
     </div>
   )

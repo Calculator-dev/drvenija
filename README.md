@@ -30,9 +30,9 @@ Other root commands, also run in CI (`.github/workflows/ci.yml`):
 
 | App | File | Variables |
 | --- | --- | --- |
-| API | `apps/api/.env` | `DATABASE_URL`, `SUPABASE_*`, `BACKBLAZE_*`, `RESEND_API_KEY`, `ORDER_EMAIL_FROM`, `INQUIRY_NOTIFY_EMAIL`, `CORS_ORIGINS`, `TRUST_PROXY` |
+| API | `apps/api/.env` | `DATABASE_URL`, `SUPABASE_*`, `BACKBLAZE_*`, `RESEND_API_KEY`, `ORDER_EMAIL_FROM`, `INQUIRY_NOTIFY_EMAIL`, `STOREFRONT_URL`, `CORS_ORIGINS`, `TRUST_PROXY` |
 | CRM | `apps/crm/.env.local` | `VITE_API_URL`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` |
-| Storefront | `apps/storefront/.env.local` | `API_URL`, `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL` |
+| Storefront | `apps/storefront/.env.local` | `API_URL`, `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_CONTACT_PHONE`, `NEXT_PUBLIC_CONTACT_EMAIL` |
 
 Each app has a `.env.example`. Environment files are git-ignored. Never put a
 database URL, service-role key or other secret in a `VITE_` or `NEXT_PUBLIC_` variable.
@@ -63,6 +63,10 @@ Migration `0005_order_shipping_amount` adds `orders.shipping_amount`; apply it
 before deploying this version of the API, since order creation writes that column.
 Migration `0006_drop_price_from` removes the unused starting-price columns; apply it
 only after this version of the API is deployed, since older API versions still read them.
+Migration `0007_shop_features` adds payment method, gift wrapping, discount, tracking and
+status-email columns to `orders`, a `published` flag to `products`, and the
+`discount_codes`, `reviews` and `newsletter_subscribers` tables. Apply it before deploying
+this version of the API.
 `drizzle/meta` holds a snapshot of the current schema, so `db:generate` only emits
 new changes. If you hand-write a migration, regenerate the snapshot as well.
 
@@ -103,8 +107,9 @@ URL must be allowed in Supabase Auth redirect settings.
 
 ## CRM
 
-The dashboard shows live counts (orders today, awaiting review, awaiting production,
-inquiries in the last 30 days, catalogue size) and recent orders. Every page has its
+The dashboard shows live counts (orders today, awaiting review, accepted but not yet
+shipped, inquiries in the last 30 days, catalogue size, reviews awaiting moderation) and
+recent orders. Every page has its
 own URL, and leaving a product form with unsaved changes asks for confirmation.
 
 ### Adding and editing products
@@ -137,11 +142,55 @@ receipt when they order and an email when the order is accepted or declined. Ema
 failures never roll back a saved order or decision; the CRM shows whether each email
 was sent so the customer can be contacted manually if needed.
 
+After acceptance, the order page has an **Izrada i dostava** panel: a step indicator
+(Prihvaćena → U izradi → Spakovano → Poslano → Završeno) and buttons to move the order
+forward (steps can be skipped, never reversed). A tracking number can be entered before
+**Poslano**, and **Pošalji email kupcu** (on by default) emails the customer about the
+change; the CRM shows whether that email was sent. The order page also shows the payment
+method, gift wrapping and card message, and the discount code. Bank transfers and
+cash-on-delivery payments are confirmed by hand with **Označi kao plaćeno** (which can be
+undone). The order list shows each order's status and payment status.
+
+### Publishing, discounts, reviews and newsletter
+
+- Products have an **Objavljeno na webshopu** option (on by default). Unpublished products
+  are drafts (**Skica**) the storefront does not show; the product list can publish or hide
+  a product in one click.
+- **Popusti** (`/discounts`) manages discount codes: a percentage or fixed whole-KM amount,
+  an optional minimum order, validity window and usage limit. The list shows usage
+  (e.g. `3 / 50`) and status (Aktivan, Zakazan, Istekao, Iskorišten, Neaktivan). Deleting
+  a code does not change orders that already used it.
+- **Recenzije** (`/reviews`) lists customer reviews, pending first. Only approved reviews
+  appear on the storefront.
+- **Newsletter** (`/newsletter`) lists active subscribers; **Preuzmi CSV** downloads them
+  (email, jezik, datum).
+
 ### Custom-work inquiries
 
 The storefront's custom-work form saves inquiries through `POST /public/inquiries`.
 They appear under **Upiti** in the CRM. Set `INQUIRY_NOTIFY_EMAIL` to also email each
 inquiry to the shop (reply-to is the customer's address).
+
+## Orders, payment and discounts
+
+Customers choose bank transfer (payment details are sent after confirmation) or cash on
+delivery, can add gift wrapping (5 KM, `giftWrapPrice` in `apps/api/src/lib/pricing.ts`)
+with a card message, and can enter a discount code. The API computes every total:
+discount (whole KM, rounded down), then delivery judged on the subtotal after discount,
+then gift wrapping. A code's use is counted in the order transaction, so usage limits hold
+under concurrent orders. Orders store the code text, so deleting a code does not change
+past orders.
+
+After acceptance an order moves forward through *in production → packed → shipped →
+completed* (`PUT /admin/orders/:id/status`), optionally emailing the customer each step and
+storing a courier tracking number. Set `STOREFRONT_URL` so emails link to the order status
+page. Customers see their order at `/order` (order number + email) and, once it has
+shipped, can review each product once; reviews appear on the product page after an
+administrator approves them.
+
+Newsletter sign-ups need an explicit consent checkbox; the CRM lists active subscribers
+and exports CSV. `/newsletter/unsubscribe?token=…` unsubscribes with one click (the token
+is in `newsletter_subscribers.token`; include that link in any newsletter you send).
 
 ## Shipping
 
@@ -208,6 +257,26 @@ Product images are served from `/api/media/:id`. The route streams the image fro
 private storage with a one-day cache, which lets `next/image` resize and convert it to
 AVIF/WebP. All saved products are public (there is no draft/publish switch yet).
 Cart and checkout pages are excluded from search indexing and the sitemap.
+
+### Merchandising
+
+- The home page lists CRM categories that have products (each with a product photo and a
+  link to the filtered shop), and a product row with tabs for bestsellers (products marked
+  **featured** in the CRM), personalised, mediapan and plexiglass items. Empty tabs are hidden.
+- Product cards show the second product image on hover and "Bestseller" / "Personalised" badges.
+- Product pages have gallery arrows, a sticky add-to-cart bar on phones, a drawn
+  "on your wall" scene with selectable wall colours (it uses the primary product photo),
+  and up to four related products (same category first, then bestsellers).
+- The cart drawer and cart page show progress towards free delivery from the shipping policy.
+- Each category has its own page, `/shop/<slug>` (`/en/shop/<slug>`), with the category's
+  SEO title and description; the sitemap lists categories that have products.
+- Customisable products have a live personalisation preview: the customer types the text
+  and picks a lettering style and finish; both are saved in the order line's note.
+- A heart saves products to a wishlist in the browser (`/wishlist`).
+- A floating button opens WhatsApp (with the current page link) or Viber using
+  `NEXT_PUBLIC_CONTACT_PHONE`; the footer uses the same phone and `NEXT_PUBLIC_CONTACT_EMAIL`.
+- Unpublished products (CRM) are not shown or orderable.
+- FAQ answers live in `messages/*.json` under `faq`; the shipping answer uses the live policy.
 
 The legacy localized `/public/products`, `/public/products/:slug`, and
 `/public/categories` API endpoints remain available alongside `/public/catalogue`.

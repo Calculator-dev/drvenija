@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Minus, Plus, Trash2 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useCart } from "@/components/cart-provider"
+import { FreeShippingProgress } from "@/components/free-shipping-progress"
 import { formatPrice, type Locale, isSvg } from "@/lib/products"
 
 export function CartPage({ locale }: { locale: Locale }) {
@@ -37,7 +38,7 @@ export function CartPage({ locale }: { locale: Locale }) {
           <p className="mt-3 max-w-md text-sm leading-7 text-muted-foreground">
             {t("pageEmptyDescription")}
           </p>
-          <Link href={shopHref} className="mt-8 flex h-12 items-center justify-center bg-foreground px-8 text-sm text-background transition-opacity hover:opacity-90">
+          <Link href={shopHref} className="mt-8 flex h-12 items-center justify-center bg-accent px-8 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent-hover">
             {t("startShopping")}
           </Link>
         </section>
@@ -89,6 +90,7 @@ export function CartPage({ locale }: { locale: Locale }) {
 
           <aside className="h-fit border border-border bg-secondary/20 p-5 sm:p-7 lg:sticky lg:top-28">
             <h2 className="font-serif text-3xl">{t("summaryTitle")}</h2>
+            <div className="mt-5"><FreeShippingProgress locale={locale} /></div>
             <div className="mt-7 flex items-center justify-between border-b border-border pb-5 text-sm">
               <span className="text-muted-foreground">{t("subtotal")}</span>
               <span className="font-serif text-2xl">{formatPrice(subtotal, locale)}</span>
@@ -96,7 +98,7 @@ export function CartPage({ locale }: { locale: Locale }) {
             <p className="py-5 text-xs leading-6 text-muted-foreground">
               {t("shippingNote")}
             </p>
-            <Link href={checkoutHref} className="flex h-13 w-full items-center justify-center bg-foreground px-5 text-sm font-medium text-background transition-opacity hover:opacity-90">
+            <Link href={checkoutHref} className="flex h-13 w-full items-center justify-center bg-accent px-5 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent-hover">
               {t("proceedToCheckout")}
             </Link>
             <Link href={shopHref} className="mt-4 flex h-11 w-full items-center justify-center text-sm underline underline-offset-4 sm:hidden">

@@ -25,7 +25,9 @@
     "custom": "Custom work | Drvenija",
     "cart": "Your cart | Drvenija",
     "checkout": "Checkout | Drvenija",
-    "success": "Order received | Drvenija"
+    "success": "Order received | Drvenija",
+    "wishlist": "Saved | Drvenija",
+    "order": "Order status | Drvenija"
   },
   "notFound": {
     "title": "Page not found",
@@ -61,64 +63,132 @@
     "contact": "Contact",
     "location": "Sarajevo, Bosnia and Herzegovina",
     "languageNote": "English is available as a secondary storefront language.",
-    "backHome": "Back to home"
+    "information": "Information",
+    "copyright": "© {year} Drvenija. All rights reserved.",
+    "orderStatus": "Order status",
+    "wishlist": "Saved",
+    "newsletterTitle": "News from the workshop",
+    "newsletterText": "New collections and seasonal offers, at most twice a month."
   },
   "home": {
     "hero": {
-      "imageAlt": "Drvenija decor in an interior",
       "eyebrow": "Designed and made in Sarajevo",
-      "title": "Your idea, precisely made.",
-      "description": "Decor, gifts, and business signage in plexiglass and MDF — from the first sketch to the finished piece.",
-      "shopCta": "Shop products",
-      "customCta": "Send your idea"
-    },
-    "categories": {
-      "title": "What would you like us to make?",
-      "tiles": {
-        "nameSigns": "Name signs",
-        "wallDecor": "Wall decor",
-        "celebrationDecor": "Celebration decor",
-        "gifts": "Gifts and keepsakes",
-        "businessSigns": "Business signage",
-        "keychains": "Keychains",
-        "houseNumbers": "House numbers",
-        "monograms": "Monograms",
-        "forHome": "For the home",
-        "yourIdea": "Made from your idea"
+      "title": "Words that matter, cut in gold and wood.",
+      "description": "Islamic calligraphy, name signs and keepsakes for special moments — in plexiglass and MDF, precisely CNC-cut and finished by hand.",
+      "shopCta": "Browse products",
+      "customCta": "Send us your idea",
+      "imageAlts": {
+        "main": "Gold mirror Allah calligraphy on a wall",
+        "left": "Shahada in gold letters on a black framed panel",
+        "right": "Mihrab stand with Bismillah in gold"
       }
-    },
-    "customStudio": {
-      "imageAlt": "Custom business signage",
-      "title": "Can’t find what you have in mind?",
-      "description": "Send us a sketch, dimensions, or simply an idea. We’ll choose the material together and make a piece that fits your space.",
-      "cta": "Start a custom project"
     },
     "products": {
-      "title": "All products",
-      "viewAll": "View all"
-    },
-    "showcase": {
-      "eyebrow": "From the workshop",
-      "title": "Made to become part of your moments.",
-      "tiles": {
-        "space": "Details that change a room",
-        "name": "A name made just for you",
-        "memories": "Memories kept close",
-        "celebrations": "Moments worth celebrating"
+      "title": "Workshop favourites",
+      "viewAll": "View all products",
+      "eyebrow": "Webshop",
+      "tabs": {
+        "bestsellers": "Bestsellers",
+        "personalised": "Personalised",
+        "mediapan": "MDF",
+        "plexiglass": "Plexiglass"
       }
     },
-    "craft": {
-      "imageAlt": "Making a Drvenija product",
-      "eyebrow": "Material and craft",
-      "title": "Choose a finish that belongs in your space.",
-      "description": "Plexiglass brings crisp lines and shine, while MDF adds warmth and a natural feel. Each piece can be adjusted in color, size, and mounting style.",
-      "cta": "Explore custom work"
+    "collections": {
+      "eyebrow": "Collections",
+      "title": "What should we make for you?",
+      "viewAll": "All categories",
+      "items": {
+        "calligraphy": {
+          "name": "Calligraphy",
+          "hint": "Verses, duas, names",
+          "alt": "Ayat al-Kursi in gold in a black frame"
+        },
+        "ramadan": {
+          "name": "Ramadan and Eid",
+          "hint": "Decor and gifts",
+          "alt": "Ramadan crescent with a mosque"
+        },
+        "hajj": {
+          "name": "Hajj and Umrah",
+          "hint": "Gifts for pilgrims",
+          "alt": "Gold Hajj lettering with the Kaaba"
+        },
+        "family": {
+          "name": "Babies and family",
+          "hint": "Names and keepsakes",
+          "alt": "Baby birth plaque"
+        },
+        "clocks": {
+          "name": "Clocks",
+          "hint": "Wood and mirror",
+          "alt": "Wooden wall clock with calligraphy"
+        },
+        "business": {
+          "name": "Business signs",
+          "hint": "Your company logo",
+          "alt": "Company logo on an office wall"
+        }
+      }
+    },
+    "materials": {
+      "eyebrow": "Materials",
+      "title": "Three finishes. Endless combinations.",
+      "description": "Order each piece in the material that suits your space — or combine them, like gold on a black base.",
+      "items": {
+        "mirror": {
+          "name": "Gold mirror",
+          "text": "Acrylic mirror that catches the light in the room. Our most popular finish for calligraphy and signs.",
+          "alt": "Mirror calligraphy reflecting the sky"
+        },
+        "black": {
+          "name": "Black plexiglass",
+          "text": "A deep, elegant tone for stands, mihrabs and the base beneath gold lettering.",
+          "alt": "Black mihrab stand with surah names in gold"
+        },
+        "wood": {
+          "name": "Wood and MDF",
+          "text": "The warm texture of wood for clocks, frames and decor that feels natural.",
+          "alt": "Shahada cut into a wooden frame"
+        }
+      }
+    },
+    "personal": {
+      "eyebrow": "Personalised",
+      "title": "Your name. Your date. Your story.",
+      "description": "Wedding signs, baby birth plaques, family blessings for the home or your company logo — tell us the text and we prepare a draft.",
+      "steps": {
+        "choose": "<b>Choose a design</b> from the shop or describe your idea.",
+        "write": "<b>Add names, a date or a quote</b> and pick the material.",
+        "approve": "<b>Approve the draft</b> — only then do we cut and ship."
+      },
+      "shopCta": "Personalised products",
+      "customCta": "Custom request",
+      "imageAlts": {
+        "wedding": "Wedding signs with the couple's names",
+        "baby": "Baby plaque with name, date, weight and length",
+        "draft": "Calligraphy draft in design software before cutting"
+      }
+    },
+    "seasonal": {
+      "greeting": "رمضان كريم",
+      "title": "The Ramadan and Eid collection",
+      "description": "Crescents, mihrabs and stands that bring calm to the home — and gifts people remember.",
+      "cta": "See the collection",
+      "imageAlts": {
+        "crescent": "Ramadan crescent with a mosque on a wooden base",
+        "stand": "Ramadan Mubarak mihrab stand"
+      }
+    },
+    "instagram": {
+      "title": "Follow us on Instagram",
+      "follow": "Follow",
+      "tileLabel": "Drvenija on Instagram"
     }
   },
   "shop": {
     "allProducts": "All products",
     "productCount": "({count} products)",
-    "featured": "Featured",
     "viewProduct": "View product",
     "filters": {
       "title": "Filters",
@@ -148,7 +218,9 @@
     "allCategoriesChip": "All",
     "resultsFor": "Results for “{query}” · {count}",
     "showing": "Showing {shown} of {total}",
-    "empty": "No products match these filters."
+    "empty": "No products match these filters.",
+    "bestseller": "Bestseller",
+    "personalised": "Personalised"
   },
   "product": {
     "personalizationAvailable": "Personalization available",
@@ -158,7 +230,6 @@
     "dimensions": "Dimensions",
     "leadTime": "Lead time",
     "personalization": "Personalization",
-    "personalizationPlaceholder": "Enter a name, wording, dimension, or short note.",
     "addToCart": "Add to cart",
     "details": {
       "deliveryTitle": "Delivery and lead time",
@@ -197,7 +268,15 @@
       "personalizationAvailable": "Available",
       "personalizationUnavailable": "Not available"
     },
-    "related": "Related products"
+    "related": "Related products",
+    "previousImage": "Previous image",
+    "nextImage": "Next image",
+    "mockup": {
+      "eyebrow": "On your wall",
+      "title": "Picture it in your space.",
+      "text": "Try a few wall colours and see how the piece looks above a sofa. Need another size or colour? We will make it to measure.",
+      "cta": "Ask for another size"
+    }
   },
   "cart": {
     "drawerTitle": "Your cart",
@@ -225,13 +304,16 @@
     "repricer": {
       "removed": "Some products are no longer available and were removed from your cart.",
       "repriced": "Cart prices were updated to match the current catalogue."
-    }
+    },
+    "freeShippingRemaining": "<strong>{amount}</strong> away from free delivery",
+    "freeShippingReached": "You have unlocked free delivery",
+    "freeShippingLabel": "Progress towards free delivery"
   },
   "checkout": {
     "intro": {
       "eyebrow": "Checkout",
       "title": "Submit the order and we will confirm the details manually.",
-      "description": "This is the first webshop checkout release. After submitting, you receive confirmation, shipping details, and manual payment instructions."
+      "description": "You get an email confirmation after ordering. We review the details, get in touch, and only then start making it."
     },
     "submitError": "Order submission failed. Please try again.",
     "emptyDescription": "Add products before continuing to checkout.",
@@ -239,7 +321,9 @@
     "sections": {
       "contact": "Contact",
       "shipping": "Shipping",
-      "notes": "Notes"
+      "notes": "Notes",
+      "payment": "Payment method",
+      "gift": "Gift"
     },
     "fields": {
       "fullName": "Full name",
@@ -252,7 +336,7 @@
       "notes": "Additional information",
       "notesPlaceholder": "Any extra note for delivery, personalization, or order confirmation."
     },
-    "confirmationNote": "After the order is submitted, we will contact you to confirm availability, final delivery cost, and manual payment details.",
+    "confirmationNote": "After you place the order we check the details and personalisation and email you. We start production only once everything is confirmed.",
     "submitting": "Submitting...",
     "submit": "Submit order · {total}",
     "summary": {
@@ -260,14 +344,47 @@
       "quantity": "Qty {quantity}",
       "products": "Products",
       "free": "Free",
-      "total": "Total"
+      "total": "Total",
+      "discount": "Discount ({code})",
+      "giftWrap": "Gift wrapping"
+    },
+    "payment": {
+      "bank_transfer": {
+        "title": "Bank transfer",
+        "text": "We send payment details once we confirm your order."
+      },
+      "cash_on_delivery": {
+        "title": "Cash on delivery",
+        "text": "Pay the courier in cash when the parcel arrives."
+      }
+    },
+    "gift": {
+      "label": "Gift wrapping (+{price})",
+      "text": "We pack it in a gift box with a card carrying your message. No prices in the parcel.",
+      "messageLabel": "Card message",
+      "messagePlaceholder": "E.g. Eid Mubarak, with love — Amra"
+    },
+    "discount": {
+      "label": "Discount code",
+      "apply": "Apply",
+      "remove": "Remove discount code",
+      "errors": {
+        "not_found": "This code does not exist.",
+        "inactive": "This code is not active.",
+        "not_started": "This code is not active yet.",
+        "expired": "This code has expired.",
+        "used_up": "This code has been used up.",
+        "min_subtotal": "This code applies to orders from {amount}.",
+        "unavailable": "We could not check the code right now. Please try again."
+      }
     }
   },
   "success": {
     "eyebrow": "Order received",
     "title": "Thank you. We are reviewing your order.",
     "description": "We will send you confirmation of availability. Keep the order number for follow-up.",
-    "backToShop": "Back to shop"
+    "backToShop": "Back to shop",
+    "trackOrder": "Track your order"
   },
   "custom": {
     "eyebrow": "Custom work",
@@ -321,6 +438,171 @@
       "define": "We define the product use case, dimensions, and visual direction.",
       "prepare": "We prepare the CNC-ready file and align material and thickness.",
       "finish": "We cut, finish the edges, and inspect each piece before dispatch."
+    }
+  },
+  "trust": {
+    "label": "Why shop with us",
+    "shippingTitle": "Free delivery from {amount} KM",
+    "shippingText": "We deliver anywhere in Bosnia and Herzegovina.",
+    "madeTitle": "Hand-finished in Sarajevo",
+    "madeText": "Every piece is made to order.",
+    "personalTitle": "Personalised your way",
+    "personalText": "Name, text, colour or size.",
+    "confirmTitle": "Pay after confirmation",
+    "confirmText": "You pay nothing until we confirm the details."
+  },
+  "faq": {
+    "eyebrow": "Questions and answers",
+    "title": "Frequently asked questions",
+    "items": {
+      "production": {
+        "q": "How long does production take?",
+        "a": "Each product page shows its production time. Most standard items are made within a few working days; for larger or custom orders we agree the timeline when confirming."
+      },
+      "shipping": {
+        "q": "How much is delivery?",
+        "a": "Delivery is free for orders from {freeFrom} KM. Smaller orders have a {fee} KM delivery fee."
+      },
+      "payment": {
+        "q": "How do I pay for my order?",
+        "a": "After you place an order we review the details and email a confirmation with payment instructions. You pay nothing before that confirmation."
+      },
+      "personalization": {
+        "q": "Can I add a name or my own text?",
+        "a": "Yes. On products marked “Personalised”, enter your text in the personalisation field. We check that everything looks right before production."
+      },
+      "mounting": {
+        "q": "How do wall pieces hang?",
+        "a": "Wall decor ships ready to mount. With your order you can tell us whether you prefer double-sided tape or screw holes."
+      },
+      "custom": {
+        "q": "Can you work from my sketch or logo?",
+        "a": "Yes. Send a request through the Custom work page with your idea, size and deadline, and we will reply with a proposal and price."
+      }
+    }
+  },
+  "mockup": {
+    "wallColour": "Wall colour",
+    "walls": {
+      "linen": "Linen",
+      "sage": "Sage",
+      "clay": "Clay",
+      "charcoal": "Charcoal"
+    },
+    "note": "The illustration is a guide only; the real size depends on the dimensions you choose."
+  },
+  "chat": {
+    "open": "Ask us",
+    "close": "Close",
+    "title": "Have a question?",
+    "text": "Message us on WhatsApp or Viber — we usually reply the same day.",
+    "message": "Hello! I have a question about this: {url}",
+    "messageGeneric": "Hello! I have a question about your products."
+  },
+  "wishlist": {
+    "eyebrow": "Wishlist",
+    "title": "Saved",
+    "description": "Products you saved on this device.",
+    "emptyTitle": "Nothing saved yet",
+    "emptyText": "Tap the heart on a product to save it for later.",
+    "browse": "Browse products",
+    "save": "Save for later",
+    "saved": "Saved",
+    "saveLabel": "Save {name}",
+    "removeLabel": "Remove {name} from saved",
+    "added": "{name} saved.",
+    "removed": "{name} removed from saved."
+  },
+  "personalize": {
+    "label": "Your text",
+    "placeholder": "E.g. The Hodžić Family or Amina & Tarik · 12.06.2026",
+    "fontLabel": "Lettering",
+    "fonts": {
+      "script": "Script",
+      "classic": "Classic",
+      "modern": "Modern"
+    },
+    "finishLabel": "Finish",
+    "finishes": {
+      "gold": "Gold mirror",
+      "black": "Black plexiglass",
+      "wood": "Wood"
+    },
+    "previewLabel": "Preview",
+    "previewEmpty": "Type your text to see how it will look.",
+    "previewNote": "The preview is a guide. We email you a draft to approve before cutting.",
+    "reviewCount": "{count, plural, one {# review} other {# reviews}}"
+  },
+  "newsletter": {
+    "placeholder": "Your email",
+    "submit": "Sign up",
+    "consent": "I want to receive email news from Drvenija. I can unsubscribe in any email.",
+    "done": "Thank you! You are signed up.",
+    "error": "Sign-up failed. Please try again.",
+    "unsubscribeTitle": "Unsubscribe",
+    "unsubscribeText": "Confirm that you no longer want to receive our email news.",
+    "unsubscribeButton": "Unsubscribe me",
+    "unsubscribed": "You are unsubscribed. We will not send you news anymore.",
+    "invalidLink": "This unsubscribe link is not valid. Contact us and we will remove you manually."
+  },
+  "reviews": {
+    "eyebrow": "Reviews",
+    "title": "What customers say",
+    "average": "Average rating {rating} out of 5, {count} reviews",
+    "count": "{count, plural, one {# review} other {# reviews}}",
+    "verified": "Verified purchase"
+  },
+  "orderStatus": {
+    "eyebrow": "Order",
+    "title": "Order status",
+    "description": "Enter the order number from your confirmation email and the email address you used.",
+    "orderNumber": "Order number",
+    "find": "Find",
+    "searching": "Searching…",
+    "notFound": "We could not find an order with that number and email.",
+    "error": "Search is not available right now. Please try again.",
+    "placed": "Ordered {date}",
+    "progress": "Order progress",
+    "tracking": "Tracking number",
+    "quantity": "Quantity {quantity}",
+    "statuses": {
+      "submitted": "Received",
+      "confirmed": "Confirmed",
+      "in_production": "In production",
+      "packed": "Packed",
+      "shipped": "Shipped",
+      "completed": "Delivered",
+      "declined": "Order declined"
+    },
+    "totals": {
+      "products": "Products",
+      "discount": "Discount",
+      "giftWrap": "Gift wrapping",
+      "shipping": "Delivery",
+      "free": "Free",
+      "total": "Total"
+    },
+    "payment": {
+      "bank_transfer": "Bank transfer",
+      "cash_on_delivery": "Cash on delivery"
+    },
+    "paymentStatus": {
+      "pending_manual": "awaiting payment",
+      "paid": "paid",
+      "cancelled": "cancelled"
+    },
+    "review": {
+      "write": "Review this product",
+      "rating": "Rating",
+      "stars": "{count, plural, one {# star} other {# stars}}",
+      "name": "Your name (shown with the review)",
+      "body": "Your experience",
+      "moderation": "We publish reviews after a short check.",
+      "submit": "Send review",
+      "sending": "Sending…",
+      "cancel": "Cancel",
+      "error": "The review was not sent.",
+      "thanks": "Thank you for your review!"
     }
   }
 }
