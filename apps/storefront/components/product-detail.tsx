@@ -1,16 +1,25 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
-import { Check, Minus, Plus } from "lucide-react"
+import { Check, ChevronDown, Minus, Plus } from "lucide-react"
 import { toast } from "sonner"
 import { useCart } from "@/components/cart-provider"
-import { activeVariants, formatPrice, type Locale, type LocalizedProduct } from "@/lib/products"
+import { PersonalizationDesigner, personalizationNote, type PersonalizationDesign } from "@/components/personalization-designer"
+import { StarRating } from "@/components/star-rating"
+import { TrustBar } from "@/components/trust-bar"
+import { WishlistButton } from "@/components/wishlist-button"
+import { activeVariants, formatPrice, isSvg, type Locale, type LocalizedProduct } from "@/lib/products"
+import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 export function ProductDetail({ locale, product }: { locale: Locale; product: LocalizedProduct }) {
-  const { addItem } = useCart()
+  const { addItem, shippingPolicy } = useCart()
+  const addButton = useRef<HTMLButtonElement | null>(null)
+  const [showStickyBar, setShowStickyBar] = useState(false)
   const [quantity, setQuantity] = useState(1)
-  const [personalization, setPersonalization] = useState("")
+  const [design, setDesign] = useState<PersonalizationDesign>({ text: "", font: "script", finish: "gold" })
+  const personalize = useTranslations("personalize")
   const variants = activeVariants(product)
   const [variantId, setVariantId] = useState(() => variants[0]!.id)
   const selectedVariant = variants.find(variant => variant.id === variantId) ?? variants[0]!
@@ -18,8 +27,25 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
   const common = useTranslations("common")
   const materialName = common(`materials.${product.material}`)
 
+  // The bottom bar appears on small screens once the main button has scrolled out of view.
+  useEffect(() => {
+    const target = addButton.current
+    if (!target) return
+    const observer = new IntersectionObserver(([entry]) => setShowStickyBar(!entry.isIntersecting && entry.boundingClientRect.top < 0))
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [])
+
+  // Lets the floating chat button move above the bar while it is shown.
+  useEffect(() => {
+    if (showStickyBar) document.body.dataset.stickyBar = ""
+    else delete document.body.dataset.stickyBar
+    return () => { delete document.body.dataset.stickyBar }
+  }, [showStickyBar])
+
   const handleAdd = () => {
-    addItem(product, { quantity, personalization: personalization.trim() || undefined, variantId: selectedVariant.id })
+    const personalization = personalizationNote(design, { font: personalize(`fonts.${design.font}`), finish: personalize(`finishes.${design.finish}`) })
+    addItem(product, { quantity, personalization: personalization || undefined, variantId: selectedVariant.id })
     toast.success(t("addedToCart"))
   }
 
@@ -28,7 +54,13 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
       <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
         {product.categoryName?.[locale] ?? ""} · {materialName}
       </p>
-      <h1 className="mt-4 wrap-break-word text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-foreground md:text-5xl">{product.localizedName}</h1>
+      <h1 className="mt-4 wrap-break-word font-serif text-4xl leading-[1.05] tracking-tight text-foreground md:text-5xl">{product.localizedName}</h1>
+      {product.rating && (
+        <a href="#recenzije" className="mt-3 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+          <StarRating value={product.rating.average} />
+          {personalize("reviewCount", { count: product.rating.count })}
+        </a>
+      )}
       <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground">{product.localizedTagline}</p>
 
       <p className="mt-5 break-all text-xs text-muted-foreground">SKU: <span className="text-foreground">{selectedVariant.sku}</span></p>
@@ -73,21 +105,7 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
         </div>
       </dl>
 
-      {product.customizable && (
-        <div className="mt-7">
-          <label htmlFor="personalization" className="block text-sm font-semibold">
-            {t("personalization")}
-          </label>
-          <textarea
-            id="personalization"
-            rows={3}
-            value={personalization}
-            onChange={(event) => setPersonalization(event.target.value)}
-            placeholder={t("personalizationPlaceholder")}
-            className="mt-3 w-full resize-none border border-border bg-transparent px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
-          />
-        </div>
-      )}
+      {product.customizable && <PersonalizationDesigner design={design} onChange={setDesign} />}
 
       <div className="mt-7 flex flex-col items-stretch gap-3 sm:flex-row">
         <div className="inline-flex items-center justify-between border border-border sm:justify-start">
@@ -100,19 +118,56 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
           </button>
         </div>
         <button
+          ref={addButton}
           type="button"
           onClick={handleAdd}
-          className="min-h-12 flex-1 bg-foreground px-6 text-sm font-semibold tracking-wide text-background transition-colors hover:bg-foreground/90"
+          className="min-h-12 flex-1 bg-accent px-6 text-sm font-semibold tracking-wide text-accent-foreground transition-colors hover:bg-accent-hover"
         >
           {t("addToCart")} · {formatPrice(selectedVariant.price * quantity, locale)}
         </button>
       </div>
+      <WishlistButton variant="full" productId={product.id} productName={product.localizedName} className="mt-3 w-full" />
+
+      <TrustBar variant="compact" freeFrom={shippingPolicy.freeFrom} className="mt-6 border border-border/70 bg-secondary/60 p-4" />
 
       <div className="mt-8 divide-y divide-border/60 border-y border-border/60 text-sm">
-        <details className="group py-4" open><summary className="cursor-pointer list-none font-semibold">{t("details.deliveryTitle")}</summary><p className="mt-3 leading-6 text-muted-foreground">{t("details.deliveryText", { leadTime: product.localizedLeadTime })}</p></details>
-        <details className="group py-4"><summary className="cursor-pointer list-none font-semibold">{t("details.careTitle")}</summary><p className="mt-3 leading-6 text-muted-foreground">{t("details.careText")}</p></details>
-        <details className="group py-4"><summary className="cursor-pointer list-none font-semibold">{t("details.bulkTitle")}</summary><p className="mt-3 leading-6 text-muted-foreground">{t("details.bulkText")}</p></details>
+        <Accordion title={t("details.deliveryTitle")} open>{t("details.deliveryText", { leadTime: product.localizedLeadTime })}</Accordion>
+        <Accordion title={t("details.careTitle")}>{t("details.careText")}</Accordion>
+        <Accordion title={t("details.bulkTitle")}>{t("details.bulkText")}</Accordion>
+      </div>
+
+      <div
+        className={cn(
+          "fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 py-3 backdrop-blur-xl transition-transform duration-300 lg:hidden",
+          showStickyBar ? "translate-y-0" : "translate-y-full",
+        )}
+        inert={!showStickyBar}
+      >
+        <div className="flex items-center gap-3">
+          <div className="relative h-12 w-12 shrink-0 overflow-hidden bg-secondary">
+            <Image unoptimized={isSvg(product.primaryImage.url)} src={product.primaryImage.url} alt="" fill sizes="48px" className="object-cover" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold">{product.localizedName}</p>
+            <p className="truncate text-xs text-muted-foreground">{selectedVariant.dimensions} · {formatPrice(selectedVariant.price, locale)}</p>
+          </div>
+          <button type="button" onClick={handleAdd} className="h-11 shrink-0 bg-accent px-4 text-sm font-semibold text-accent-foreground">
+            {t("addToCart")}
+          </button>
+        </div>
       </div>
     </div>
+  )
+}
+
+function Accordion({ title, open = false, children }: { title: string; open?: boolean; children: React.ReactNode }) {
+  return (
+    <details className="group py-4" open={open}>
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold [&::-webkit-details-marker]:hidden">
+        {title}
+        <ChevronDown className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180" strokeWidth={1.5} aria-hidden />
+      </summary>
+      <p className="mt-3 leading-6 text-muted-foreground">{children}</p>
+    </details>
   )
 }

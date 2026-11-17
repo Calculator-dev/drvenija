@@ -260,6 +260,18 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
     }
   }
   app.post("/products", (request, reply) => save(request, reply));
+  // Quick publish/unpublish from the product list without a full form save.
+  app.patch("/products/:id/published", async (request, reply) => {
+    const { id } = params.parse(request.params);
+    const { published } = z.object({ published: z.boolean() }).strict().parse(request.body);
+    const [updated] = await db
+      .update(products)
+      .set({ published, updatedAt: new Date() })
+      .where(eq(products.id, id))
+      .returning({ id: products.id, published: products.published });
+    if (!updated) return reply.code(404).send({ message: "Product not found" });
+    return updated;
+  });
   app.put("/products/:id", (request, reply) =>
     save(request, reply, params.parse(request.params).id),
   );

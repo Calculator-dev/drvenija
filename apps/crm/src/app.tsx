@@ -1,18 +1,24 @@
 import { useEffect, useRef } from "react"
 import { Link, NavLink, Outlet, useLocation, type RouteObject } from "react-router"
-import { Boxes, LayoutDashboard, MessageSquareMore, ShoppingCart, Sparkles } from "lucide-react"
+import { Boxes, LayoutDashboard, Mail, MessageSquareMore, ShoppingCart, Sparkles, Star, TicketPercent } from "lucide-react"
 import { PageHeader } from "./components/page-header"
 import { DashboardPage } from "./pages/dashboard"
+import { DiscountsPage } from "./pages/discounts"
 import { InquiriesPage, InquiryPage } from "./pages/inquiries"
+import { NewsletterPage } from "./pages/newsletter"
 import { OrderPage, OrdersPage } from "./pages/orders"
 import { EditProductPage, NewProductPage } from "./pages/product-editor"
 import { ProductsPage } from "./pages/products"
+import { ReviewsPage } from "./pages/reviews"
 
 const navigation = [
   { to: "/", label: "Pregled", icon: LayoutDashboard },
   { to: "/products", label: "Proizvodi", icon: Boxes },
   { to: "/orders", label: "Narudžbe", icon: ShoppingCart },
   { to: "/inquiries", label: "Upiti", icon: MessageSquareMore },
+  { to: "/discounts", label: "Popusti", icon: TicketPercent },
+  { to: "/reviews", label: "Recenzije", icon: Star },
+  { to: "/newsletter", label: "Newsletter", icon: Mail },
 ] as const
 
 function Layout() {
@@ -84,6 +90,9 @@ export const routes: RouteObject[] = [
       { path: "orders/:id", element: <OrderPage /> },
       { path: "inquiries", element: <InquiriesPage /> },
       { path: "inquiries/:id", element: <InquiryPage /> },
+      { path: "discounts", element: <DiscountsPage /> },
+      { path: "reviews", element: <ReviewsPage /> },
+      { path: "newsletter", element: <NewsletterPage /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },

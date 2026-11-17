@@ -23,6 +23,8 @@ const envSchema = z.object({
   BACKBLAZE_PUBLIC_URL: z.string().url().optional(),
   RESEND_API_KEY: z.string().optional(),
   ORDER_EMAIL_FROM: z.string().optional(),
+  // Public storefront address, used for links in customer emails (order tracking, reviews).
+  STOREFRONT_URL: z.preprocess(value => value === "" ? undefined : value, z.string().url().optional()),
   INQUIRY_NOTIFY_EMAIL: z.preprocess(value => value === "" ? undefined : value, z.string().email().optional()),
 })
 

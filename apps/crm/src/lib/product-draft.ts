@@ -73,6 +73,7 @@ export function productPayload({ form, category, images, variants, mainDimension
     stockLabel: localized("stockLabel"),
     featured: form.has("featured"),
     customizable: form.has("customizable"),
+    published: form.has("published"),
     translations: { bs: translation("bs"), en: translation("en") },
   }
 }

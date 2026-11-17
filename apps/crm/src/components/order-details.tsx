@@ -1,9 +1,10 @@
 import { useState, type FormEvent } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { ArrowLeft, Check, Mail, X } from "lucide-react"
+import { ArrowLeft, Check, Gift, Mail, X } from "lucide-react"
 import { decideOrder, getOrder } from "../lib/api"
-import { localizedOrderStatus } from "../lib/admin-data"
+import { fulfilmentIndex, localizedOrderStatus } from "../lib/admin-data"
 import { formatDateTime, formatMoney } from "../lib/format"
+import { FulfilmentPanel, PaymentCard } from "./order-fulfilment"
 import { Button } from "./ui/button"
 import { Card } from "./ui/card"
 
@@ -45,6 +46,7 @@ export function OrderDetails({ id, onBack }: { id: string; onBack: () => void })
   if (!query.data) return <p role="alert" className="mt-6 text-destructive">Detalje narudžbe nije moguće učitati.</p>
   const order = query.data
   const canReview = order.status === "submitted"
+  const accepted = fulfilmentIndex(order.status) >= 0
 
   return (
     <div className="space-y-6 pt-6">
@@ -78,14 +80,18 @@ export function OrderDetails({ id, onBack }: { id: string; onBack: () => void })
           </div>
           <dl className="ml-auto max-w-xs space-y-2 border-t border-border pt-5 text-sm">
             <div className="flex justify-between gap-6"><dt className="text-muted-foreground">Proizvodi</dt><dd>{money(order.subtotal)}</dd></div>
+            {(order.discountCode || order.discountAmount > 0) && <div className="flex justify-between gap-6"><dt className="text-muted-foreground">Popust{order.discountCode && <> (<span className="font-mono text-foreground">{order.discountCode}</span>)</>}</dt><dd>{`−${money(order.discountAmount)}`}</dd></div>}
             <div className="flex justify-between gap-6"><dt className="text-muted-foreground">Dostava</dt><dd>{order.shippingAmount === 0 ? "Besplatna" : money(order.shippingAmount)}</dd></div>
+            {order.giftWrap && <div className="flex justify-between gap-6"><dt className="text-muted-foreground">Poklon pakovanje</dt><dd>{money(order.giftWrapAmount)}</dd></div>}
             <div className="flex items-baseline justify-between gap-6"><dt className="text-muted-foreground">Ukupno</dt><dd className="font-serif text-3xl">{money(order.amount)}</dd></div>
           </dl>
         </Card>
 
         <div className="space-y-6">
           <Card className="p-6"><h3 className="font-serif text-2xl">Kupac</h3><dl className="mt-5 space-y-3 text-sm"><Detail label="Ime" value={order.customer.fullName} /><Detail label="Email" value={order.customer.email} /><Detail label="Telefon" value={order.customer.phone || "Nije navedeno"} /><Detail label="Potvrda narudžbe" value={order.confirmationEmailSentAt ? `Poslana ${date(order.confirmationEmailSentAt)}` : "Email nije poslan"} /></dl></Card>
-          <Card className="p-6"><h3 className="font-serif text-2xl">Dostava</h3><p className="mt-5 text-sm leading-7">{order.shippingAddress.address}<br />{[order.shippingAddress.postalCode, order.shippingAddress.city].filter(Boolean).join(" ")}<br />{order.shippingAddress.country}</p>{order.notes && <><p className="mt-5 text-xs uppercase tracking-[0.18em] text-muted-foreground">Napomena</p><p className="mt-2 text-sm leading-6">{order.notes}</p></>}</Card>
+          <PaymentCard order={order} />
+          <Card className="p-6"><h3 className="font-serif text-2xl">Dostava</h3><p className="mt-5 text-sm leading-7">{order.shippingAddress.address}<br />{[order.shippingAddress.postalCode, order.shippingAddress.city].filter(Boolean).join(" ")}<br />{order.shippingAddress.country}</p>{order.trackingNumber && <><p className="mt-5 text-xs uppercase tracking-[0.18em] text-muted-foreground">Broj za praćenje</p><p className="mt-2 text-sm font-medium wrap-break-word">{order.trackingNumber}</p></>}{order.notes && <><p className="mt-5 text-xs uppercase tracking-[0.18em] text-muted-foreground">Napomena</p><p className="mt-2 text-sm leading-6">{order.notes}</p></>}</Card>
+          {(order.giftWrap || order.giftMessage) && <Card className="p-6"><h3 className="flex items-center gap-2 font-serif text-2xl"><Gift className="h-5 w-5" aria-hidden />Poklon</h3><p className="mt-5 text-sm">{order.giftWrap ? "Kupac je odabrao poklon pakovanje." : "Bez poklon pakovanja."}</p>{order.giftMessage && <><p className="mt-5 text-xs uppercase tracking-[0.18em] text-muted-foreground">Poruka na čestitki</p><p className="mt-2 whitespace-pre-line border-l-2 border-primary/30 pl-4 text-sm leading-6">{order.giftMessage}</p></>}</Card>}
         </div>
       </div>
 
@@ -109,7 +115,9 @@ export function OrderDetails({ id, onBack }: { id: string; onBack: () => void })
         </form>}
       </Card>}
 
-      {!canReview && <Card className="p-6"><h3 className="font-serif text-2xl">Odluka je zaključena</h3><p className="mt-2 text-sm text-muted-foreground">Narudžba je {localizedOrderStatus(order.status).toLowerCase()} {order.reviewedAt ? `dana ${date(order.reviewedAt)}` : ""}.</p>{order.declineReason && <div className="mt-5 border-l-2 border-red-300 pl-4"><p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Obrazloženje odbijanja</p><p className="mt-2 text-sm leading-6">{order.declineReason}</p></div>}<p className="mt-4 text-xs text-muted-foreground">{order.reviewEmailSentAt ? `Email poslan ${date(order.reviewEmailSentAt)}.` : "Email kupcu nije zabilježen kao poslan."}</p></Card>}
+      {accepted && <FulfilmentPanel order={order} />}
+
+      {!canReview && <Card className="p-6"><h3 className="font-serif text-2xl">Odluka je zaključena</h3><p className="mt-2 text-sm text-muted-foreground">Narudžba je {(accepted ? "prihvaćena" : localizedOrderStatus(order.status).toLowerCase())} {order.reviewedAt ? `dana ${date(order.reviewedAt)}` : ""}.</p>{order.declineReason && <div className="mt-5 border-l-2 border-red-300 pl-4"><p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Obrazloženje odbijanja</p><p className="mt-2 text-sm leading-6">{order.declineReason}</p></div>}<p className="mt-4 text-xs text-muted-foreground">{order.reviewEmailSentAt ? `Email poslan ${date(order.reviewEmailSentAt)}.` : "Email kupcu nije zabilježen kao poslan."}</p></Card>}
     </div>
   )
 }

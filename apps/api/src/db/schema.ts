@@ -2,6 +2,7 @@ import {
   boolean,
   index,
   integer,
+  uniqueIndex,
   jsonb,
   pgEnum,
   pgTable,
@@ -33,6 +34,17 @@ export const paymentStatusEnum = pgEnum("payment_status", [
   "cancelled",
 ]);
 
+export const paymentMethodEnum = pgEnum("payment_method", [
+  "bank_transfer",
+  "cash_on_delivery",
+]);
+export const discountKindEnum = pgEnum("discount_kind", ["percent", "fixed"]);
+export const reviewStatusEnum = pgEnum("review_status", [
+  "pending",
+  "approved",
+  "rejected",
+]);
+
 export const categories = pgTable("categories", {
   id: uuid("id").defaultRandom().primaryKey(),
   code: varchar("code", { length: 80 }).notNull().unique(),
@@ -62,6 +74,8 @@ export const products = pgTable("products", {
   material: materialEnum("material").notNull(),
   featured: boolean("featured").notNull().default(false),
   customizable: boolean("customizable").notNull().default(false),
+  // Unpublished products stay in the CRM but are hidden from the storefront and cannot be ordered.
+  published: boolean("published").notNull().default(true),
   price: integer("price").notNull(),
   dimensions: text("dimensions").notNull(),
   leadTime: jsonb("lead_time").$type<Record<string, string>>().notNull(),
@@ -158,6 +172,16 @@ export const orders = pgTable("orders", {
     .notNull(),
   notes: text("notes"),
   shippingAmount: integer("shipping_amount").notNull().default(0),
+  paymentMethod: paymentMethodEnum("payment_method")
+    .notNull()
+    .default("bank_transfer"),
+  giftWrap: boolean("gift_wrap").notNull().default(false),
+  giftWrapAmount: integer("gift_wrap_amount").notNull().default(0),
+  giftMessage: text("gift_message"),
+  discountCode: varchar("discount_code", { length: 40 }),
+  discountAmount: integer("discount_amount").notNull().default(0),
+  trackingNumber: varchar("tracking_number", { length: 120 }),
+  statusEmailSentAt: timestamp("status_email_sent_at", { withTimezone: true }),
   declineReason: text("decline_reason"),
   reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
   reviewEmailSentAt: timestamp("review_email_sent_at", { withTimezone: true }),
@@ -192,6 +216,59 @@ export const inquiries = pgTable("inquiries", {
   brief: text("brief").notNull(),
   dimensions: text("dimensions"),
   deadline: text("deadline"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+}).enableRLS();
+
+export const discountCodes = pgTable("discount_codes", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  // Stored upper-case; customers can type it in any case.
+  code: varchar("code", { length: 40 }).notNull().unique(),
+  kind: discountKindEnum("kind").notNull(),
+  // Percent (1–100) or whole KM, depending on kind.
+  value: integer("value").notNull(),
+  minSubtotal: integer("min_subtotal").notNull().default(0),
+  startsAt: timestamp("starts_at", { withTimezone: true }),
+  endsAt: timestamp("ends_at", { withTimezone: true }),
+  maxUses: integer("max_uses"),
+  usedCount: integer("used_count").notNull().default(0),
+  active: boolean("active").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+}).enableRLS();
+
+export const reviews = pgTable("reviews", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  productId: uuid("product_id")
+    .notNull()
+    .references(() => products.id, { onDelete: "cascade" }),
+  orderId: uuid("order_id")
+    .notNull()
+    .references(() => orders.id),
+  authorName: varchar("author_name", { length: 80 }).notNull(),
+  rating: integer("rating").notNull(),
+  body: text("body").notNull(),
+  locale: localeEnum("locale").notNull(),
+  status: reviewStatusEnum("status").notNull().default("pending"),
+  reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+}, (table) => [
+  // One review per product per order, so only buyers review and only once.
+  uniqueIndex("reviews_order_product_idx").on(table.orderId, table.productId),
+  index("reviews_product_status_idx").on(table.productId, table.status),
+]).enableRLS();
+
+export const newsletterSubscribers = pgTable("newsletter_subscribers", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  email: varchar("email", { length: 190 }).notNull().unique(),
+  locale: localeEnum("locale").notNull(),
+  // Used in unsubscribe links.
+  token: uuid("token").defaultRandom().notNull().unique(),
+  unsubscribedAt: timestamp("unsubscribed_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

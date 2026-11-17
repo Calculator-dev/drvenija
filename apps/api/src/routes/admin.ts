@@ -5,6 +5,7 @@ import { verifyAdminSession } from "../plugins/admin-auth.js"
 import { dashboardRoutes } from "./dashboard.js"
 import { orderReviewRoutes } from "./order-review.js"
 import { adminInquiryRoutes } from "./inquiries.js"
+import { marketingRoutes } from "./marketing.js"
 
 export const adminRoutes: FastifyPluginAsync = async (app) => {
   app.decorateRequest("adminUser", null)
@@ -21,4 +22,6 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
   app.register(mediaRoutes)
 
   app.register(adminInquiryRoutes)
+
+  app.register(marketingRoutes)
 }

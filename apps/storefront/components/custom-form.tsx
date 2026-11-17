@@ -62,7 +62,7 @@ export function CustomForm({ locale }: { locale: Locale }) {
           placeholder={t("briefPlaceholder")}
         />
       </div>
-      <button type="submit" disabled={sending} className="mt-2 flex h-12 items-center justify-center bg-foreground text-sm tracking-wide text-background disabled:opacity-60">
+      <button type="submit" disabled={sending} className="mt-2 flex h-12 items-center justify-center bg-accent text-sm font-semibold tracking-wide text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-60">
         {sending ? t("sending") : t("submit")}
       </button>
     </form>

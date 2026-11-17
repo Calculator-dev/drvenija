@@ -25,7 +25,9 @@
     "custom": "Custom izrada | Drvenija",
     "cart": "Korpa | Drvenija",
     "checkout": "Checkout | Drvenija",
-    "success": "Narudžba zaprimljena | Drvenija"
+    "success": "Narudžba zaprimljena | Drvenija",
+    "wishlist": "Sačuvano | Drvenija",
+    "order": "Status narudžbe | Drvenija"
   },
   "notFound": {
     "title": "Stranica nije pronađena",
@@ -61,64 +63,132 @@
     "contact": "Kontakt",
     "location": "Sarajevo, BiH",
     "languageNote": "Bosanski je primarni jezik webshopa.",
-    "backHome": "Nazad na početnu"
+    "information": "Informacije",
+    "copyright": "© {year} Drvenija. Sva prava zadržana.",
+    "orderStatus": "Status narudžbe",
+    "wishlist": "Sačuvano",
+    "newsletterTitle": "Novosti iz radionice",
+    "newsletterText": "Nove kolekcije i sezonski popusti, najviše dva puta mjesečno."
   },
   "home": {
     "hero": {
-      "imageAlt": "Drvenija dekoracije u enterijeru",
       "eyebrow": "Dizajnirano i izrađeno u Sarajevu",
-      "title": "Vaša ideja, precizno izrađena.",
-      "description": "Dekoracije, pokloni i poslovni natpisi od pleksiglasa i mediapana — od prvog nacrta do gotovog komada.",
+      "title": "Riječi koje vrijede, izrezane u zlatu i drvetu.",
+      "description": "Islamska kaligrafija, natpisi s imenima i uspomene za posebne trenutke — iz pleksiglasa i mediapana, precizno izrezano na CNC mašini i završeno ručno.",
       "shopCta": "Pogledaj proizvode",
-      "customCta": "Pošalji svoju ideju"
-    },
-    "categories": {
-      "title": "Šta želite da napravimo?",
-      "tiles": {
-        "nameSigns": "Natpisi s imenima",
-        "wallDecor": "Zidne dekoracije",
-        "celebrationDecor": "Dekoracije za proslave",
-        "gifts": "Pokloni i uspomene",
-        "businessSigns": "Poslovni natpisi",
-        "keychains": "Privjesci",
-        "houseNumbers": "Kućni brojevi",
-        "monograms": "Monogrami",
-        "forHome": "Za dom",
-        "yourIdea": "Po vašoj ideji"
+      "customCta": "Pošalji svoju ideju",
+      "imageAlts": {
+        "main": "Kaligrafija Allah od zlatnog ogledala na zidu",
+        "left": "Šehadet zlatnim slovima na crnoj podlozi u okviru",
+        "right": "Mihrab stalak s Bismillom u zlatu"
       }
-    },
-    "customStudio": {
-      "imageAlt": "Personalizirani poslovni natpis",
-      "title": "Ne nalazite ono što ste zamislili?",
-      "description": "Pošaljite nam skicu, dimenzije ili samo ideju. Zajedno ćemo odabrati materijal i napraviti komad koji odgovara prostoru.",
-      "cta": "Započni custom projekat"
     },
     "products": {
-      "title": "Svi proizvodi",
-      "viewAll": "Pogledaj sve"
-    },
-    "showcase": {
-      "eyebrow": "Ideje iz radionice",
-      "title": "Napravljeno da bude dio vaših trenutaka.",
-      "tiles": {
-        "space": "Detalji koji mijenjaju prostor",
-        "name": "Ime napravljeno samo za vas",
-        "memories": "Uspomene koje ostaju blizu",
-        "celebrations": "Trenuci vrijedni slavlja"
+      "title": "Najprodavanije iz radionice",
+      "viewAll": "Pogledaj sve proizvode",
+      "eyebrow": "Webshop",
+      "tabs": {
+        "bestsellers": "Bestseleri",
+        "personalised": "Personalizirano",
+        "mediapan": "Mediapan",
+        "plexiglass": "Pleksiglas"
       }
     },
-    "craft": {
-      "imageAlt": "Izrada Drvenija proizvoda",
-      "eyebrow": "Materijal i izrada",
-      "title": "Odaberite završnu obradu koja pristaje vašem prostoru.",
-      "description": "Pleksiglas donosi čiste linije i sjaj, a mediapan toplinu i prirodan osjećaj. Svaki komad možemo prilagoditi bojom, veličinom i načinom montaže.",
-      "cta": "Istraži custom izradu"
+    "collections": {
+      "eyebrow": "Kolekcije",
+      "title": "Šta želite da napravimo?",
+      "viewAll": "Sve kategorije",
+      "items": {
+        "calligraphy": {
+          "name": "Kaligrafija",
+          "hint": "Ajeti, dove, imena",
+          "alt": "Ajetul-kursija zlatom u crnom okviru"
+        },
+        "ramadan": {
+          "name": "Ramazan i Bajram",
+          "hint": "Dekor i pokloni",
+          "alt": "Ramazanski polumjesec s džamijom"
+        },
+        "hajj": {
+          "name": "Hadž i umra",
+          "hint": "Čestitke za hadžije",
+          "alt": "Zlatni natpis Hadž s Kabom"
+        },
+        "family": {
+          "name": "Bebe i porodica",
+          "hint": "Imena i uspomene",
+          "alt": "Ploča za bebu s podacima o rođenju"
+        },
+        "clocks": {
+          "name": "Satovi",
+          "hint": "Drvo i ogledalo",
+          "alt": "Drveni zidni sat s kaligrafijom"
+        },
+        "business": {
+          "name": "Poslovni natpisi",
+          "hint": "Logo za firmu",
+          "alt": "Logo firme na zidu ureda"
+        }
+      }
+    },
+    "materials": {
+      "eyebrow": "Materijali",
+      "title": "Tri završne obrade. Bezbroj kombinacija.",
+      "description": "Svaki komad možete naručiti u materijalu koji odgovara vašem prostoru — ili ih kombinovati, kao zlato na crnoj podlozi.",
+      "items": {
+        "mirror": {
+          "name": "Zlatno ogledalo",
+          "text": "Akrilno ogledalo koje hvata svjetlo prostorije. Najpopularnije za kaligrafiju i natpise.",
+          "alt": "Ogledalna kaligrafija u kojoj se odražava nebo"
+        },
+        "black": {
+          "name": "Crni pleksiglas",
+          "text": "Dubok, elegantan ton za stalke, mihrabe i podlogu ispod zlatnih slova.",
+          "alt": "Crni mihrab stalak s nazivima sura u zlatu"
+        },
+        "wood": {
+          "name": "Drvo i mediapan",
+          "text": "Topla tekstura drveta za satove, okvire i dekor koji djeluje prirodno.",
+          "alt": "Šehadet izrezan u drvenom okviru"
+        }
+      }
+    },
+    "personal": {
+      "eyebrow": "Personalizirano",
+      "title": "Vaše ime. Vaš datum. Vaša priča.",
+      "description": "Natpisi za vjenčanja, ploče za rođenje bebe, porodični blagoslovi za dom ili logo za vašu firmu — upišite tekst, a mi pripremamo nacrt.",
+      "steps": {
+        "choose": "<b>Odaberite model</b> iz shopa ili opišite svoju ideju.",
+        "write": "<b>Upišite imena, datum ili citat</b> i odaberite materijal.",
+        "approve": "<b>Odobrite nacrt</b> — tek onda režemo i šaljemo."
+      },
+      "shopCta": "Personalizirani proizvodi",
+      "customCta": "Custom upit",
+      "imageAlts": {
+        "wedding": "Vjenčani natpisi s imenima mladenaca",
+        "baby": "Ploča za bebu s imenom, datumom, težinom i dužinom",
+        "draft": "Nacrt kaligrafije u programu prije rezanja"
+      }
+    },
+    "seasonal": {
+      "greeting": "رمضان كريم",
+      "title": "Kolekcija za Ramazan i Bajram",
+      "description": "Polumjeseci, mihrabi i stalci koji unose mir u dom — i pokloni koji se pamte.",
+      "cta": "Pogledaj kolekciju",
+      "imageAlts": {
+        "crescent": "Ramazanski polumjesec s džamijom na drvenom postolju",
+        "stand": "Ramazan Mubarek stalak s mihrabom"
+      }
+    },
+    "instagram": {
+      "title": "Pratite nas na Instagramu",
+      "follow": "Zaprati",
+      "tileLabel": "Drvenija na Instagramu"
     }
   },
   "shop": {
     "allProducts": "Svi proizvodi",
     "productCount": "({count} proizvoda)",
-    "featured": "Istaknuto",
     "viewProduct": "Pogledaj proizvod",
     "filters": {
       "title": "Filteri",
@@ -148,7 +218,9 @@
     "allCategoriesChip": "Sve",
     "resultsFor": "Rezultati za “{query}” · {count}",
     "showing": "Prikazano {shown} od {total}",
-    "empty": "Nema proizvoda za odabrane filtere."
+    "empty": "Nema proizvoda za odabrane filtere.",
+    "bestseller": "Bestseler",
+    "personalised": "Personalizirano"
   },
   "product": {
     "personalizationAvailable": "Personalizacija dostupna",
@@ -158,7 +230,6 @@
     "dimensions": "Dimenzije",
     "leadTime": "Rok izrade",
     "personalization": "Personalizacija",
-    "personalizationPlaceholder": "Unesite ime, tekst, dimenziju ili kratku napomenu.",
     "addToCart": "Dodaj u korpu",
     "details": {
       "deliveryTitle": "Dostava i rok izrade",
@@ -197,7 +268,15 @@
       "personalizationAvailable": "Dostupna",
       "personalizationUnavailable": "Nije dostupna"
     },
-    "related": "Povezani proizvodi"
+    "related": "Povezani proizvodi",
+    "previousImage": "Prethodna slika",
+    "nextImage": "Sljedeća slika",
+    "mockup": {
+      "eyebrow": "Na vašem zidu",
+      "title": "Zamislite ga u svom prostoru.",
+      "text": "Isprobajte nekoliko boja zida i pogledajte kako komad djeluje iznad sofe. Trebate drugu veličinu ili boju? Napravit ćemo je po mjeri.",
+      "cta": "Zatraži drugu veličinu"
+    }
   },
   "cart": {
     "drawerTitle": "Korpa",
@@ -225,13 +304,16 @@
     "repricer": {
       "removed": "Neki proizvodi više nisu dostupni i uklonjeni su iz korpe.",
       "repriced": "Cijene u korpi su ažurirane prema aktuelnom katalogu."
-    }
+    },
+    "freeShippingRemaining": "Još <strong>{amount}</strong> do besplatne dostave",
+    "freeShippingReached": "Ostvarili ste besplatnu dostavu",
+    "freeShippingLabel": "Napredak do besplatne dostave"
   },
   "checkout": {
     "intro": {
       "eyebrow": "Checkout",
       "title": "Pošaljite narudžbu, a detalje potvrđujemo ručno.",
-      "description": "Ovo je prva verzija webshop checkouta. Nakon slanja narudžbe dobijate potvrdu, detalje dostave i upute za manualno plaćanje."
+      "description": "Nakon slanja narudžbe dobijate email potvrdu. Pregledamo detalje, javimo vam se i tek onda krećemo s izradom."
     },
     "submitError": "Narudžba nije poslana. Pokušajte ponovo.",
     "emptyDescription": "Dodajte proizvode prije nego što nastavite na checkout.",
@@ -239,7 +321,9 @@
     "sections": {
       "contact": "Kontakt",
       "shipping": "Dostava",
-      "notes": "Napomena"
+      "notes": "Napomena",
+      "payment": "Način plaćanja",
+      "gift": "Poklon"
     },
     "fields": {
       "fullName": "Ime i prezime",
@@ -252,7 +336,7 @@
       "notes": "Dodatne informacije",
       "notesPlaceholder": "Napomena za dostavu, personalizaciju ili potvrdu narudžbe."
     },
-    "confirmationNote": "Nakon slanja narudžbe kontaktirat ćemo vas radi potvrde dostupnosti, ukupnog iznosa dostave i detalja manualnog plaćanja.",
+    "confirmationNote": "Nakon slanja narudžbe provjeravamo detalje i personalizaciju i javljamo vam se emailom. Izradu počinjemo tek kada sve potvrdimo.",
     "submitting": "Slanje...",
     "submit": "Pošalji narudžbu · {total}",
     "summary": {
@@ -260,14 +344,47 @@
       "quantity": "Količina {quantity}",
       "products": "Proizvodi",
       "free": "Gratis",
-      "total": "Ukupno"
+      "total": "Ukupno",
+      "discount": "Popust ({code})",
+      "giftWrap": "Poklon pakovanje"
+    },
+    "payment": {
+      "bank_transfer": {
+        "title": "Uplata na račun",
+        "text": "Podatke za uplatu šaljemo nakon što potvrdimo narudžbu."
+      },
+      "cash_on_delivery": {
+        "title": "Plaćanje pouzećem",
+        "text": "Plaćate kuriru gotovinom pri preuzimanju paketa."
+      }
+    },
+    "gift": {
+      "label": "Poklon pakovanje (+{price})",
+      "text": "Pakujemo u poklon kutiju i dodajemo čestitku s vašom porukom. Cijena se ne prikazuje u paketu.",
+      "messageLabel": "Poruka na čestitki",
+      "messagePlaceholder": "Npr. Sretan Bajram, s ljubavlju — Amra"
+    },
+    "discount": {
+      "label": "Kod za popust",
+      "apply": "Primijeni",
+      "remove": "Ukloni kod za popust",
+      "errors": {
+        "not_found": "Kod ne postoji.",
+        "inactive": "Kod trenutno nije aktivan.",
+        "not_started": "Kod još nije aktivan.",
+        "expired": "Kod je istekao.",
+        "used_up": "Kod je već iskorišten.",
+        "min_subtotal": "Kod vrijedi za narudžbe od {amount}.",
+        "unavailable": "Provjera koda trenutno nije moguća. Pokušajte ponovo."
+      }
     }
   },
   "success": {
     "eyebrow": "Narudžba primljena",
     "title": "Hvala. Pregledamo vašu narudžbu.",
     "description": "Poslat ćemo potvrdu dostupnosti. Sačuvajte broj narudžbe za komunikaciju.",
-    "backToShop": "Nazad u shop"
+    "backToShop": "Nazad u shop",
+    "trackOrder": "Prati narudžbu"
   },
   "custom": {
     "eyebrow": "Custom izrada",
@@ -321,6 +438,171 @@
       "define": "Definišemo dimenzije, namjenu i vizual proizvoda.",
       "prepare": "Pripremamo CNC fajl i usklađujemo materijal i debljinu.",
       "finish": "Režemo, obrađujemo rubove i provjeravamo svaki komad prije slanja."
+    }
+  },
+  "trust": {
+    "label": "Zašto kupovati kod nas",
+    "shippingTitle": "Besplatna dostava od {amount} KM",
+    "shippingText": "Dostavljamo na adrese širom BiH.",
+    "madeTitle": "Ručno završeno u Sarajevu",
+    "madeText": "Svaki komad izrađujemo po narudžbi.",
+    "personalTitle": "Personalizacija po želji",
+    "personalText": "Ime, tekst, boja ili dimenzija.",
+    "confirmTitle": "Plaćanje nakon potvrde",
+    "confirmText": "Ništa ne plaćate dok ne potvrdimo detalje."
+  },
+  "faq": {
+    "eyebrow": "Pitanja i odgovori",
+    "title": "Česta pitanja",
+    "items": {
+      "production": {
+        "q": "Koliko traje izrada?",
+        "a": "Rok izrade piše na stranici svakog proizvoda. Većinu standardnih artikala izrađujemo u roku od nekoliko radnih dana, a za veće ili custom narudžbe rok dogovaramo pri potvrdi."
+      },
+      "shipping": {
+        "q": "Koliko košta dostava?",
+        "a": "Dostava je besplatna za narudžbe od {freeFrom} KM. Za manje narudžbe dostava iznosi {fee} KM."
+      },
+      "payment": {
+        "q": "Kako plaćam narudžbu?",
+        "a": "Nakon slanja narudžbe pregledamo detalje i šaljemo potvrdu emailom, zajedno s uputama za plaćanje. Ništa ne plaćate prije te potvrde."
+      },
+      "personalization": {
+        "q": "Mogu li dodati ime ili vlastiti tekst?",
+        "a": "Da. Kod proizvoda s oznakom „Personalizirano“ upišite tekst u polje za personalizaciju. Prije izrade provjeravamo da sve izgleda kako treba."
+      },
+      "mounting": {
+        "q": "Kako se zidne dekoracije kače?",
+        "a": "Zidne dekoracije šaljemo pripremljene za montažu. Uz narudžbu možete navesti želite li dvostrano ljepljivu traku ili otvore za šarafe."
+      },
+      "custom": {
+        "q": "Radite li po mojoj skici ili logotipu?",
+        "a": "Da. Pošaljite upit preko stranice Custom izrada s idejom, dimenzijama i rokom, a mi vam vraćamo prijedlog izvedbe i cijenu."
+      }
+    }
+  },
+  "mockup": {
+    "wallColour": "Boja zida",
+    "walls": {
+      "linen": "Lan",
+      "sage": "Žalfija",
+      "clay": "Glina",
+      "charcoal": "Grafit"
+    },
+    "note": "Ilustracija služi kao orijentacija; stvarna veličina zavisi od odabranih dimenzija."
+  },
+  "chat": {
+    "open": "Pitajte nas",
+    "close": "Zatvori",
+    "title": "Imate pitanje?",
+    "text": "Pišite nam na WhatsApp ili Viber — obično odgovaramo isti dan.",
+    "message": "Pozdrav! Imam pitanje o ovome: {url}",
+    "messageGeneric": "Pozdrav! Imam pitanje o vašim proizvodima."
+  },
+  "wishlist": {
+    "eyebrow": "Lista želja",
+    "title": "Sačuvano",
+    "description": "Proizvodi koje ste sačuvali na ovom uređaju.",
+    "emptyTitle": "Još ništa niste sačuvali",
+    "emptyText": "Kliknite srce na proizvodu da ga sačuvate za kasnije.",
+    "browse": "Pogledaj proizvode",
+    "save": "Sačuvaj za kasnije",
+    "saved": "Sačuvano",
+    "saveLabel": "Sačuvaj {name}",
+    "removeLabel": "Ukloni {name} iz sačuvanih",
+    "added": "{name} je sačuvan.",
+    "removed": "{name} je uklonjen iz sačuvanih."
+  },
+  "personalize": {
+    "label": "Vaš tekst",
+    "placeholder": "Npr. Porodica Hodžić ili Amina & Tarik · 12.06.2026",
+    "fontLabel": "Stil slova",
+    "fonts": {
+      "script": "Rukopis",
+      "classic": "Klasično",
+      "modern": "Moderno"
+    },
+    "finishLabel": "Završna obrada",
+    "finishes": {
+      "gold": "Zlatno ogledalo",
+      "black": "Crni pleksiglas",
+      "wood": "Drvo"
+    },
+    "previewLabel": "Pregled",
+    "previewEmpty": "Upišite tekst da vidite kako će izgledati.",
+    "previewNote": "Pregled je orijentacioni. Prije izrade šaljemo vam nacrt na odobrenje.",
+    "reviewCount": "{count, plural, one {# recenzija} few {# recenzije} other {# recenzija}}"
+  },
+  "newsletter": {
+    "placeholder": "Vaš email",
+    "submit": "Prijavi se",
+    "consent": "Želim primati email novosti od Drvenije. Odjava je moguća u svakom emailu.",
+    "done": "Hvala! Prijavljeni ste na novosti.",
+    "error": "Prijava nije uspjela. Pokušajte ponovo.",
+    "unsubscribeTitle": "Odjava s novosti",
+    "unsubscribeText": "Potvrdite da više ne želite primati naše email novosti.",
+    "unsubscribeButton": "Odjavi me",
+    "unsubscribed": "Odjavljeni ste. Više vam nećemo slati novosti.",
+    "invalidLink": "Link za odjavu nije ispravan. Javite nam se i odjavit ćemo vas ručno."
+  },
+  "reviews": {
+    "eyebrow": "Recenzije",
+    "title": "Šta kažu kupci",
+    "average": "Prosječna ocjena {rating} od 5, {count} recenzija",
+    "count": "{count, plural, one {# recenzija} few {# recenzije} other {# recenzija}}",
+    "verified": "Provjerena kupovina"
+  },
+  "orderStatus": {
+    "eyebrow": "Narudžba",
+    "title": "Status narudžbe",
+    "description": "Upišite broj narudžbe iz email potvrde i email adresu koju ste koristili.",
+    "orderNumber": "Broj narudžbe",
+    "find": "Pronađi",
+    "searching": "Tražim…",
+    "notFound": "Nismo pronašli narudžbu s tim brojem i emailom.",
+    "error": "Pretraga trenutno nije moguća. Pokušajte ponovo.",
+    "placed": "Naručeno {date}",
+    "progress": "Napredak narudžbe",
+    "tracking": "Broj za praćenje pošiljke",
+    "quantity": "Količina {quantity}",
+    "statuses": {
+      "submitted": "Zaprimljena",
+      "confirmed": "Potvrđena",
+      "in_production": "U izradi",
+      "packed": "Spakovana",
+      "shipped": "Poslana",
+      "completed": "Isporučena",
+      "declined": "Narudžba je odbijena"
+    },
+    "totals": {
+      "products": "Proizvodi",
+      "discount": "Popust",
+      "giftWrap": "Poklon pakovanje",
+      "shipping": "Dostava",
+      "free": "Besplatna",
+      "total": "Ukupno"
+    },
+    "payment": {
+      "bank_transfer": "Uplata na račun",
+      "cash_on_delivery": "Plaćanje pouzećem"
+    },
+    "paymentStatus": {
+      "pending_manual": "čeka uplatu",
+      "paid": "plaćeno",
+      "cancelled": "otkazano"
+    },
+    "review": {
+      "write": "Ocijenite proizvod",
+      "rating": "Ocjena",
+      "stars": "{count, plural, one {# zvjezdica} few {# zvjezdice} other {# zvjezdica}}",
+      "name": "Vaše ime (prikazuje se uz recenziju)",
+      "body": "Vaše iskustvo",
+      "moderation": "Recenziju objavljujemo nakon kratkog pregleda.",
+      "submit": "Pošalji recenziju",
+      "sending": "Slanje…",
+      "cancel": "Odustani",
+      "error": "Recenzija nije poslana.",
+      "thanks": "Hvala na recenziji!"
     }
   }
 }
