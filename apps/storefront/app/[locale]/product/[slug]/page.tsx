@@ -61,6 +61,16 @@ export default async function Page({ params }: Props) {
             description: product.localizedDescription,
             image: [getAbsoluteUrl(product.primaryImage.url)],
             sku: product.sku,
+            ...(product.rating ? {
+              aggregateRating: { "@type": "AggregateRating", ratingValue: product.rating.average, reviewCount: product.rating.count, bestRating: 5, worstRating: 1 },
+              review: (product.reviews ?? []).slice(0, 5).map(review => ({
+                "@type": "Review",
+                author: { "@type": "Person", name: review.authorName },
+                reviewRating: { "@type": "Rating", ratingValue: review.rating, bestRating: 5 },
+                reviewBody: review.body,
+                datePublished: review.createdAt.slice(0, 10),
+              })),
+            } : {}),
             offers: {
               "@type": "AggregateOffer",
               priceCurrency: product.currency,

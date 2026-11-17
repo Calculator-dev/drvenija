@@ -26,7 +26,8 @@
     "cart": "Korpa | Drvenija",
     "checkout": "Checkout | Drvenija",
     "success": "Narudžba zaprimljena | Drvenija",
-    "wishlist": "Sačuvano | Drvenija"
+    "wishlist": "Sačuvano | Drvenija",
+    "order": "Status narudžbe | Drvenija"
   },
   "notFound": {
     "title": "Stranica nije pronađena",
@@ -63,7 +64,11 @@
     "location": "Sarajevo, BiH",
     "languageNote": "Bosanski je primarni jezik webshopa.",
     "information": "Informacije",
-    "copyright": "© {year} Drvenija. Sva prava zadržana."
+    "copyright": "© {year} Drvenija. Sva prava zadržana.",
+    "orderStatus": "Status narudžbe",
+    "wishlist": "Sačuvano",
+    "newsletterTitle": "Novosti iz radionice",
+    "newsletterText": "Nove kolekcije i sezonski popusti, najviše dva puta mjesečno."
   },
   "home": {
     "hero": {
@@ -308,7 +313,7 @@
     "intro": {
       "eyebrow": "Checkout",
       "title": "Pošaljite narudžbu, a detalje potvrđujemo ručno.",
-      "description": "Ovo je prva verzija webshop checkouta. Nakon slanja narudžbe dobijate potvrdu, detalje dostave i upute za manualno plaćanje."
+      "description": "Nakon slanja narudžbe dobijate email potvrdu. Pregledamo detalje, javimo vam se i tek onda krećemo s izradom."
     },
     "submitError": "Narudžba nije poslana. Pokušajte ponovo.",
     "emptyDescription": "Dodajte proizvode prije nego što nastavite na checkout.",
@@ -316,7 +321,9 @@
     "sections": {
       "contact": "Kontakt",
       "shipping": "Dostava",
-      "notes": "Napomena"
+      "notes": "Napomena",
+      "payment": "Način plaćanja",
+      "gift": "Poklon"
     },
     "fields": {
       "fullName": "Ime i prezime",
@@ -329,7 +336,7 @@
       "notes": "Dodatne informacije",
       "notesPlaceholder": "Napomena za dostavu, personalizaciju ili potvrdu narudžbe."
     },
-    "confirmationNote": "Nakon slanja narudžbe kontaktirat ćemo vas radi potvrde dostupnosti, ukupnog iznosa dostave i detalja manualnog plaćanja.",
+    "confirmationNote": "Nakon slanja narudžbe provjeravamo detalje i personalizaciju i javljamo vam se emailom. Izradu počinjemo tek kada sve potvrdimo.",
     "submitting": "Slanje...",
     "submit": "Pošalji narudžbu · {total}",
     "summary": {
@@ -337,14 +344,47 @@
       "quantity": "Količina {quantity}",
       "products": "Proizvodi",
       "free": "Gratis",
-      "total": "Ukupno"
+      "total": "Ukupno",
+      "discount": "Popust ({code})",
+      "giftWrap": "Poklon pakovanje"
+    },
+    "payment": {
+      "bank_transfer": {
+        "title": "Uplata na račun",
+        "text": "Podatke za uplatu šaljemo nakon što potvrdimo narudžbu."
+      },
+      "cash_on_delivery": {
+        "title": "Plaćanje pouzećem",
+        "text": "Plaćate kuriru gotovinom pri preuzimanju paketa."
+      }
+    },
+    "gift": {
+      "label": "Poklon pakovanje (+{price})",
+      "text": "Pakujemo u poklon kutiju i dodajemo čestitku s vašom porukom. Cijena se ne prikazuje u paketu.",
+      "messageLabel": "Poruka na čestitki",
+      "messagePlaceholder": "Npr. Sretan Bajram, s ljubavlju — Amra"
+    },
+    "discount": {
+      "label": "Kod za popust",
+      "apply": "Primijeni",
+      "remove": "Ukloni kod za popust",
+      "errors": {
+        "not_found": "Kod ne postoji.",
+        "inactive": "Kod trenutno nije aktivan.",
+        "not_started": "Kod još nije aktivan.",
+        "expired": "Kod je istekao.",
+        "used_up": "Kod je već iskorišten.",
+        "min_subtotal": "Kod vrijedi za narudžbe od {amount}.",
+        "unavailable": "Provjera koda trenutno nije moguća. Pokušajte ponovo."
+      }
     }
   },
   "success": {
     "eyebrow": "Narudžba primljena",
     "title": "Hvala. Pregledamo vašu narudžbu.",
     "description": "Poslat ćemo potvrdu dostupnosti. Sačuvajte broj narudžbe za komunikaciju.",
-    "backToShop": "Nazad u shop"
+    "backToShop": "Nazad u shop",
+    "trackOrder": "Prati narudžbu"
   },
   "custom": {
     "eyebrow": "Custom izrada",
@@ -490,6 +530,79 @@
     },
     "previewLabel": "Pregled",
     "previewEmpty": "Upišite tekst da vidite kako će izgledati.",
-    "previewNote": "Pregled je orijentacioni. Prije izrade šaljemo vam nacrt na odobrenje."
+    "previewNote": "Pregled je orijentacioni. Prije izrade šaljemo vam nacrt na odobrenje.",
+    "reviewCount": "{count, plural, one {# recenzija} few {# recenzije} other {# recenzija}}"
+  },
+  "newsletter": {
+    "placeholder": "Vaš email",
+    "submit": "Prijavi se",
+    "consent": "Želim primati email novosti od Drvenije. Odjava je moguća u svakom emailu.",
+    "done": "Hvala! Prijavljeni ste na novosti.",
+    "error": "Prijava nije uspjela. Pokušajte ponovo.",
+    "unsubscribeTitle": "Odjava s novosti",
+    "unsubscribeText": "Potvrdite da više ne želite primati naše email novosti.",
+    "unsubscribeButton": "Odjavi me",
+    "unsubscribed": "Odjavljeni ste. Više vam nećemo slati novosti.",
+    "invalidLink": "Link za odjavu nije ispravan. Javite nam se i odjavit ćemo vas ručno."
+  },
+  "reviews": {
+    "eyebrow": "Recenzije",
+    "title": "Šta kažu kupci",
+    "average": "Prosječna ocjena {rating} od 5, {count} recenzija",
+    "count": "{count, plural, one {# recenzija} few {# recenzije} other {# recenzija}}",
+    "verified": "Provjerena kupovina"
+  },
+  "orderStatus": {
+    "eyebrow": "Narudžba",
+    "title": "Status narudžbe",
+    "description": "Upišite broj narudžbe iz email potvrde i email adresu koju ste koristili.",
+    "orderNumber": "Broj narudžbe",
+    "find": "Pronađi",
+    "searching": "Tražim…",
+    "notFound": "Nismo pronašli narudžbu s tim brojem i emailom.",
+    "error": "Pretraga trenutno nije moguća. Pokušajte ponovo.",
+    "placed": "Naručeno {date}",
+    "progress": "Napredak narudžbe",
+    "tracking": "Broj za praćenje pošiljke",
+    "quantity": "Količina {quantity}",
+    "statuses": {
+      "submitted": "Zaprimljena",
+      "confirmed": "Potvrđena",
+      "in_production": "U izradi",
+      "packed": "Spakovana",
+      "shipped": "Poslana",
+      "completed": "Isporučena",
+      "declined": "Narudžba je odbijena"
+    },
+    "totals": {
+      "products": "Proizvodi",
+      "discount": "Popust",
+      "giftWrap": "Poklon pakovanje",
+      "shipping": "Dostava",
+      "free": "Besplatna",
+      "total": "Ukupno"
+    },
+    "payment": {
+      "bank_transfer": "Uplata na račun",
+      "cash_on_delivery": "Plaćanje pouzećem"
+    },
+    "paymentStatus": {
+      "pending_manual": "čeka uplatu",
+      "paid": "plaćeno",
+      "cancelled": "otkazano"
+    },
+    "review": {
+      "write": "Ocijenite proizvod",
+      "rating": "Ocjena",
+      "stars": "{count, plural, one {# zvjezdica} few {# zvjezdice} other {# zvjezdica}}",
+      "name": "Vaše ime (prikazuje se uz recenziju)",
+      "body": "Vaše iskustvo",
+      "moderation": "Recenziju objavljujemo nakon kratkog pregleda.",
+      "submit": "Pošalji recenziju",
+      "sending": "Slanje…",
+      "cancel": "Odustani",
+      "error": "Recenzija nije poslana.",
+      "thanks": "Hvala na recenziji!"
+    }
   }
 }

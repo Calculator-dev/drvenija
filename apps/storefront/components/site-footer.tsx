@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Mail, MapPin, Phone } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { Logo } from "@/components/logo"
+import { NewsletterForm } from "@/components/newsletter-form"
 import { useCart } from "@/components/cart-provider"
 import { contactEmail, contactPhone, formatPhone } from "@/lib/contact"
 import { buildPath, type Locale } from "@/lib/products"
@@ -23,6 +24,8 @@ export function SiteFooter({ locale }: { locale: Locale }) {
   const infoLinks = [
     { href: `${prefix}/custom`, label: t("customWork") },
     { href: `${prefix}/about`, label: t("about") },
+    { href: `${prefix}/order`, label: t("orderStatus") },
+    { href: `${prefix}/wishlist`, label: t("wishlist") },
     { href: `${prefix}/cart`, label: common("cart") },
   ]
 
@@ -40,6 +43,9 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         <div>
           <Link href={buildPath(locale)} aria-label="Drvenija"><Logo className="text-[#f7f5f0]" /></Link>
           <p className="mt-5 max-w-md text-sm leading-7 text-white/65">{t("description")}</p>
+          <p className="mt-7 font-serif text-lg text-[#f7f5f0]">{t("newsletterTitle")}</p>
+          <p className="mb-3 mt-1 text-xs leading-5 text-white/55">{t("newsletterText")}</p>
+          <NewsletterForm locale={locale} />
         </div>
 
         <FooterColumn title={common("shop")} links={shopLinks} />

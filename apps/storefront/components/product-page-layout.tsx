@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl"
 import { ProductCard } from "@/components/product-card"
 import { ProductDetail } from "@/components/product-detail"
 import { ProductGallery } from "@/components/product-gallery"
+import { ProductReviews } from "@/components/product-reviews"
 import { Reveal } from "@/components/reveal"
 import { WallMockup } from "@/components/wall-mockup"
 import { activeVariants, buildPath, categoryPath, type Locale, type LocalizedCategory, type LocalizedProduct, isSvg } from "@/lib/products"
@@ -109,6 +110,8 @@ export function ProductPageLayout({ locale, product, related, category }: { loca
           </dl>
         </Reveal>
       </section>
+
+      <ProductReviews locale={locale} product={product} />
 
       {related.length > 0 && (
         <section className="border-t border-border/60 bg-secondary py-16 md:py-24">

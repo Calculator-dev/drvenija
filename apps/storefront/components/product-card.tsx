@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { ProductCardMedia } from "@/components/product-card-media"
+import { StarRating } from "@/components/star-rating"
 import { buildPath, displayPrice, formatPrice, type Locale, type LocalizedProduct } from "@/lib/products"
 
 export function ProductCard({
@@ -25,6 +26,11 @@ export function ProductCard({
           {product.categoryName?.[locale] ?? ""} · {common(`materials.${product.material}`)}
         </p>
         <h3 className="mt-2 font-serif text-lg leading-snug text-foreground transition-opacity group-hover:opacity-70 md:text-xl">{product.localizedName}</h3>
+        {product.rating && (
+          <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+            <StarRating value={product.rating.average} className="[&_svg]:h-3.5 [&_svg]:w-3.5" />({product.rating.count})
+          </p>
+        )}
         <p className="mt-1 hidden text-sm leading-6 text-muted-foreground line-clamp-2 sm:block">{product.localizedShortDescription}</p>
         <div className="mt-auto flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 pt-3">
           <p className="font-semibold text-foreground">

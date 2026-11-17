@@ -27,12 +27,13 @@ async function findCustomerOrder(number: string, address: string) {
 
 export const publicCustomerRoutes: FastifyPluginAsync = async app => {
   // Preview only: POST /public/orders checks the code again and records its use.
-  app.post("/discounts/check", { config: { rateLimit: lookupRateLimit } }, async (request, reply) => {
+  app.post("/discounts/check", { config: { rateLimit: lookupRateLimit } }, async request => {
     const input = z.object({ code: z.string().trim().min(1).max(40), subtotal: z.number().int().min(0).max(10_000_000) }).parse(request.body)
     const [code] = await db.select().from(discountCodes).where(eq(discountCodes.code, normalizeCode(input.code))).limit(1)
-    if (!code) return reply.code(404).send({ valid: false, reason: "not_found" })
+    // A rejected code is a normal answer, not an error, so browsers do not log failed requests.
+    if (!code) return { valid: false, reason: "not_found" }
     const problem = discountProblem(code, input.subtotal)
-    if (problem) return reply.code(422).send({ valid: false, reason: problem, minSubtotal: code.minSubtotal })
+    if (problem) return { valid: false, reason: problem, minSubtotal: code.minSubtotal }
     return { valid: true, code: code.code, kind: code.kind, value: code.value, minSubtotal: code.minSubtotal, amount: discountFor(code, input.subtotal) }
   })
 

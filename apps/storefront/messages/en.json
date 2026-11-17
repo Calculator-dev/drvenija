@@ -26,7 +26,8 @@
     "cart": "Your cart | Drvenija",
     "checkout": "Checkout | Drvenija",
     "success": "Order received | Drvenija",
-    "wishlist": "Saved | Drvenija"
+    "wishlist": "Saved | Drvenija",
+    "order": "Order status | Drvenija"
   },
   "notFound": {
     "title": "Page not found",
@@ -63,7 +64,11 @@
     "location": "Sarajevo, Bosnia and Herzegovina",
     "languageNote": "English is available as a secondary storefront language.",
     "information": "Information",
-    "copyright": "© {year} Drvenija. All rights reserved."
+    "copyright": "© {year} Drvenija. All rights reserved.",
+    "orderStatus": "Order status",
+    "wishlist": "Saved",
+    "newsletterTitle": "News from the workshop",
+    "newsletterText": "New collections and seasonal offers, at most twice a month."
   },
   "home": {
     "hero": {
@@ -308,7 +313,7 @@
     "intro": {
       "eyebrow": "Checkout",
       "title": "Submit the order and we will confirm the details manually.",
-      "description": "This is the first webshop checkout release. After submitting, you receive confirmation, shipping details, and manual payment instructions."
+      "description": "You get an email confirmation after ordering. We review the details, get in touch, and only then start making it."
     },
     "submitError": "Order submission failed. Please try again.",
     "emptyDescription": "Add products before continuing to checkout.",
@@ -316,7 +321,9 @@
     "sections": {
       "contact": "Contact",
       "shipping": "Shipping",
-      "notes": "Notes"
+      "notes": "Notes",
+      "payment": "Payment method",
+      "gift": "Gift"
     },
     "fields": {
       "fullName": "Full name",
@@ -329,7 +336,7 @@
       "notes": "Additional information",
       "notesPlaceholder": "Any extra note for delivery, personalization, or order confirmation."
     },
-    "confirmationNote": "After the order is submitted, we will contact you to confirm availability, final delivery cost, and manual payment details.",
+    "confirmationNote": "After you place the order we check the details and personalisation and email you. We start production only once everything is confirmed.",
     "submitting": "Submitting...",
     "submit": "Submit order · {total}",
     "summary": {
@@ -337,14 +344,47 @@
       "quantity": "Qty {quantity}",
       "products": "Products",
       "free": "Free",
-      "total": "Total"
+      "total": "Total",
+      "discount": "Discount ({code})",
+      "giftWrap": "Gift wrapping"
+    },
+    "payment": {
+      "bank_transfer": {
+        "title": "Bank transfer",
+        "text": "We send payment details once we confirm your order."
+      },
+      "cash_on_delivery": {
+        "title": "Cash on delivery",
+        "text": "Pay the courier in cash when the parcel arrives."
+      }
+    },
+    "gift": {
+      "label": "Gift wrapping (+{price})",
+      "text": "We pack it in a gift box with a card carrying your message. No prices in the parcel.",
+      "messageLabel": "Card message",
+      "messagePlaceholder": "E.g. Eid Mubarak, with love — Amra"
+    },
+    "discount": {
+      "label": "Discount code",
+      "apply": "Apply",
+      "remove": "Remove discount code",
+      "errors": {
+        "not_found": "This code does not exist.",
+        "inactive": "This code is not active.",
+        "not_started": "This code is not active yet.",
+        "expired": "This code has expired.",
+        "used_up": "This code has been used up.",
+        "min_subtotal": "This code applies to orders from {amount}.",
+        "unavailable": "We could not check the code right now. Please try again."
+      }
     }
   },
   "success": {
     "eyebrow": "Order received",
     "title": "Thank you. We are reviewing your order.",
     "description": "We will send you confirmation of availability. Keep the order number for follow-up.",
-    "backToShop": "Back to shop"
+    "backToShop": "Back to shop",
+    "trackOrder": "Track your order"
   },
   "custom": {
     "eyebrow": "Custom work",
@@ -490,6 +530,79 @@
     },
     "previewLabel": "Preview",
     "previewEmpty": "Type your text to see how it will look.",
-    "previewNote": "The preview is a guide. We email you a draft to approve before cutting."
+    "previewNote": "The preview is a guide. We email you a draft to approve before cutting.",
+    "reviewCount": "{count, plural, one {# review} other {# reviews}}"
+  },
+  "newsletter": {
+    "placeholder": "Your email",
+    "submit": "Sign up",
+    "consent": "I want to receive email news from Drvenija. I can unsubscribe in any email.",
+    "done": "Thank you! You are signed up.",
+    "error": "Sign-up failed. Please try again.",
+    "unsubscribeTitle": "Unsubscribe",
+    "unsubscribeText": "Confirm that you no longer want to receive our email news.",
+    "unsubscribeButton": "Unsubscribe me",
+    "unsubscribed": "You are unsubscribed. We will not send you news anymore.",
+    "invalidLink": "This unsubscribe link is not valid. Contact us and we will remove you manually."
+  },
+  "reviews": {
+    "eyebrow": "Reviews",
+    "title": "What customers say",
+    "average": "Average rating {rating} out of 5, {count} reviews",
+    "count": "{count, plural, one {# review} other {# reviews}}",
+    "verified": "Verified purchase"
+  },
+  "orderStatus": {
+    "eyebrow": "Order",
+    "title": "Order status",
+    "description": "Enter the order number from your confirmation email and the email address you used.",
+    "orderNumber": "Order number",
+    "find": "Find",
+    "searching": "Searching…",
+    "notFound": "We could not find an order with that number and email.",
+    "error": "Search is not available right now. Please try again.",
+    "placed": "Ordered {date}",
+    "progress": "Order progress",
+    "tracking": "Tracking number",
+    "quantity": "Quantity {quantity}",
+    "statuses": {
+      "submitted": "Received",
+      "confirmed": "Confirmed",
+      "in_production": "In production",
+      "packed": "Packed",
+      "shipped": "Shipped",
+      "completed": "Delivered",
+      "declined": "Order declined"
+    },
+    "totals": {
+      "products": "Products",
+      "discount": "Discount",
+      "giftWrap": "Gift wrapping",
+      "shipping": "Delivery",
+      "free": "Free",
+      "total": "Total"
+    },
+    "payment": {
+      "bank_transfer": "Bank transfer",
+      "cash_on_delivery": "Cash on delivery"
+    },
+    "paymentStatus": {
+      "pending_manual": "awaiting payment",
+      "paid": "paid",
+      "cancelled": "cancelled"
+    },
+    "review": {
+      "write": "Review this product",
+      "rating": "Rating",
+      "stars": "{count, plural, one {# star} other {# stars}}",
+      "name": "Your name (shown with the review)",
+      "body": "Your experience",
+      "moderation": "We publish reviews after a short check.",
+      "submit": "Send review",
+      "sending": "Sending…",
+      "cancel": "Cancel",
+      "error": "The review was not sent.",
+      "thanks": "Thank you for your review!"
+    }
   }
 }

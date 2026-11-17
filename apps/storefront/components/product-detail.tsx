@@ -6,6 +6,7 @@ import { Check, ChevronDown, Minus, Plus } from "lucide-react"
 import { toast } from "sonner"
 import { useCart } from "@/components/cart-provider"
 import { PersonalizationDesigner, personalizationNote, type PersonalizationDesign } from "@/components/personalization-designer"
+import { StarRating } from "@/components/star-rating"
 import { TrustBar } from "@/components/trust-bar"
 import { WishlistButton } from "@/components/wishlist-button"
 import { activeVariants, formatPrice, isSvg, type Locale, type LocalizedProduct } from "@/lib/products"
@@ -54,6 +55,12 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
         {product.categoryName?.[locale] ?? ""} · {materialName}
       </p>
       <h1 className="mt-4 wrap-break-word font-serif text-4xl leading-[1.05] tracking-tight text-foreground md:text-5xl">{product.localizedName}</h1>
+      {product.rating && (
+        <a href="#recenzije" className="mt-3 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+          <StarRating value={product.rating.average} />
+          {personalize("reviewCount", { count: product.rating.count })}
+        </a>
+      )}
       <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground">{product.localizedTagline}</p>
 
       <p className="mt-5 break-all text-xs text-muted-foreground">SKU: <span className="text-foreground">{selectedVariant.sku}</span></p>
