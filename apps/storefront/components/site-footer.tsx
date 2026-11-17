@@ -3,6 +3,7 @@ import { Mail, MapPin, Phone } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { Logo } from "@/components/logo"
 import { useCart } from "@/components/cart-provider"
+import { contactEmail, contactPhone, formatPhone } from "@/lib/contact"
 import { buildPath, type Locale } from "@/lib/products"
 
 export function SiteFooter({ locale }: { locale: Locale }) {
@@ -47,8 +48,8 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         <div>
           <p className="text-xs uppercase tracking-[0.22em] text-gold">{t("contact")}</p>
           <ul className="mt-4 space-y-3 text-sm text-white/80">
-            <li><a href="mailto:info@drvenija.ba" className="inline-flex items-center gap-2 hover:text-gold"><Mail className="h-4 w-4" strokeWidth={1.5} aria-hidden />info@drvenija.ba</a></li>
-            <li><a href="tel:+38761000000" className="inline-flex items-center gap-2 hover:text-gold"><Phone className="h-4 w-4" strokeWidth={1.5} aria-hidden />+387 61 000 000</a></li>
+            <li><a href={`mailto:${contactEmail}`} className="inline-flex items-center gap-2 hover:text-gold"><Mail className="h-4 w-4" strokeWidth={1.5} aria-hidden />{contactEmail}</a></li>
+            <li><a href={`tel:${contactPhone}`} className="inline-flex items-center gap-2 hover:text-gold"><Phone className="h-4 w-4" strokeWidth={1.5} aria-hidden />{formatPhone(contactPhone)}</a></li>
             <li className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" strokeWidth={1.5} aria-hidden />{t("location")}</li>
           </ul>
         </div>

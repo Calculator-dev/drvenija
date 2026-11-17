@@ -4,10 +4,11 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { useModalPanel } from "@/hooks/use-modal-panel";
-import { Menu, Search, ShoppingBag, X } from "lucide-react";
+import { Heart, Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/components/cart-provider";
+import { useWishlist } from "@/components/wishlist-provider";
 import { CartDrawer } from "@/components/cart-drawer";
 import { Logo } from "@/components/logo";
 import { alternateLocalePath, buildPath, siteName, type Locale } from "@/lib/products";
@@ -248,6 +249,7 @@ function HeaderActions({
       <Suspense fallback={<LanguageLink locale={locale} />}>
         <LanguageLinkWithQuery locale={locale} />
       </Suspense>
+      <WishlistLink locale={locale} />
       <button
         type="button"
         onClick={onCartOpen}
@@ -283,6 +285,25 @@ function LanguageLink({ locale, search }: { locale: Locale; search?: string }) {
       className="inline-flex h-10 items-center justify-center px-2 text-xs font-semibold tracking-[0.16em] transition-colors hover:text-gold sm:px-3"
     >
       {t("switchLanguage")}
+    </Link>
+  );
+}
+
+function WishlistLink({ locale }: { locale: Locale }) {
+  const { ids } = useWishlist();
+  const t = useTranslations("wishlist");
+  return (
+    <Link
+      href={buildPath(locale, "/wishlist")}
+      aria-label={t("title")}
+      className="relative flex h-10 w-10 items-center justify-center transition-colors hover:text-gold"
+    >
+      <Heart className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+      {ids.length > 0 && (
+        <span className="absolute right-0 top-0 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-gold px-1 text-[10px] font-bold text-accent-foreground">
+          {ids.length}
+        </span>
+      )}
     </Link>
   );
 }

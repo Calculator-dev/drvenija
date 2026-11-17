@@ -6,6 +6,7 @@ import { Check, ChevronDown, Minus, Plus } from "lucide-react"
 import { toast } from "sonner"
 import { useCart } from "@/components/cart-provider"
 import { TrustBar } from "@/components/trust-bar"
+import { WishlistButton } from "@/components/wishlist-button"
 import { activeVariants, formatPrice, isSvg, type Locale, type LocalizedProduct } from "@/lib/products"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
@@ -31,6 +32,13 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
     observer.observe(target)
     return () => observer.disconnect()
   }, [])
+
+  // Lets the floating chat button move above the bar while it is shown.
+  useEffect(() => {
+    if (showStickyBar) document.body.dataset.stickyBar = ""
+    else delete document.body.dataset.stickyBar
+    return () => { delete document.body.dataset.stickyBar }
+  }, [showStickyBar])
 
   const handleAdd = () => {
     addItem(product, { quantity, personalization: personalization.trim() || undefined, variantId: selectedVariant.id })
@@ -122,6 +130,7 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
           {t("addToCart")} · {formatPrice(selectedVariant.price * quantity, locale)}
         </button>
       </div>
+      <WishlistButton variant="full" productId={product.id} productName={product.localizedName} className="mt-3 w-full" />
 
       <TrustBar variant="compact" freeFrom={shippingPolicy.freeFrom} className="mt-6 border border-border/70 bg-secondary/60 p-4" />
 

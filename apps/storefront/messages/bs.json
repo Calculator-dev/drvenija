@@ -25,7 +25,8 @@
     "custom": "Custom izrada | Drvenija",
     "cart": "Korpa | Drvenija",
     "checkout": "Checkout | Drvenija",
-    "success": "Narudžba zaprimljena | Drvenija"
+    "success": "Narudžba zaprimljena | Drvenija",
+    "wishlist": "Sačuvano | Drvenija"
   },
   "notFound": {
     "title": "Stranica nije pronađena",
@@ -450,5 +451,27 @@
       "charcoal": "Grafit"
     },
     "note": "Ilustracija služi kao orijentacija; stvarna veličina zavisi od odabranih dimenzija."
+  },
+  "chat": {
+    "open": "Pitajte nas",
+    "close": "Zatvori",
+    "title": "Imate pitanje?",
+    "text": "Pišite nam na WhatsApp ili Viber — obično odgovaramo isti dan.",
+    "message": "Pozdrav! Imam pitanje o ovome: {url}",
+    "messageGeneric": "Pozdrav! Imam pitanje o vašim proizvodima."
+  },
+  "wishlist": {
+    "eyebrow": "Lista želja",
+    "title": "Sačuvano",
+    "description": "Proizvodi koje ste sačuvali na ovom uređaju.",
+    "emptyTitle": "Još ništa niste sačuvali",
+    "emptyText": "Kliknite srce na proizvodu da ga sačuvate za kasnije.",
+    "browse": "Pogledaj proizvode",
+    "save": "Sačuvaj za kasnije",
+    "saved": "Sačuvano",
+    "saveLabel": "Sačuvaj {name}",
+    "removeLabel": "Ukloni {name} iz sačuvanih",
+    "added": "{name} je sačuvan.",
+    "removed": "{name} je uklonjen iz sačuvanih."
   }
 }

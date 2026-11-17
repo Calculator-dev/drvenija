@@ -3,6 +3,7 @@ import { Amiri, Marcellus, Montserrat } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { NextIntlClientProvider } from "next-intl"
 import { CartProvider } from "@/components/cart-provider"
+import { WishlistProvider } from "@/components/wishlist-provider"
 import { SiteShell } from "@/components/site-shell"
 import { Toaster } from "@/components/ui/sonner"
 import { generateLocaleParams, resolveLocale, type LocaleParams } from "@/lib/locale-params"
@@ -60,8 +61,10 @@ export default async function RootLayout({
       <body suppressHydrationWarning className="min-h-screen bg-background font-sans antialiased">
         <NextIntlClientProvider>
           <CartProvider>
-            <SiteShell locale={locale}>{children}</SiteShell>
-            <Toaster position="top-center" />
+            <WishlistProvider>
+              <SiteShell locale={locale}>{children}</SiteShell>
+              <Toaster position="top-center" />
+            </WishlistProvider>
           </CartProvider>
         </NextIntlClientProvider>
         {process.env.NODE_ENV === "production" && <Analytics />}

@@ -25,7 +25,8 @@
     "custom": "Custom work | Drvenija",
     "cart": "Your cart | Drvenija",
     "checkout": "Checkout | Drvenija",
-    "success": "Order received | Drvenija"
+    "success": "Order received | Drvenija",
+    "wishlist": "Saved | Drvenija"
   },
   "notFound": {
     "title": "Page not found",
@@ -450,5 +451,27 @@
       "charcoal": "Charcoal"
     },
     "note": "The illustration is a guide only; the real size depends on the dimensions you choose."
+  },
+  "chat": {
+    "open": "Ask us",
+    "close": "Close",
+    "title": "Have a question?",
+    "text": "Message us on WhatsApp or Viber — we usually reply the same day.",
+    "message": "Hello! I have a question about this: {url}",
+    "messageGeneric": "Hello! I have a question about your products."
+  },
+  "wishlist": {
+    "eyebrow": "Wishlist",
+    "title": "Saved",
+    "description": "Products you saved on this device.",
+    "emptyTitle": "Nothing saved yet",
+    "emptyText": "Tap the heart on a product to save it for later.",
+    "browse": "Browse products",
+    "save": "Save for later",
+    "saved": "Saved",
+    "saveLabel": "Save {name}",
+    "removeLabel": "Remove {name} from saved",
+    "added": "{name} saved.",
+    "removed": "{name} removed from saved."
   }
 }

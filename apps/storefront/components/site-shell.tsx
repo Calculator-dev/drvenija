@@ -1,5 +1,6 @@
 "use client"
 
+import { ChatButton } from "@/components/chat-button"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import type { Locale } from "@/lib/products"
@@ -10,6 +11,7 @@ export function SiteShell({ locale, children }: { locale: Locale; children: Reac
       <SiteHeader locale={locale} />
       <main className="flex-1">{children}</main>
       <SiteFooter locale={locale} />
+      <ChatButton />
     </>
   )
 }
