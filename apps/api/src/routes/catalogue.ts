@@ -1,8 +1,9 @@
 import { withImageUrls } from "./media.js";
+import { imageUrl } from "../services/backblaze.js";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
-import { and, asc, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNotNull } from "drizzle-orm";
 import { db } from "../db/client.js";
 import {
   categories,
@@ -18,9 +19,29 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
   app.get("/categories", async () =>
     db.select().from(categories).orderBy(categories.code),
   );
-  app.get("/products", async () =>
-    db.select().from(products).orderBy(desc(products.createdAt)),
-  );
+  // Each row carries a short-lived link to its main gallery photo for the CRM list.
+  app.get("/products", async () => {
+    const [rows, images] = await Promise.all([
+      db.select().from(products).orderBy(desc(products.createdAt)),
+      db
+        .select({ productId: mediaAssets.productId, storageKey: mediaAssets.storageKey, isPrimary: mediaAssets.isPrimary })
+        .from(mediaAssets)
+        .where(and(isNotNull(mediaAssets.productId), eq(mediaAssets.kind, "gallery")))
+        .orderBy(desc(mediaAssets.isPrimary), mediaAssets.createdAt),
+    ]);
+    const mainImage = new Map<string, string>();
+    for (const image of images)
+      if (image.productId && !mainImage.has(image.productId))
+        mainImage.set(image.productId, image.storageKey);
+    return Promise.all(
+      rows.map(async (row) => {
+        const storageKey = mainImage.get(row.id);
+        // Without storage settings the list still loads, just without thumbnails.
+        const thumbnailUrl = storageKey ? await imageUrl(storageKey).catch(() => null) : null;
+        return { ...row, thumbnailUrl };
+      }),
+    );
+  });
   const params = z.object({ id: z.string().uuid() });
   app.get("/products/:id", async (request, reply) => {
     const { id } = params.parse(request.params);
