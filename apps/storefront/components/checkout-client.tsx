@@ -139,7 +139,7 @@ export function CheckoutClient({ locale, settings }: { locale: Locale; settings:
             id="notes"
             name="notes"
             rows={4}
-            className="mt-2 w-full border border-border bg-transparent px-3 py-3 text-sm text-foreground outline-none transition-colors focus:border-foreground"
+            className="mt-2 w-full border border-input bg-transparent px-3 py-3 text-sm text-foreground outline-none transition-colors focus:border-foreground"
             placeholder={t("fields.notesPlaceholder")}
           />
         </Section>
@@ -172,7 +172,7 @@ export function CheckoutClient({ locale, settings }: { locale: Locale; settings:
           {giftWrap && (
             <div>
               <label htmlFor="giftMessage" className="block text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{t("gift.messageLabel")}</label>
-              <textarea id="giftMessage" rows={3} maxLength={300} value={giftMessage} onChange={event => setGiftMessage(event.target.value)} placeholder={t("gift.messagePlaceholder")} className="mt-2 w-full border border-border bg-transparent px-3 py-3 text-sm outline-none transition-colors focus:border-foreground" />
+              <textarea id="giftMessage" rows={3} maxLength={300} value={giftMessage} onChange={event => setGiftMessage(event.target.value)} placeholder={t("gift.messagePlaceholder")} className="mt-2 w-full border border-input bg-transparent px-3 py-3 text-sm outline-none transition-colors focus:border-foreground" />
             </div>
           )}
         </Section>
@@ -223,7 +223,7 @@ export function CheckoutClient({ locale, settings }: { locale: Locale; settings:
                 onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); void applyCode() } }}
                 maxLength={40}
                 autoComplete="off"
-                className="min-w-0 flex-1 border border-border bg-transparent px-3 py-2.5 text-sm uppercase outline-none focus:border-foreground"
+                className="min-w-0 flex-1 border border-input bg-transparent px-3 py-2.5 text-sm uppercase outline-none focus:border-foreground"
                 aria-describedby={codeError ? "discountError" : undefined}
               />
               <button type="button" onClick={() => void applyCode()} disabled={checkingCode || !codeInput.trim()} className="border border-foreground px-4 text-sm font-semibold transition-colors hover:bg-foreground hover:text-background disabled:opacity-50">
@@ -292,7 +292,7 @@ function Input({
         id={id}
         name={id}
         {...props}
-        className="mt-2 w-full border border-border bg-transparent px-3 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+        className="mt-2 w-full border border-input bg-transparent px-3 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
       />
     </div>
   )

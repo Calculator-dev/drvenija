@@ -40,7 +40,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
         {t("freeDelivery", { amount: String(shippingPolicy.freeFrom) })}
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-burgundy-line bg-burgundy/95 text-ivory backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-accent/25 bg-burgundy/95 text-ivory backdrop-blur-xl">
         <div className="mx-auto grid h-17 max-w-375 grid-cols-[1fr_auto] items-center gap-3 px-4 md:h-19 md:grid-cols-[220px_1fr] md:px-6">
           <div className="flex min-w-0 items-center gap-2">
             <button
@@ -204,7 +204,7 @@ function SearchForm({
       onSubmit={onSubmit}
       className={cn(
         "flex h-10 w-full items-center rounded-sm border transition-colors",
-        dark ? "border-burgundy-line bg-ivory/10 text-ivory focus-within:border-accent" : "border-border bg-secondary focus-within:border-foreground",
+        dark ? "border-input bg-ivory/10 text-ivory focus-within:border-accent" : "border-border bg-secondary focus-within:border-foreground",
         className,
       )}
     >

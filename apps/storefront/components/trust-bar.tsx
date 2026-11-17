@@ -30,7 +30,7 @@ export function TrustBar({ freeFrom, variant = "band", className }: { freeFrom: 
       <ul className="mx-auto grid max-w-375 grid-cols-2 gap-x-4 gap-y-7 px-4 py-9 md:px-6 lg:grid-cols-4">
         {items.map(item => (
           <li key={item.title} className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-start sm:text-left">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-burgundy text-accent">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-burgundy-deep text-accent">
               <item.icon className="h-5 w-5" strokeWidth={1.6} aria-hidden />
             </span>
             <span>

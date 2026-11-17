@@ -232,7 +232,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
         </section>
       )}
 
-      <section className="bg-burgundy py-20 text-ivory md:py-24">
+      <section className="bg-burgundy-deep py-20 text-ivory md:py-24">
         <div className="mx-auto max-w-375 px-4 md:px-6">
           <Reveal className="mb-12 max-w-160">
             <p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-accent">
@@ -322,7 +322,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
                 <li key={step} className="flex items-start gap-4">
                   <span
                     aria-hidden
-                    className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-burgundy font-serif text-[17px] text-accent"
+                    className="flex h-9 w-9 flex-none items-center justify-center rounded-full border border-accent/50 bg-burgundy-deep font-serif text-[17px] text-accent"
                   >
                     {index + 1}
                   </span>
@@ -356,7 +356,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
 
       <section className="mx-auto max-w-375 px-4 py-20 md:px-6 md:py-24">
         <Reveal>
-          <div className="grid overflow-hidden rounded-xl bg-burgundy text-ivory md:grid-cols-2">
+          <div className="grid overflow-hidden rounded-xl border border-accent/25 bg-burgundy-deep text-ivory md:grid-cols-2">
             <div className="flex flex-col gap-5 px-7 py-12 md:px-12 md:py-14">
               <span
                 lang="ar"
@@ -458,6 +458,7 @@ function SectionHeading({
         <h2 className="font-serif text-[32px] leading-[1.1] md:text-[44px]">
           {title}
         </h2>
+        <span aria-hidden className="mt-4 block h-px w-10 bg-accent" />
       </div>
       {children}
     </Reveal>

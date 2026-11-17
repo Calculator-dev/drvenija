@@ -4,36 +4,39 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Brand palette: deep burgundy #59000A for the header, footer and dark sections; ivory
-     backgrounds; champagne gold for buttons (always with burgundy text) and antique gold for
-     small labels; near-black burgundy for text. */
-  --background: #f8f3ec;
-  --foreground: #2b1215;
-  --card: #fcf9f4;
-  --card-foreground: #2b1215;
-  --popover: #fcf9f4;
-  --popover-foreground: #2b1215;
-  --primary: #59000a;
-  --primary-foreground: #f8f3ec;
-  --secondary: #efe5d6;
-  --secondary-foreground: #2b1215;
-  --muted: #efe5d6;
-  --muted-foreground: #6e5450;
-  --accent: #c9a66b;
-  --accent-foreground: #59000a;
-  --accent-hover: #d8bc8a;
-  /* Antique gold, dark enough for small text and icons on ivory. */
-  --accent-ink: #7a5a1f;
-  --destructive: oklch(0.52 0.19 28);
-  --destructive-foreground: #f8f3ec;
-  --border: #e4d6c2;
-  --input: #d3c0a4;
-  --ring: #7a5a1f;
-  --radius: 0.375rem;
-  --burgundy: #59000a;
-  --burgundy-line: #7a1f2b;
-  --ivory: #f8f3ec;
-  --sand: #eadbc4;
+  /* Burgundy theme: burgundy pages (#4b0e1c) with darker bands (#340913) and the deepest
+     shade for the footer (#29080f); ivory text; gold #d2a62c for buttons, selected options,
+     small labels and thin rules, always with the deepest burgundy as text on gold. */
+  --background: #4b0e1c;
+  --foreground: #f5ece1;
+  --card: #3d0b17;
+  --card-foreground: #f5ece1;
+  --popover: #3d0b17;
+  --popover-foreground: #f5ece1;
+  --primary: #d2a62c;
+  --primary-foreground: #29080f;
+  --secondary: #340913;
+  --secondary-foreground: #f5ece1;
+  --muted: #340913;
+  --muted-foreground: #d4bfb5;
+  --accent: #d2a62c;
+  --accent-foreground: #29080f;
+  --accent-hover: #e0b94a;
+  /* Gold is readable as text on every burgundy shade (6.7:1 or more). */
+  --accent-ink: #d2a62c;
+  --destructive: #ff9b8f;
+  --destructive-foreground: #29080f;
+  --border: #672c2e;
+  /* Form field borders need 3:1 against the page. */
+  --input: #a06a6f;
+  --ring: #d2a62c;
+  --radius: 0.25rem;
+  --burgundy: #4b0e1c;
+  --burgundy-deep: #340913;
+  --burgundy-darkest: #29080f;
+  --burgundy-line: #672c2e;
+  --ivory: #f5ece1;
+  --sand: #340913;
   --wood: #c9a27a;
   --sidebar: var(--background);
   --sidebar-foreground: var(--foreground);
@@ -47,7 +50,7 @@
 
 @theme inline {
   --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-marcellus), ui-serif, Georgia, serif;
+  --font-serif: var(--font-cormorant), ui-serif, Georgia, serif;
   --font-arabic: var(--font-amiri), serif;
   --font-script: var(--font-great-vibes), cursive;
   --font-mono: ui-monospace, SFMono-Regular, monospace;
@@ -66,6 +69,8 @@
   --color-sand: var(--sand);
   --color-burgundy: var(--burgundy);
   --color-burgundy-line: var(--burgundy-line);
+  --color-burgundy-deep: var(--burgundy-deep);
+  --color-burgundy-darkest: var(--burgundy-darkest);
   --color-ivory: var(--ivory);
   --color-accent-hover: var(--accent-hover);
   --color-accent-ink: var(--accent-ink);
@@ -97,6 +102,8 @@
   }
 
   html {
+    /* Native checkboxes, radios and scrollbars render for a dark page. */
+    color-scheme: dark;
     scroll-behavior: smooth;
   }
 

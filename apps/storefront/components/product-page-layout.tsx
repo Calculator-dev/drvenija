@@ -43,11 +43,11 @@ export function ProductPageLayout({ locale, product, related, category }: { loca
         </div>
       </div>
 
-      <section className="bg-primary px-4 py-20 text-center text-primary-foreground md:px-6 md:py-28">
+      <section className="bg-burgundy-darkest px-4 py-20 text-center text-ivory md:px-6 md:py-28">
         <Reveal className="mx-auto max-w-4xl">
           <p className="text-xs uppercase tracking-[0.3em] text-accent">{product.categoryName?.[locale] ?? t("collectionFallback")}</p>
           <h2 className="mt-5 font-serif text-4xl leading-tight tracking-tight md:text-6xl">{product.localizedName}</h2>
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-white/65 md:text-lg">{product.localizedDescription}</p>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-ivory/70 md:text-lg">{product.localizedDescription}</p>
         </Reveal>
       </section>
 

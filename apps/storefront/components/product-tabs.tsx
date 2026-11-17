@@ -34,6 +34,7 @@ export function ProductTabs({ locale, products, shopHref }: { locale: Locale; pr
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent-ink">{t("eyebrow")}</p>
           <h2 className="mt-3 font-serif text-4xl tracking-tight md:text-5xl">{t("title")}</h2>
+          <span aria-hidden className="mt-4 block h-px w-10 bg-accent" />
         </div>
         <div role="tablist" aria-label={t("title")} className="-mx-4 flex gap-2 overflow-x-auto px-4 [&::-webkit-scrollbar]:hidden md:mx-0 md:px-0">
           {lists.map(list => (

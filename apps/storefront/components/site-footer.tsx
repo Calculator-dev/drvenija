@@ -30,7 +30,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
   ]
 
   return (
-    <footer className="bg-burgundy text-ivory">
+    <footer className="border-t border-accent/25 bg-burgundy-darkest text-ivory">
       <div className="border-b border-burgundy-line">
         <div className="mx-auto grid max-w-375 gap-6 px-4 py-8 text-sm sm:grid-cols-3 md:px-6">
           <p><span className="font-semibold text-accent">{trust("shippingTitle", { amount: String(shippingPolicy.freeFrom) })}</span><span className="block text-ivory/60">{trust("shippingText")}</span></p>

@@ -179,7 +179,7 @@ function ReviewForm({ locale, orderNumber, email, productId, onDone }: { locale:
       <Field id={`review-name-${productId}`} label={t("name")} value={authorName} onChange={setAuthorName} required minLength={2} maxLength={80} />
       <div>
         <label htmlFor={`review-body-${productId}`} className="block text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{t("body")}</label>
-        <textarea id={`review-body-${productId}`} value={body} onChange={event => setBody(event.target.value)} required minLength={10} maxLength={2000} rows={4} className="mt-2 w-full border border-border bg-background px-3 py-3 text-sm outline-none focus:border-foreground" />
+        <textarea id={`review-body-${productId}`} value={body} onChange={event => setBody(event.target.value)} required minLength={10} maxLength={2000} rows={4} className="mt-2 w-full border border-input bg-background px-3 py-3 text-sm outline-none focus:border-foreground" />
       </div>
       <p className="text-xs text-muted-foreground">{t("moderation")}</p>
       {status === "error" && <p role="alert" className="text-sm text-destructive">{t("error")}{error ? ` (${error})` : ""}</p>}
@@ -195,7 +195,7 @@ function Field({ id, label, value, onChange, ...props }: { id: string; label: st
   return (
     <div>
       <label htmlFor={id} className="block text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{label}</label>
-      <input id={id} value={value} onChange={event => onChange(event.target.value)} {...props} className="mt-2 h-12 w-full border border-border bg-background px-3 text-sm outline-none focus:border-foreground" />
+      <input id={id} value={value} onChange={event => onChange(event.target.value)} {...props} className="mt-2 h-12 w-full border border-input bg-background px-3 text-sm outline-none focus:border-foreground" />
     </div>
   )
 }

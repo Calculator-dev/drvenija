@@ -58,7 +58,7 @@ export function CustomForm({ locale }: { locale: Locale }) {
           minLength={10}
           maxLength={5000}
           rows={5}
-          className="mt-2 w-full border border-border bg-background px-3 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+          className="mt-2 w-full border border-input bg-background px-3 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
           placeholder={t("briefPlaceholder")}
         />
       </div>
@@ -83,7 +83,7 @@ function Input({
         id={id}
         name={id}
         {...props}
-        className="mt-2 w-full border border-border bg-background px-3 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+        className="mt-2 w-full border border-input bg-background px-3 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
       />
     </div>
   )
