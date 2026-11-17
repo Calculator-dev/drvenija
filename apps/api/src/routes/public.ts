@@ -5,11 +5,12 @@ import { z } from "zod"
 import { randomBytes } from "node:crypto"
 import { inArray, sql, eq, and, isNotNull } from "drizzle-orm"
 import { db } from "../db/client.js"
-import { categories, products, customers, orders, orderItems, mediaAssets, productVariants } from "../db/schema.js"
+import { categories, products, customers, orders, orderItems, mediaAssets, productVariants, discountCodes } from "../db/schema.js"
 import { sendOrderConfirmationEmail } from "../services/order-email.js"
-import { shippingFor } from "../lib/shipping.js"
+import { discountFor, discountProblem, normalizeCode, orderTotals } from "../lib/pricing.js"
 import { publicVariants } from "../lib/variants.js"
 import { publicInquiryRoutes } from "./inquiries.js"
+import { publicCustomerRoutes } from "./customer.js"
 import { publicFormRateLimit } from "../lib/rate-limits.js"
 
 const localeSchema = z.enum(["bs", "en"]).default("bs")
@@ -22,6 +23,7 @@ export function createOrderNumber(now = new Date()) {
 
 export const publicRoutes: FastifyPluginAsync = async (app) => {
   app.register(publicInquiryRoutes)
+  app.register(publicCustomerRoutes)
   const variantsFor = async (ids: string[]) => {
     if (ids.length === 0) return new Map<string, Array<typeof productVariants.$inferSelect>>()
     const rows = await db.select().from(productVariants).where(inArray(productVariants.productId, ids))
@@ -55,7 +57,7 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
 
   app.get("/products", async (request) => {
     const locale = localeSchema.parse((request.query as { locale?: string }).locale)
-    const rows = await db.select().from(products)
+    const rows = await db.select().from(products).where(eq(products.published, true))
     const byProduct = await variantsFor(rows.map(product => product.id))
     return rows.map((product) => ({
       id: product.id,
@@ -77,7 +79,7 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
   app.get("/products/:slug", async (request, reply) => {
     const params = z.object({ slug: z.string().min(1) }).parse(request.params)
     const locale = localeSchema.parse((request.query as { locale?: string }).locale)
-    const [product] = await db.select().from(products).where(sql`${products.translations}->${locale}->>'slug' = ${params.slug}`).limit(1)
+    const [product] = await db.select().from(products).where(and(eq(products.published, true), sql`${products.translations}->${locale}->>'slug' = ${params.slug}`)).limit(1)
 
     if (!product) {
       return reply.code(404).send({ message: "Product not found" })
@@ -118,6 +120,10 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
         country: z.string().trim().min(2).max(80),
       }),
       notes: z.string().trim().max(2000).optional(),
+      paymentMethod: z.enum(["bank_transfer", "cash_on_delivery"]).default("bank_transfer"),
+      giftWrap: z.boolean().default(false),
+      giftMessage: z.string().trim().max(300).optional().transform(value => value || undefined),
+      discountCode: z.string().trim().max(40).optional().transform(value => value ? normalizeCode(value) : undefined),
       items: z.array(
         z.object({
           productId: z.string().uuid(),
@@ -139,7 +145,7 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
       const variantsById = new Map(selectedVariants.map(variant => [variant.id, variant]))
       const lines = payload.items.map(item => {
         const product = byId.get(item.productId)
-        if (!product) throw app.httpErrors.badRequest("Unknown product")
+        if (!product || product.published === false) throw app.httpErrors.badRequest("Unknown product")
         if (item.personalization && !product.customizable) throw app.httpErrors.badRequest("Product cannot be personalized")
         const variant = item.variantId ? variantsById.get(item.variantId) : undefined
         if (item.variantId) {
@@ -157,11 +163,23 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
         }
       })
       const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.item.quantity, 0)
-      const shippingAmount = shippingFor(subtotal)
+      let discount = 0
+      if (payload.discountCode) {
+        // Count the use in the same statement that checks the limit, so two orders
+        // cannot both take the last use of a code.
+        const [code] = await tx.select().from(discountCodes).where(eq(discountCodes.code, payload.discountCode)).for("update")
+        if (!code || discountProblem(code, subtotal)) throw app.httpErrors.badRequest("Discount code cannot be used")
+        await tx.update(discountCodes).set({ usedCount: sql`${discountCodes.usedCount} + 1` }).where(eq(discountCodes.id, code.id))
+        discount = discountFor(code, subtotal)
+      }
+      const totals = orderTotals({ subtotal, discount, giftWrap: payload.giftWrap })
       const [customer] = await tx.insert(customers).values(payload.customer).returning()
       const [order] = await tx.insert(orders).values({
         orderNumber, locale: payload.locale, customerId: customer.id,
-        shippingAddress: payload.shipping, notes: payload.notes, shippingAmount,
+        shippingAddress: payload.shipping, notes: payload.notes, shippingAmount: totals.shippingAmount,
+        paymentMethod: payload.paymentMethod, giftWrap: payload.giftWrap, giftWrapAmount: totals.giftWrapAmount,
+        giftMessage: payload.giftWrap ? payload.giftMessage : undefined,
+        discountCode: discount > 0 ? payload.discountCode : undefined, discountAmount: totals.discountAmount,
       }).returning()
       await tx.insert(orderItems).values(lines.map(line => ({
         orderId: order.id, productId: line.item.productId, quantity: line.item.quantity,
@@ -169,8 +187,7 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
       })))
       return {
         order,
-        subtotal,
-        shippingAmount,
+        totals,
         emailItems: lines.map(line => ({
           name: line.product.translations[payload.locale]?.name ?? line.product.translations.bs?.name ?? line.product.sku,
           quantity: line.item.quantity,
@@ -184,7 +201,9 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
       orderNumber: result.order.orderNumber,
       locale: payload.locale,
       items: result.emailItems,
-      shippingAmount: result.shippingAmount,
+      totals: result.totals,
+      paymentMethod: payload.paymentMethod,
+      giftMessage: payload.giftWrap ? payload.giftMessage : undefined,
       shipping: payload.shipping,
     })
     if (notification.sent) {
@@ -198,9 +217,11 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
       ok: true,
       orderNumber: result.order.orderNumber,
       status: result.order.status,
-      subtotal: result.subtotal,
-      shippingAmount: result.shippingAmount,
-      total: result.subtotal + result.shippingAmount,
+      subtotal: result.totals.subtotal,
+      discountAmount: result.totals.discountAmount,
+      shippingAmount: result.totals.shippingAmount,
+      giftWrapAmount: result.totals.giftWrapAmount,
+      total: result.totals.total,
       message: "Manual confirmation pending",
       notification,
     })

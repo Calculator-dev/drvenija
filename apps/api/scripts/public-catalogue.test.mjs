@@ -12,5 +12,18 @@ test('live catalogue serializes translations, categories and primary-first stabl
   assert.equal(product.media[0].url, '/public/media/primary')
   assert.equal(product.media[0].alt.en, 'Slika')
   assert.ok(!JSON.stringify(result).includes('private-secret'))
-  assert.deepEqual(catalogueResponse([], [], []), { shipping: { freeFrom: 150, fee: 10 }, products: [], categories: [] })
+  assert.equal(product.rating, null)
+  assert.deepEqual(catalogueResponse([], [], []), { shipping: { freeFrom: 150, fee: 10 }, checkout: { giftWrapPrice: 5, paymentMethods: ['bank_transfer', 'cash_on_delivery'] }, products: [], categories: [] })
+})
+
+test('catalogue hides unpublished products and summarises approved reviews', () => {
+  const base = { sku: 'SKU', categoryId: 'category', price: 45, translations: { bs: { name: 'Ime', slug: 'ime' } }, seo: {}, leadTime: {}, stockLabel: {}, type: 'standard', material: 'mediapan', featured: false, customizable: false }
+  const reviews = [
+    { id: 'r1', productId: 'live', authorName: 'Amra', rating: 5, body: 'Prelijepo', locale: 'bs', createdAt: new Date() },
+    { id: 'r2', productId: 'live', authorName: 'Kenan', rating: 4, body: 'Odlično', locale: 'bs', createdAt: new Date() },
+  ]
+  const result = catalogueResponse([], [{ ...base, id: 'live', published: true }, { ...base, id: 'draft', published: false }], [], [], reviews)
+  assert.deepEqual(result.products.map(product => product.id), ['live'])
+  assert.deepEqual(result.products[0].rating, { average: 4.5, count: 2 })
+  assert.equal(result.products[0].reviews.length, 2)
 })

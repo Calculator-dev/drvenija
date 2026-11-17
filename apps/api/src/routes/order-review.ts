@@ -3,20 +3,30 @@ import { and, desc, eq, sql } from "drizzle-orm"
 import { z } from "zod"
 import { db } from "../db/client.js"
 import { customers, orderItems, orders, products } from "../db/schema.js"
-import { sendOrderDecisionEmail } from "../services/order-email.js"
+import { sendOrderDecisionEmail, sendOrderStatusEmail, type FulfilmentStatus } from "../services/order-email.js"
 
 const params = z.object({ id: z.string().uuid() })
+/** Fulfilment steps after acceptance, in order. An order can only move forward. */
+export const fulfilmentSteps = ["confirmed", "in_production", "packed", "shipped", "completed"] as const
+const statusInput = z.object({
+  status: z.enum(["in_production", "packed", "shipped", "completed"]),
+  trackingNumber: z.string().trim().max(120).optional().transform(value => value || undefined),
+  notify: z.boolean().default(true),
+}).strict()
+const paymentInput = z.object({ paymentStatus: z.enum(["pending_manual", "paid"]) }).strict()
+
 const decisionInput = z.discriminatedUnion("decision", [
   z.object({ decision: z.literal("accept") }),
   z.object({ decision: z.literal("decline"), reason: z.string().trim().min(5).max(2000) }),
 ])
-const totalAmount = sql<number>`coalesce(sum(${orderItems.unitPrice} * ${orderItems.quantity}), 0) + ${orders.shippingAmount}`.mapWith(Number)
+const totalAmount = sql<number>`coalesce(sum(${orderItems.unitPrice} * ${orderItems.quantity}), 0) - ${orders.discountAmount} + ${orders.shippingAmount} + ${orders.giftWrapAmount}`.mapWith(Number)
 
 export function orderSummaries() {
   return db
     .select({
       id: orders.id, orderNumber: orders.orderNumber, customer: customers.fullName,
-      status: orders.status, amount: totalAmount, createdAt: orders.createdAt,
+      status: orders.status, paymentStatus: orders.paymentStatus, paymentMethod: orders.paymentMethod,
+      amount: totalAmount, createdAt: orders.createdAt,
     })
     .from(orders)
     .innerJoin(customers, eq(customers.id, orders.customerId))
@@ -36,6 +46,9 @@ export const orderReviewRoutes: FastifyPluginAsync = async app => {
         status: orders.status, paymentStatus: orders.paymentStatus,
         shippingAddress: orders.shippingAddress, notes: orders.notes,
         shippingAmount: orders.shippingAmount,
+        paymentMethod: orders.paymentMethod, giftWrap: orders.giftWrap, giftWrapAmount: orders.giftWrapAmount,
+        giftMessage: orders.giftMessage, discountCode: orders.discountCode, discountAmount: orders.discountAmount,
+        trackingNumber: orders.trackingNumber, statusEmailSentAt: orders.statusEmailSentAt, updatedAt: orders.updatedAt,
         declineReason: orders.declineReason, reviewedAt: orders.reviewedAt,
         reviewEmailSentAt: orders.reviewEmailSentAt, confirmationEmailSentAt: orders.confirmationEmailSentAt,
         createdAt: orders.createdAt,
@@ -65,7 +78,7 @@ export const orderReviewRoutes: FastifyPluginAsync = async app => {
         quantity: item.quantity, unitPrice: item.unitPrice, personalization: item.personalization,
       })),
       subtotal: items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
-      amount: items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0) + order.shippingAmount,
+      amount: items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0) - order.discountAmount + order.shippingAmount + order.giftWrapAmount,
     }
   })
 
@@ -104,5 +117,44 @@ export const orderReviewRoutes: FastifyPluginAsync = async app => {
       updated.reviewEmailSentAt = sentAt
     }
     return { order: updated, notification: email }
+  })
+
+  app.put("/orders/:id/status", async (request, reply) => {
+    const { id } = params.parse(request.params)
+    const input = statusInput.parse(request.body)
+    const [existing] = await db
+      .select({ status: orders.status, orderNumber: orders.orderNumber, locale: orders.locale, trackingNumber: orders.trackingNumber, email: customers.email, fullName: customers.fullName })
+      .from(orders).innerJoin(customers, eq(customers.id, orders.customerId)).where(eq(orders.id, id)).limit(1)
+    if (!existing) return reply.code(404).send({ message: "Order not found" })
+    const from = fulfilmentSteps.indexOf(existing.status as (typeof fulfilmentSteps)[number])
+    const to = fulfilmentSteps.indexOf(input.status)
+    if (from < 0) return reply.code(409).send({ message: "Only accepted orders can move through production" })
+    if (to <= from) return reply.code(409).send({ message: "An order can only move forward" })
+
+    const trackingNumber = input.trackingNumber ?? existing.trackingNumber
+    const [updated] = await db.update(orders).set({ status: input.status, trackingNumber, updatedAt: new Date() })
+      .where(and(eq(orders.id, id), eq(orders.status, existing.status))).returning()
+    if (!updated) return reply.code(409).send({ message: "The order changed meanwhile. Reload and try again." })
+
+    if (!input.notify) return { order: updated, notification: null }
+    const email = await sendOrderStatusEmail({
+      to: existing.email, fullName: existing.fullName, orderNumber: existing.orderNumber,
+      locale: existing.locale, status: input.status as FulfilmentStatus, trackingNumber,
+    })
+    if (email.sent) {
+      const sentAt = new Date()
+      await db.update(orders).set({ statusEmailSentAt: sentAt }).where(eq(orders.id, id))
+      updated.statusEmailSentAt = sentAt
+    }
+    return { order: updated, notification: email }
+  })
+
+  app.put("/orders/:id/payment", async (request, reply) => {
+    const { id } = params.parse(request.params)
+    const input = paymentInput.parse(request.body)
+    const [updated] = await db.update(orders).set({ paymentStatus: input.paymentStatus, updatedAt: new Date() })
+      .where(and(eq(orders.id, id), sql`${orders.status} <> 'declined'`)).returning()
+    if (!updated) return reply.code(404).send({ message: "Order not found or declined" })
+    return { order: updated }
   })
 }

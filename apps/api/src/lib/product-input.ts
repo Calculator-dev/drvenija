@@ -32,6 +32,7 @@ export const productInput = z
     stockLabel: localized,
     featured: z.boolean().default(false),
     customizable: z.boolean().default(false),
+    published: z.boolean().default(true),
     translations: z.object({ bs: translation, en: translation }),
     images: z
       .array(

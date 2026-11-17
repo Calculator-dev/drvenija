@@ -50,6 +50,13 @@
       "when": 1790677400845,
       "tag": "0006_drop_price_from",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794908598911,
+      "tag": "0007_shop_features",
+      "breakpoints": true
     }
   ]
 }
