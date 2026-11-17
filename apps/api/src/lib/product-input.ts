@@ -58,12 +58,30 @@ export const productInput = z
         "Choose one primary image",
       )
       .optional(),
+    // One photo of the product in a real room, shown in "On your wall". null removes it;
+    // leaving it out keeps the current one.
+    roomImage: z
+      .object({
+        id: z.string().uuid(),
+        alt: z.object({
+          bs: z.string().trim().max(300),
+          en: z.string().trim().max(300),
+        }),
+      })
+      .nullable()
+      .optional(),
   })
   .strict()
   .refine((value) => Boolean(value.categoryId) !== Boolean(value.newCategory), {
     message: "Select a category or create one",
     path: ["categoryId"],
   })
+  .refine(
+    (value) =>
+      !value.roomImage ||
+      !value.images?.some((image) => image.id === value.roomImage!.id),
+    { message: "The room photo cannot also be a gallery photo", path: ["roomImage"] },
+  )
   .refine(
     (value) =>
       new Set(value.variants.map((variant) => variant.sku)).size ===

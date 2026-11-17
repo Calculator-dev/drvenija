@@ -1,8 +1,9 @@
 import { withImageUrls } from "./media.js";
+import { imageUrl } from "../services/backblaze.js";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
-import { asc, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNotNull } from "drizzle-orm";
 import { db } from "../db/client.js";
 import {
   categories,
@@ -18,9 +19,29 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
   app.get("/categories", async () =>
     db.select().from(categories).orderBy(categories.code),
   );
-  app.get("/products", async () =>
-    db.select().from(products).orderBy(desc(products.createdAt)),
-  );
+  // Each row carries a short-lived link to its main gallery photo for the CRM list.
+  app.get("/products", async () => {
+    const [rows, images] = await Promise.all([
+      db.select().from(products).orderBy(desc(products.createdAt)),
+      db
+        .select({ productId: mediaAssets.productId, storageKey: mediaAssets.storageKey, isPrimary: mediaAssets.isPrimary })
+        .from(mediaAssets)
+        .where(and(isNotNull(mediaAssets.productId), eq(mediaAssets.kind, "gallery")))
+        .orderBy(desc(mediaAssets.isPrimary), mediaAssets.createdAt),
+    ]);
+    const mainImage = new Map<string, string>();
+    for (const image of images)
+      if (image.productId && !mainImage.has(image.productId))
+        mainImage.set(image.productId, image.storageKey);
+    return Promise.all(
+      rows.map(async (row) => {
+        const storageKey = mainImage.get(row.id);
+        // Without storage settings the list still loads, just without thumbnails.
+        const thumbnailUrl = storageKey ? await imageUrl(storageKey).catch(() => null) : null;
+        return { ...row, thumbnailUrl };
+      }),
+    );
+  });
   const params = z.object({ id: z.string().uuid() });
   app.get("/products/:id", async (request, reply) => {
     const { id } = params.parse(request.params);
@@ -40,9 +61,11 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
       .from(productVariants)
       .where(eq(productVariants.productId, id))
       .orderBy(asc(productVariants.sortOrder), productVariants.createdAt);
+    const withUrls = await withImageUrls(media);
     return {
       ...product,
-      media: await withImageUrls(media),
+      media: withUrls.filter((image) => image.kind !== "room"),
+      roomImage: withUrls.find((image) => image.kind === "room") ?? null,
       variants: publicVariants(product, variants),
     };
   });
@@ -106,6 +129,7 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
         const {
           newCategory: _newCategory,
           images,
+          roomImage,
           variants,
           ...fields
         } = input;
@@ -224,10 +248,11 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
             throw app.httpErrors.conflict(
               "An image is already linked to another product",
             );
+          // Only gallery photos are replaced here; the room photo is handled below.
           await tx
             .update(mediaAssets)
             .set({ productId: null, isPrimary: false })
-            .where(eq(mediaAssets.productId, id));
+            .where(and(eq(mediaAssets.productId, id), eq(mediaAssets.kind, "gallery")));
           for (const image of images) {
             await tx
               .update(mediaAssets)
@@ -235,8 +260,34 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
                 productId: id,
                 alt: image.alt,
                 isPrimary: image.isPrimary,
+                kind: "gallery",
               })
               .where(eq(mediaAssets.id, image.id));
+          }
+        }
+        if (roomImage !== undefined) {
+          await tx
+            .update(mediaAssets)
+            .set({ productId: null, kind: "gallery" })
+            .where(and(eq(mediaAssets.productId, id), eq(mediaAssets.kind, "room")));
+          if (roomImage) {
+            const [asset] = await tx
+              .select()
+              .from(mediaAssets)
+              .where(eq(mediaAssets.id, roomImage.id))
+              .for("update");
+            if (!asset)
+              throw app.httpErrors.badRequest(
+                "The room photo no longer exists. Upload it again.",
+              );
+            if (asset.productId && asset.productId !== id)
+              throw app.httpErrors.conflict(
+                "The room photo is already linked to another product",
+              );
+            await tx
+              .update(mediaAssets)
+              .set({ productId: id, alt: roomImage.alt, isPrimary: false, kind: "room" })
+              .where(eq(mediaAssets.id, roomImage.id));
           }
         }
         return saved;

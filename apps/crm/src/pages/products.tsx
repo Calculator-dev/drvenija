@@ -5,6 +5,7 @@ import { DataTable } from "../components/data-table"
 import { PageHeader } from "../components/page-header"
 import { StatusBadge } from "../components/status-badges"
 import { Button, buttonVariants } from "../components/ui/button"
+import { ImageOff } from "lucide-react"
 import { getProducts, setProductPublished } from "../lib/api"
 
 export function ProductsPage() {
@@ -34,6 +35,18 @@ export function ProductsPage() {
       <DataTable
         query={query}
         columns={[
+          {
+            key: "thumbnailUrl",
+            label: "Slika",
+            render: row => row.thumbnailUrl ? (
+              <img src={row.thumbnailUrl} alt="" loading="lazy" className="h-14 w-14 rounded-md border border-border bg-muted object-cover" />
+            ) : (
+              <span className="flex h-14 w-14 items-center justify-center rounded-md border border-dashed border-border bg-muted text-muted-foreground" title="Nema slike">
+                <ImageOff className="h-5 w-5" aria-hidden />
+                <span className="sr-only">Nema slike</span>
+              </span>
+            ),
+          },
           { key: "name", label: "Naziv" },
           { key: "sku", label: "SKU" },
           { key: "type", label: "Tip" },
@@ -61,6 +74,7 @@ export function ProductsPage() {
           },
         ]}
         rowHref={row => `/products/${row.id}/edit`}
+        rowLabel={row => row.name}
         emptyText="Još nema proizvoda. Dodajte prvi proizvod."
       />
     </>

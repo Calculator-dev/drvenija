@@ -82,7 +82,7 @@ export function ProductDetail({ locale, product }: { locale: Locale; product: Lo
                   type="button"
                   onClick={() => setVariantId(variant.id)}
                   aria-pressed={active}
-                  className={`border px-3 py-2 text-sm transition-colors ${active ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground"}`}
+                  className={`border px-3 py-2 text-sm transition-colors ${active ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-foreground"}`}
                 >
                   {variant.dimensions}
                 </button>

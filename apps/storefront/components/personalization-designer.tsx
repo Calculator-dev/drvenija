@@ -59,7 +59,7 @@ export function PersonalizationDesigner({ design, onChange }: { design: Personal
         value={design.text}
         onChange={event => onChange({ ...design, text: event.target.value })}
         placeholder={t("placeholder")}
-        className="mt-3 w-full resize-none border border-border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+        className="mt-3 w-full resize-none border border-input bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
       />
       <p className="mt-1 text-right text-[11px] text-muted-foreground">{design.text.length}/{personalizationMaxLength}</p>
 
@@ -107,7 +107,7 @@ export function PersonalizationDesigner({ design, onChange }: { design: Personal
               {lines.map((line, index) => <span key={index} className="block">{line || " "}</span>)}
             </p>
           ) : (
-            <p className="relative text-center text-sm text-muted-foreground">{t("previewEmpty")}</p>
+            <p className="relative text-center text-sm text-[#6e5450]">{t("previewEmpty")}</p>
           )}
         </div>
         <p className="mt-2 text-xs leading-5 text-muted-foreground">{t("previewNote")}</p>

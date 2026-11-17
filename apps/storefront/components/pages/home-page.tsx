@@ -101,7 +101,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-brown text-cream">
+      <section className="relative isolate overflow-hidden bg-burgundy text-ivory">
         <svg
           aria-hidden
           className="absolute inset-0 -z-10 h-full w-full opacity-[0.07]"
@@ -136,7 +136,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
             <h1 className="font-serif text-[40px] leading-[1.04] tracking-[-0.01em] sm:text-6xl lg:text-[70px]">
               {t("hero.title")}
             </h1>
-            <p className="max-w-130 text-base leading-7 text-cream/75 md:text-lg">
+            <p className="max-w-130 text-base leading-7 text-ivory/75 md:text-lg">
               {t("hero.description")}
             </p>
             <div className="flex flex-wrap gap-3 pt-1">
@@ -148,7 +148,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
               </Link>
               <Link
                 href={customHref}
-                className="inline-flex min-h-13 items-center rounded-full border border-cream/30 px-6.5 text-[15px] font-semibold transition-colors hover:border-accent hover:text-accent"
+                className="inline-flex min-h-13 items-center rounded-full border border-ivory/30 px-6.5 text-[15px] font-semibold transition-colors hover:border-accent hover:text-accent"
               >
                 {t("hero.customCta")}
               </Link>
@@ -232,7 +232,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
         </section>
       )}
 
-      <section className="bg-brown py-20 text-cream md:py-24">
+      <section className="bg-burgundy-deep py-20 text-ivory md:py-24">
         <div className="mx-auto max-w-375 px-4 md:px-6">
           <Reveal className="mb-12 max-w-160">
             <p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-accent">
@@ -241,7 +241,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
             <h2 className="mb-4 font-serif text-[32px] leading-[1.1] md:text-[44px]">
               {t("materials.title")}
             </h2>
-            <p className="text-base leading-7 text-cream/75 md:text-[17px]">
+            <p className="text-base leading-7 text-ivory/75 md:text-[17px]">
               {t("materials.description")}
             </p>
           </Reveal>
@@ -264,11 +264,11 @@ export async function HomePage({ locale }: { locale: Locale }) {
                 <h3 className="flex items-center gap-2.5 font-serif text-2xl">
                   <span
                     aria-hidden
-                    className={`h-3.5 w-3.5 rounded-full border border-cream/30 ${material.swatch}`}
+                    className={`h-3.5 w-3.5 rounded-full border border-ivory/30 ${material.swatch}`}
                   />
                   {t(`materials.items.${material.key}.name`)}
                 </h3>
-                <p className="text-[15px] leading-6 text-cream/65">
+                <p className="text-[15px] leading-6 text-ivory/65">
                   {t(`materials.items.${material.key}.text`)}
                 </p>
               </Reveal>
@@ -322,7 +322,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
                 <li key={step} className="flex items-start gap-4">
                   <span
                     aria-hidden
-                    className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-brown font-serif text-[17px] text-accent"
+                    className="flex h-9 w-9 flex-none items-center justify-center rounded-full border border-accent/50 bg-burgundy-deep font-serif text-[17px] text-accent"
                   >
                     {index + 1}
                   </span>
@@ -356,7 +356,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
 
       <section className="mx-auto max-w-375 px-4 py-20 md:px-6 md:py-24">
         <Reveal>
-          <div className="grid overflow-hidden rounded-xl bg-brown text-cream md:grid-cols-2">
+          <div className="grid overflow-hidden rounded-xl border border-accent/25 bg-burgundy-deep text-ivory md:grid-cols-2">
             <div className="flex flex-col gap-5 px-7 py-12 md:px-12 md:py-14">
               <span
                 lang="ar"
@@ -368,7 +368,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
               <h2 className="font-serif text-[32px] leading-[1.1] md:text-[44px]">
                 {t("seasonal.title")}
               </h2>
-              <p className="max-w-110 text-base leading-7 text-cream/75">
+              <p className="max-w-110 text-base leading-7 text-ivory/75">
                 {t("seasonal.description")}
               </p>
               <Link
@@ -458,6 +458,7 @@ function SectionHeading({
         <h2 className="font-serif text-[32px] leading-[1.1] md:text-[44px]">
           {title}
         </h2>
+        <span aria-hidden className="mt-4 block h-px w-10 bg-accent" />
       </div>
       {children}
     </Reveal>

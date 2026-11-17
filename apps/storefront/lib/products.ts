@@ -67,6 +67,8 @@ export type Product = {
   variants?: ProductVariant[]
   seo: SeoFields
   media: MediaAsset[]
+  /** Photo of the product in a real room (CRM "Slika u prostoru"), or null. */
+  roomImage?: MediaAsset | null
   /** Average of approved reviews, or null when there are none. */
   rating?: { average: number; count: number } | null
   reviews?: ProductReview[]

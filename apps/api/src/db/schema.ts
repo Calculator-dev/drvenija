@@ -39,6 +39,8 @@ export const paymentMethodEnum = pgEnum("payment_method", [
   "cash_on_delivery",
 ]);
 export const discountKindEnum = pgEnum("discount_kind", ["percent", "fixed"]);
+/** Gallery photos appear in the product gallery; the room photo shows the product in a real interior. */
+export const mediaKindEnum = pgEnum("media_kind", ["gallery", "room"]);
 export const reviewStatusEnum = pgEnum("review_status", [
   "pending",
   "approved",
@@ -136,6 +138,7 @@ export const mediaAssets = pgTable("media_assets", {
   height: integer("height").notNull(),
   alt: jsonb("alt").$type<Record<string, string>>().notNull(),
   isPrimary: boolean("is_primary").notNull().default(false),
+  kind: mediaKindEnum("kind").notNull().default("gallery"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

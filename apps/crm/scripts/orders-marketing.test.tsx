@@ -75,8 +75,12 @@ test('zaprimljena narudžba nema panel izrade i nudi označavanje uplate', () =>
 
 test('lista proizvoda prikazuje oznaku objave i brzu promjenu', () => {
   const queryClient = client()
-  queryClient.setQueryData(['products'], productRows([seedProducts[0], { ...seedProducts[1], published: false }]))
+  queryClient.setQueryData(['products'], productRows([{ ...seedProducts[0], thumbnailUrl: 'https://images.example.com/monogram.webp' }, { ...seedProducts[1], published: false }]))
   const html = render(queryClient, '/products')
+  // Each row starts with the product photo, or a placeholder when there is none.
+  assert.match(html, /<img src="https:\/\/images\.example\.com\/monogram\.webp"/)
+  assert.match(html, /Nema slike/)
+  assert.match(html, /Uredi: Monogram za vjenčanje/)
   assert.match(html, /Objavljeno/)
   assert.match(html, /Skica/)
   assert.match(html, /Sakrij s webshopa: Monogram za vjenčanje/)

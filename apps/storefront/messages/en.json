@@ -275,7 +275,9 @@
       "eyebrow": "On your wall",
       "title": "Picture it in your space.",
       "text": "Try a few wall colours and see how the piece looks above a sofa. Need another size or colour? We will make it to measure.",
-      "cta": "Ask for another size"
+      "cta": "Ask for another size",
+      "photoText": "This is how the piece looks in a real room. Need another size or colour to suit your wall? We will make it to measure.",
+      "photoCaption": "Photo of the product in a real room."
     }
   },
   "cart": {

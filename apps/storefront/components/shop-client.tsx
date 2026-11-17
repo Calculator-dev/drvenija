@@ -210,7 +210,7 @@ function FilterSection({ title, children }: { title: string; children: React.Rea
 function FilterOption({ name, label, count, checked, onChange }: { name: string; label: string; count: number; checked: boolean; onChange: () => void }) {
   return (
     <label className="flex cursor-pointer items-center gap-3 text-sm">
-      <input type="radio" name={name} checked={checked} onChange={onChange} className="h-5 w-5 appearance-none border border-foreground bg-background checked:bg-foreground checked:bg-[linear-gradient(135deg,transparent_42%,white_42%,white_58%,transparent_58%),linear-gradient(45deg,transparent_56%,white_56%,white_68%,transparent_68%)]" />
+      <input type="radio" name={name} checked={checked} onChange={onChange} className="h-5 w-5 appearance-none border border-foreground bg-background checked:border-accent checked:bg-accent checked:bg-[linear-gradient(135deg,transparent_42%,var(--burgundy-darkest)_42%,var(--burgundy-darkest)_58%,transparent_58%),linear-gradient(45deg,transparent_56%,var(--burgundy-darkest)_56%,var(--burgundy-darkest)_68%,transparent_68%)]" />
       <span className="flex-1">{label}</span><span className="text-muted-foreground">({count})</span>
     </label>
   )

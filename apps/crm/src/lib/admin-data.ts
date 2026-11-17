@@ -33,6 +33,8 @@ export type AdminProduct = {
   /** Visible on the webshop; defaults to true. */
   published?: boolean;
   translations: Record<string, { name: string }>;
+  /** Link to the main photo, or null when the product has none. */
+  thumbnailUrl?: string | null;
 };
 const productType = (type: string) =>
   type === "custom"
@@ -134,11 +136,14 @@ export function productRows(products: AdminProduct[]) {
     type: productType(product.type),
     price: formatMoney(product.price),
     published: product.published ?? true,
+    thumbnailUrl: product.thumbnailUrl ?? null,
   }));
 }
 
 export type ProductDetails = AdminProduct & {
   media?: ProductImage[];
+  /** Photo of the product in a real room, for the storefront's "Na vašem zidu" section. */
+  roomImage?: RoomImage | null;
   id: string;
   categoryId: string;
   material: string;
@@ -177,6 +182,8 @@ export type ProductImage = {
   alt: { bs: string; en: string };
   isPrimary: boolean;
 };
+
+export type RoomImage = Omit<ProductImage, "isPrimary">;
 
 export type AdminOrderDetail = {
   id: string;

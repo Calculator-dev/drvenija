@@ -5,8 +5,9 @@ import { ArrowLeft, PackagePlus } from "lucide-react";
 import { createProduct, getCategories, updateProduct } from "../lib/api";
 import { productPayload, variantDrafts, type VariantDraft } from "../lib/product-draft";
 import { ProductImages } from "./product-images";
+import { RoomImageCard } from "./room-image";
 import { VariantEditor } from "./variant-editor";
-import type { ProductDetails, ProductImage } from "../lib/admin-data";
+import type { ProductDetails, ProductImage, RoomImage } from "../lib/admin-data";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Card } from "./ui/card";
@@ -28,6 +29,7 @@ export function ProductForm({
   });
   const [category, setCategory] = useState(product?.categoryId ?? "");
   const [images, setImages] = useState<ProductImage[]>(product?.media ?? []);
+  const [roomImage, setRoomImage] = useState<RoomImage | null>(product?.roomImage ?? null);
   const [variants, setVariants] = useState<VariantDraft[]>(() => variantDrafts(product));
   const [mainDimensions, setMainDimensions] = useState(
     () => product?.dimensions ?? variants[0]?.dimensions ?? "",
@@ -49,6 +51,10 @@ export function ProductForm({
   const updateImages = (next: SetStateAction<ProductImage[]>) => {
     setDirty(true);
     setImages(next);
+  };
+  const updateRoomImage = (next: RoomImage | null) => {
+    setDirty(true);
+    setRoomImage(next);
   };
   const updateVariants = (next: SetStateAction<VariantDraft[]>) => {
     setDirty(true);
@@ -72,7 +78,7 @@ export function ProductForm({
     event.preventDefault();
     if (mutation.isPending || uploading || variants.length === 0) return;
     mutation.mutate(
-      productPayload({ form: new FormData(event.currentTarget), category, images, variants, mainDimensions }),
+      productPayload({ form: new FormData(event.currentTarget), category, images, roomImage, variants, mainDimensions }),
     );
   }
 
@@ -109,6 +115,12 @@ export function ProductForm({
         <ProductImages
           images={images}
           onChange={updateImages}
+          onBusy={setUploading}
+          disabled={mutation.isPending}
+        />
+        <RoomImageCard
+          image={roomImage}
+          onChange={updateRoomImage}
           onBusy={setUploading}
           disabled={mutation.isPending}
         />

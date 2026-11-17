@@ -30,21 +30,21 @@ export function SiteFooter({ locale }: { locale: Locale }) {
   ]
 
   return (
-    <footer className="bg-brown text-cream">
-      <div className="border-b border-brown-line">
+    <footer className="border-t border-accent/25 bg-burgundy-darkest text-ivory">
+      <div className="border-b border-burgundy-line">
         <div className="mx-auto grid max-w-375 gap-6 px-4 py-8 text-sm sm:grid-cols-3 md:px-6">
-          <p><span className="font-semibold text-accent">{trust("shippingTitle", { amount: String(shippingPolicy.freeFrom) })}</span><span className="block text-cream/60">{trust("shippingText")}</span></p>
-          <p><span className="font-semibold text-accent">{trust("madeTitle")}</span><span className="block text-cream/60">{trust("madeText")}</span></p>
-          <p><span className="font-semibold text-accent">{trust("confirmTitle")}</span><span className="block text-cream/60">{trust("confirmText")}</span></p>
+          <p><span className="font-semibold text-accent">{trust("shippingTitle", { amount: String(shippingPolicy.freeFrom) })}</span><span className="block text-ivory/60">{trust("shippingText")}</span></p>
+          <p><span className="font-semibold text-accent">{trust("madeTitle")}</span><span className="block text-ivory/60">{trust("madeText")}</span></p>
+          <p><span className="font-semibold text-accent">{trust("confirmTitle")}</span><span className="block text-ivory/60">{trust("confirmText")}</span></p>
         </div>
       </div>
 
       <div className="mx-auto grid max-w-375 gap-10 px-4 py-14 sm:grid-cols-2 md:px-6 md:py-18 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr]">
         <div>
-          <Link href={buildPath(locale)} aria-label="Drvenija"><Logo className="text-cream" /></Link>
-          <p className="mt-5 max-w-md text-sm leading-7 text-cream/65">{t("description")}</p>
-          <p className="mt-7 font-serif text-lg text-cream">{t("newsletterTitle")}</p>
-          <p className="mb-3 mt-1 text-xs leading-5 text-cream/55">{t("newsletterText")}</p>
+          <Link href={buildPath(locale)} aria-label="Drvenija"><Logo className="text-ivory" /></Link>
+          <p className="mt-5 max-w-md text-sm leading-7 text-ivory/65">{t("description")}</p>
+          <p className="mt-7 font-serif text-lg text-ivory">{t("newsletterTitle")}</p>
+          <p className="mb-3 mt-1 text-xs leading-5 text-ivory/55">{t("newsletterText")}</p>
           <NewsletterForm locale={locale} />
         </div>
 
@@ -53,7 +53,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 
         <div>
           <p className="text-xs uppercase tracking-[0.22em] text-accent">{t("contact")}</p>
-          <ul className="mt-4 space-y-3 text-sm text-cream/80">
+          <ul className="mt-4 space-y-3 text-sm text-ivory/80">
             <li><a href={`mailto:${contactEmail}`} className="inline-flex items-center gap-2 hover:text-accent"><Mail className="h-4 w-4" strokeWidth={1.5} aria-hidden />{contactEmail}</a></li>
             <li><a href={`tel:${contactPhone}`} className="inline-flex items-center gap-2 hover:text-accent"><Phone className="h-4 w-4" strokeWidth={1.5} aria-hidden />{formatPhone(contactPhone)}</a></li>
             <li className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" strokeWidth={1.5} aria-hidden />{t("location")}</li>
@@ -61,8 +61,8 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         </div>
       </div>
 
-      <div className="border-t border-brown-line">
-        <div className="mx-auto flex max-w-375 flex-col gap-3 px-4 py-5 text-xs text-cream/50 md:flex-row md:items-center md:justify-between md:px-6">
+      <div className="border-t border-burgundy-line">
+        <div className="mx-auto flex max-w-375 flex-col gap-3 px-4 py-5 text-xs text-ivory/50 md:flex-row md:items-center md:justify-between md:px-6">
           <p>{t("copyright", { year: String(new Date().getFullYear()) })}</p>
           <p>{t("languageNote")}</p>
         </div>
@@ -75,7 +75,7 @@ function FooterColumn({ title, links }: { title: string; links: Array<{ href: st
   return (
     <div>
       <p className="text-xs uppercase tracking-[0.22em] text-accent">{title}</p>
-      <ul className="mt-4 flex flex-col gap-3 text-sm text-cream/80">
+      <ul className="mt-4 flex flex-col gap-3 text-sm text-ivory/80">
         {links.map(link => <li key={link.href}><Link href={link.href} className="hover:text-accent">{link.label}</Link></li>)}
       </ul>
     </div>

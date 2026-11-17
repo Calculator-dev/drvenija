@@ -8,6 +8,14 @@ import { publicVariants } from "../lib/variants.js"
 function localized(rows: Record<string, Record<string, string>>, field: string) {
   return { bs: rows.bs?.[field] ?? "", en: rows.en?.[field] || rows.bs?.[field] || "" }
 }
+function publicImage(image: typeof mediaAssets.$inferSelect, row: typeof products.$inferSelect) {
+  return {
+    id: image.id, url: `/public/media/${image.id}`, width: image.width, height: image.height,
+    alt: { bs: image.alt.bs || row.translations.bs?.name || "", en: image.alt.en || image.alt.bs || row.translations.en?.name || row.translations.bs?.name || "" },
+    mimeType: image.mimeType, storageKey: "",
+  }
+}
+
 export function catalogueResponse(
   categoryRows: (typeof categories.$inferSelect)[],
   productRows: (typeof products.$inferSelect)[],
@@ -47,11 +55,11 @@ export function catalogueResponse(
       leadTime: row.leadTime, stockLabel: row.stockLabel,
       ...Object.fromEntries(["name", "slug", "tagline", "shortDescription", "description"].map(field => [field, localized(row.translations, field)])),
       seo: { title: localized(row.seo, "title"), description: localized(row.seo, "description") },
-      media: images.filter(image => image.productId === row.id).sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary)).map(image => ({
-        id: image.id, url: `/public/media/${image.id}`, width: image.width, height: image.height,
-        alt: { bs: image.alt.bs || row.translations.bs?.name || "", en: image.alt.en || image.alt.bs || row.translations.en?.name || row.translations.bs?.name || "" },
-        mimeType: image.mimeType, storageKey: "",
-      })),
+      media: images.filter(image => image.productId === row.id && image.kind !== "room").sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary)).map(image => publicImage(image, row)),
+      roomImage: (() => {
+        const room = images.find(image => image.productId === row.id && image.kind === "room")
+        return room ? publicImage(room, row) : null
+      })(),
     }
     }),
   }

@@ -11,10 +11,12 @@ export type Column<T> = { key: keyof T & string; label: string; render?: (row: T
 /** The parts of a query result the table renders; pass a useQuery result or a derived one. */
 export type TableState<T> = { data?: T[]; isPending: boolean; error: Error | null; refetch: () => unknown }
 
-export function DataTable<T extends Row>({ query, columns, rowHref, actionLabel = "Uredi", emptyText = "Još nema stavki." }: {
+export function DataTable<T extends Row>({ query, columns, rowHref, rowLabel, actionLabel = "Uredi", emptyText = "Još nema stavki." }: {
   query: TableState<T>
   columns: Array<Column<T>>
   rowHref?: (row: T) => string
+  /** Names the row in the action button's label; defaults to the first column's text. */
+  rowLabel?: (row: T) => string
   actionLabel?: string
   emptyText?: string
 }) {
@@ -43,7 +45,7 @@ export function DataTable<T extends Row>({ query, columns, rowHref, actionLabel 
               {columns.map(column => <td key={column.key} className="py-4 pr-4">{column.render ? column.render(row) : String(row[column.key] ?? "")}</td>)}
               {rowHref && (
                 <td className="py-4 text-right">
-                  <Link to={rowHref(row)} className={buttonVariants({ variant: "outline" })} aria-label={`${actionLabel}: ${String(row[columns[0].key] ?? "")}`}>{actionLabel}</Link>
+                  <Link to={rowHref(row)} className={buttonVariants({ variant: "outline" })} aria-label={`${actionLabel}: ${rowLabel ? rowLabel(row) : String(row[columns[0].key] ?? "")}`}>{actionLabel}</Link>
                 </td>
               )}
             </tr>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Amiri, Great_Vibes, Marcellus, Montserrat } from "next/font/google";
+import { Amiri, Cormorant_Garamond, Great_Vibes, Montserrat } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { NextIntlClientProvider } from "next-intl";
 import { CartProvider } from "@/components/cart-provider";
@@ -20,10 +20,11 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
-const marcellus = Marcellus({
-  weight: "400",
+const cormorant = Cormorant_Garamond({
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
   subsets: ["latin", "latin-ext"],
-  variable: "--font-marcellus",
+  variable: "--font-cormorant",
   display: "swap",
 });
 
@@ -59,7 +60,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#3b2418",
+  themeColor: "#4b0e1c",
   width: "device-width",
   initialScale: 1,
 };
@@ -73,7 +74,7 @@ export default async function RootLayout({
     <html
       lang={locale}
       data-scroll-behavior="smooth"
-      className={`${montserrat.variable} ${marcellus.variable} ${amiri.variable} ${greatVibes.variable}`}
+      className={`${montserrat.variable} ${cormorant.variable} ${amiri.variable} ${greatVibes.variable}`}
     >
       <body
         suppressHydrationWarning

@@ -11,6 +11,7 @@ export function FaqSection({ freeFrom, fee }: { freeFrom: number; fee: number })
       <Reveal className="text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent-ink">{t("eyebrow")}</p>
         <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">{t("title")}</h2>
+        <span aria-hidden className="mx-auto mt-4 block h-px w-10 bg-accent" />
       </Reveal>
       <div className="mt-10 divide-y divide-border border-y border-border">
         {questions.map(key => (
