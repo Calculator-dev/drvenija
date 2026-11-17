@@ -40,7 +40,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
         {t("freeDelivery", { amount: String(shippingPolicy.freeFrom) })}
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-brown-line bg-brown/95 text-cream backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-burgundy-line bg-burgundy/95 text-ivory backdrop-blur-xl">
         <div className="mx-auto grid h-17 max-w-375 grid-cols-[1fr_auto] items-center gap-3 px-4 md:h-19 md:grid-cols-[220px_1fr] md:px-6">
           <div className="flex min-w-0 items-center gap-2">
             <button
@@ -54,7 +54,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             <Link
               href={buildPath(locale)}
               aria-label={siteName}
-              className="min-w-0 text-cream"
+              className="min-w-0 text-ivory"
             >
               <Logo priority />
             </Link>
@@ -80,12 +80,12 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           />
         </div>
 
-        <div className="border-t border-brown-line px-4 py-3 md:hidden">
+        <div className="border-t border-burgundy-line px-4 py-3 md:hidden">
           <SearchForm action={shopHref} id="mobile" dark />
         </div>
 
         <nav
-          className="hidden border-t border-brown-line lg:block"
+          className="hidden border-t border-burgundy-line lg:block"
           aria-label={t("mainNavigation")}
         >
           <div className="mx-auto flex h-12 max-w-375 items-center justify-center gap-8 px-6 xl:gap-11">
@@ -97,7 +97,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                   key={item.href}
                   href={`${localePrefix}${item.href}`}
                   className={cn(
-                    "relative flex h-full items-center text-[13px] font-medium text-cream/85 transition-colors hover:text-accent",
+                    "relative flex h-full items-center text-[13px] font-medium text-ivory/85 transition-colors hover:text-accent",
                     active &&
                       "text-accent after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-accent",
                   )}
@@ -204,7 +204,7 @@ function SearchForm({
       onSubmit={onSubmit}
       className={cn(
         "flex h-10 w-full items-center rounded-sm border transition-colors",
-        dark ? "border-brown-line bg-cream/10 text-cream focus-within:border-accent" : "border-border bg-secondary focus-within:border-foreground",
+        dark ? "border-burgundy-line bg-ivory/10 text-ivory focus-within:border-accent" : "border-border bg-secondary focus-within:border-foreground",
         className,
       )}
     >
@@ -216,7 +216,7 @@ function SearchForm({
         name="q"
         type="search"
         placeholder={t("searchLabel")}
-        className={cn("min-w-0 flex-1 bg-transparent px-4 text-sm outline-none", dark ? "placeholder:text-cream/55" : "placeholder:text-muted-foreground")}
+        className={cn("min-w-0 flex-1 bg-transparent px-4 text-sm outline-none", dark ? "placeholder:text-ivory/55" : "placeholder:text-muted-foreground")}
       />
       <button
         type="submit"

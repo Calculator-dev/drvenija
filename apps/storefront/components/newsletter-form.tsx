@@ -28,10 +28,10 @@ export function NewsletterForm({ locale }: { locale: Locale }) {
     <form onSubmit={submit} className="space-y-3">
       <div className="flex gap-2">
         <label htmlFor="newsletter-email" className="sr-only">Email</label>
-        <input id="newsletter-email" type="email" required value={email} onChange={event => setEmail(event.target.value)} placeholder={t("placeholder")} className="h-11 min-w-0 flex-1 rounded-sm border border-brown-line bg-cream/5 px-3 text-sm text-cream outline-none placeholder:text-cream/40 focus:border-accent" />
+        <input id="newsletter-email" type="email" required value={email} onChange={event => setEmail(event.target.value)} placeholder={t("placeholder")} className="h-11 min-w-0 flex-1 rounded-sm border border-burgundy-line bg-ivory/5 px-3 text-sm text-ivory outline-none placeholder:text-ivory/40 focus:border-accent" />
         <button type="submit" disabled={state === "sending" || !consent} className="h-11 shrink-0 rounded-sm bg-accent px-4 text-sm font-bold text-accent-foreground disabled:opacity-50">{t("submit")}</button>
       </div>
-      <label className="flex items-start gap-2 text-xs leading-5 text-cream/60">
+      <label className="flex items-start gap-2 text-xs leading-5 text-ivory/60">
         <input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} required className="mt-0.5 accent-[var(--accent)]" />
         {t("consent")}
       </label>

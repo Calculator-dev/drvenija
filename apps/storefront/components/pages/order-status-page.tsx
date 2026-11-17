@@ -124,7 +124,7 @@ function Timeline({ status }: { status: OrderStatus }) {
         return (
           <li key={step} className="relative flex flex-col items-center text-center" aria-current={index === current ? "step" : undefined}>
             {index > 0 && <span aria-hidden className={cn("absolute right-1/2 top-4.5 h-0.5 w-full -translate-y-1/2", index <= current ? "bg-accent" : "bg-border")} />}
-            <span className={cn("relative z-10 flex h-9 w-9 items-center justify-center rounded-full border-2", done ? "border-accent bg-brown text-accent" : "border-border bg-background text-muted-foreground")}>
+            <span className={cn("relative z-10 flex h-9 w-9 items-center justify-center rounded-full border-2", done ? "border-accent bg-burgundy text-accent" : "border-border bg-background text-muted-foreground")}>
               <Icon className="h-4 w-4" aria-hidden />
             </span>
             <span className={cn("mt-2 px-1 text-xs leading-4", index === current ? "font-semibold" : done ? "" : "text-muted-foreground")}>{t(`statuses.${step}`)}</span>

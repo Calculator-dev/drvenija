@@ -95,7 +95,7 @@ export async function sendOrderConfirmationEmail(input: ConfirmationEmail): Prom
     <p><strong>${bosnian ? "Plaćanje" : "Payment"}</strong><br>${payment}</p>
     ${input.giftMessage ? `<p><strong>${bosnian ? "Poruka na čestitki" : "Gift card message"}</strong><br>${escapeHtml(input.giftMessage)}</p>` : ""}
     <p><strong>${bosnian ? "Dostava" : "Shipping"}</strong><br>${escapeHtml(input.shipping.address)}<br>${escapeHtml(location)}<br>${escapeHtml(input.shipping.country)}</p>
-    ${link ? `<p><a href="${link}" style="color:#3b2418">${bosnian ? "Pratite status narudžbe" : "Track your order"}</a></p>` : ""}
+    ${link ? `<p><a href="${link}" style="color:#59000a">${bosnian ? "Pratite status narudžbe" : "Track your order"}</a></p>` : ""}
     <p>${bosnian ? "Srdačno," : "Kind regards,"}<br>Drvenija</p>
   </div>`
   return sendEmail({ to: input.to, subject, html })
@@ -134,7 +134,7 @@ export async function sendOrderStatusEmail(input: StatusEmail): Promise<EmailRes
     <p>${escapeHtml(bosnian ? `Poštovani/a ${input.fullName},` : `Dear ${input.fullName},`)}</p>
     <p>${message}</p>
     ${tracking}
-    ${link ? `<p><a href="${link}" style="color:#3b2418">${linkText}</a></p>` : ""}
+    ${link ? `<p><a href="${link}" style="color:#59000a">${linkText}</a></p>` : ""}
     <p>${bosnian ? "Srdačno," : "Kind regards,"}<br>Drvenija</p>
   </div>`
   return sendEmail({ to: input.to, subject: subjectTemplate.replace("{n}", input.orderNumber), html })
