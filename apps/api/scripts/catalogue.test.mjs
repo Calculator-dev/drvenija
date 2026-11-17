@@ -50,6 +50,17 @@ test("product validation rejects invalid pricing and ambiguous categories", () =
     assert.equal(productInput.safeParse(invalid).success, false);
 });
 
+test("product validation accepts one room photo that is not also a gallery photo", () => {
+  const photo = { id: "7a4e9f2c-1b3d-4c5e-8f6a-9b0c1d2e3f40", alt: { bs: "Dnevna soba", en: "Living room" } };
+  assert.deepEqual(productInput.parse({ ...payload, roomImage: photo }).roomImage, photo);
+  assert.equal(productInput.parse({ ...payload, roomImage: null }).roomImage, null);
+  assert.equal(productInput.parse(payload).roomImage, undefined);
+  assert.equal(
+    productInput.safeParse({ ...payload, images: [{ ...photo, isPrimary: true }], roomImage: photo }).success,
+    false,
+  );
+});
+
 test("product creation saves complete data, supports new categories, and handles conflicts", async () => {
   const app = Fastify();
   await app.register(sensible);

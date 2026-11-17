@@ -117,4 +117,9 @@ test('nacrt proizvoda zadržava ID-eve varijanti i gradi API tijelo zahtjeva', a
   assert.equal(body.published, false)
   form.set('published', 'on')
   assert.equal(productPayload({ form, category: 'category-id', images: [], variants: drafts, mainDimensions: '35 cm' }).published, true)
+  // The room photo is only sent when the form knows about it; null removes it.
+  assert.equal('roomImage' in body, false)
+  const room = { id: 'room-id', url: 'https://example.com/room.webp', width: 1200, height: 800, alt: { bs: 'Dnevna soba', en: '' } }
+  assert.deepEqual(productPayload({ form, category: 'category-id', images: [], roomImage: room, variants: drafts, mainDimensions: '35 cm' }).roomImage, { id: 'room-id', alt: { bs: 'Dnevna soba', en: '' } })
+  assert.equal(productPayload({ form, category: 'category-id', images: [], roomImage: null, variants: drafts, mainDimensions: '35 cm' }).roomImage, null)
 })

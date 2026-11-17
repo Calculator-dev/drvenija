@@ -275,7 +275,9 @@
       "eyebrow": "Na vašem zidu",
       "title": "Zamislite ga u svom prostoru.",
       "text": "Isprobajte nekoliko boja zida i pogledajte kako komad djeluje iznad sofe. Trebate drugu veličinu ili boju? Napravit ćemo je po mjeri.",
-      "cta": "Zatraži drugu veličinu"
+      "cta": "Zatraži drugu veličinu",
+      "photoText": "Ovako komad izgleda u stvarnom prostoru. Trebate drugu veličinu ili boju da se uklopi u vaš zid? Napravit ćemo je po mjeri.",
+      "photoCaption": "Fotografija proizvoda u stvarnom prostoru."
     }
   },
   "cart": {

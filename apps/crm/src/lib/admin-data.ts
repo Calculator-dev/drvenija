@@ -139,6 +139,8 @@ export function productRows(products: AdminProduct[]) {
 
 export type ProductDetails = AdminProduct & {
   media?: ProductImage[];
+  /** Photo of the product in a real room, for the storefront's "Na vašem zidu" section. */
+  roomImage?: RoomImage | null;
   id: string;
   categoryId: string;
   material: string;
@@ -177,6 +179,8 @@ export type ProductImage = {
   alt: { bs: string; en: string };
   isPrimary: boolean;
 };
+
+export type RoomImage = Omit<ProductImage, "isPrimary">;
 
 export type AdminOrderDetail = {
   id: string;

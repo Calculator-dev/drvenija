@@ -1,4 +1,4 @@
-import type { ProductDetails, ProductImage, ProductVariant } from "./admin-data"
+import type { ProductDetails, ProductImage, ProductVariant, RoomImage } from "./admin-data"
 
 /** Editable variant row. `key` is client-only; `id` is the saved row's ID, if any. */
 export type VariantDraft = {
@@ -43,12 +43,14 @@ type PayloadInput = {
   form: FormData
   category: string
   images: ProductImage[]
+  /** null removes the room photo; leave out to keep whatever is saved. */
+  roomImage?: RoomImage | null
   variants: VariantDraft[]
   mainDimensions: string
 }
 
 /** Builds the PUT/POST /admin/products body. English fields fall back to Bosnian. */
-export function productPayload({ form, category, images, variants, mainDimensions }: PayloadInput) {
+export function productPayload({ form, category, images, roomImage, variants, mainDimensions }: PayloadInput) {
   const text = (name: string) => String(form.get(name) ?? "").trim()
   const localized = (name: string) => ({ bs: text(`${name}.bs`), en: text(`${name}.en`) || text(`${name}.bs`) })
   const translation = (locale: "bs" | "en") => Object.fromEntries(
@@ -59,6 +61,7 @@ export function productPayload({ form, category, images, variants, mainDimension
   )
   return {
     images: images.map(({ id, alt, isPrimary }) => ({ id, alt, isPrimary })),
+    ...(roomImage !== undefined ? { roomImage: roomImage ? { id: roomImage.id, alt: roomImage.alt } : null } : {}),
     ...(category === "new" ? { newCategory: localized("category") } : { categoryId: category }),
     type: text("type"),
     material: text("material"),

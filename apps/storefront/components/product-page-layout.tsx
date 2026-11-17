@@ -71,11 +71,27 @@ export function ProductPageLayout({ locale, product, related, category }: { loca
 
       <section className="border-t border-border/60 bg-secondary/60">
         <div className="mx-auto grid max-w-375 items-center gap-10 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:gap-16">
-          <WallMockup image={product.primaryImage} locale={locale} />
+          {product.roomImage ? (
+            <figure>
+              <div className="relative aspect-4/3 overflow-hidden rounded-sm border border-accent/25 bg-muted">
+                <Image
+                  unoptimized={isSvg(product.roomImage.url)}
+                  src={product.roomImage.url}
+                  alt={product.roomImage.alt[locale]}
+                  fill
+                  sizes="(min-width: 1024px) 58vw, 100vw"
+                  className="object-cover"
+                />
+              </div>
+              <figcaption className="mt-3 text-xs text-muted-foreground">{t("mockup.photoCaption")}</figcaption>
+            </figure>
+          ) : (
+            <WallMockup image={product.primaryImage} locale={locale} />
+          )}
           <Reveal>
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent-ink">{t("mockup.eyebrow")}</p>
             <h2 className="mt-4 font-serif text-4xl leading-tight tracking-tight md:text-5xl">{t("mockup.title")}</h2>
-            <p className="mt-5 max-w-md text-base leading-8 text-foreground/70">{t("mockup.text")}</p>
+            <p className="mt-5 max-w-md text-base leading-8 text-foreground/70">{product.roomImage ? t("mockup.photoText") : t("mockup.text")}</p>
             <Link href={buildPath(locale, "/custom")} className="mt-7 inline-flex items-center gap-2 border-b border-foreground pb-1 text-sm font-semibold">{t("mockup.cta")}</Link>
           </Reveal>
         </div>

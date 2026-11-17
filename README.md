@@ -67,6 +67,8 @@ Migration `0007_shop_features` adds payment method, gift wrapping, discount, tra
 status-email columns to `orders`, a `published` flag to `products`, and the
 `discount_codes`, `reviews` and `newsletter_subscribers` tables. Apply it before deploying
 this version of the API.
+Migration `0008_media_kind` adds `media_assets.kind` (`gallery` or `room`) for the
+per-product room photo. Apply it before deploying this version of the API.
 `drizzle/meta` holds a snapshot of the current schema, so `db:generate` only emits
 new changes. If you hand-write a migration, regenerate the snapshot as well.
 
@@ -210,6 +212,11 @@ Configure `BACKBLAZE_ENDPOINT`, `BACKBLAZE_REGION`, `BACKBLAZE_KEY_ID`,
 `BACKBLAZE_APP_KEY`, and `BACKBLAZE_BUCKET_NAME` in `apps/api/.env`. The application
 key needs read/write access to the configured bucket and the `products/` prefix.
 The bucket can remain private; no browser CORS configuration is needed.
+
+Each product can also have one **room photo** ("Slika u prostoru"): the product photographed
+on a wall in a real room. The storefront shows it in the product page's "Na vašem zidu"
+section; without one, that section shows a drawn room with the product's main photo.
+The room photo is never part of the gallery.
 
 Choose a primary image and enter Bosnian/English image descriptions. Saving the
 product links its images in the same database transaction as product changes.
