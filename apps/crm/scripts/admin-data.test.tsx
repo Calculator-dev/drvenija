@@ -117,52 +117,42 @@ test('nacrt proizvoda zadržava ID-eve varijanti i gradi API tijelo zahtjeva', a
   assert.equal(body.published, false)
   form.set('published', 'on')
   assert.equal(productPayload({ form, category: 'category-id', images: [], variants: drafts, mainDimensions: '35 cm' }).published, true)
-  // The room photo is only sent when the form knows about it; null removes it.
-  assert.equal('roomImage' in body, false)
-  const room = { id: 'room-id', url: 'https://example.com/room.webp', width: 1200, height: 800, alt: { bs: 'Dnevna soba', en: '' } }
-  assert.deepEqual(productPayload({ form, category: 'category-id', images: [], roomImage: room, variants: drafts, mainDimensions: '35 cm' }).roomImage, { id: 'room-id', alt: { bs: 'Dnevna soba', en: '' } })
-  assert.equal(productPayload({ form, category: 'category-id', images: [], roomImage: null, variants: drafts, mainDimensions: '35 cm' }).roomImage, null)
-  // The cutout follows the same rules, independently of the room photo.
+  // The cutout is only sent when the form knows about it; null removes it.
   assert.equal('cutoutImage' in body, false)
   const cutout = { id: 'cutout-id', url: 'https://example.com/cutout.webp', width: 900, height: 900, alt: { bs: 'Bez pozadine', en: 'Cutout' } }
-  const withCutout = productPayload({ form, category: 'category-id', images: [], roomImage: room, cutoutImage: cutout, variants: drafts, mainDimensions: '35 cm' })
+  const withCutout = productPayload({ form, category: 'category-id', images: [], cutoutImage: cutout, variants: drafts, mainDimensions: '35 cm' })
   assert.deepEqual(withCutout.cutoutImage, { id: 'cutout-id', alt: { bs: 'Bez pozadine', en: 'Cutout' } })
-  assert.deepEqual(withCutout.roomImage, { id: 'room-id', alt: { bs: 'Dnevna soba', en: '' } })
+  assert.equal('roomImage' in withCutout, false)
   const removed = productPayload({ form, category: 'category-id', images: [], cutoutImage: null, variants: drafts, mainDimensions: '35 cm' })
   assert.equal(removed.cutoutImage, null)
-  assert.equal('roomImage' in removed, false)
 })
 
 test('slika bez pozadine ima zasebnu karticu s prozirnim pregledom i samo PNG/WebP', async () => {
-  const { CutoutImageCard, RoomImageCard } = await import('../src/components/room-image.tsx')
+  const { CutoutImageCard } = await import('../src/components/cutout-image.tsx')
   const image = { id: 'cutout-id', url: 'https://example.com/cutout.webp', width: 900, height: 900, alt: { bs: 'Monogram bez pozadine', en: '' } }
   const html = renderToString(<CutoutImageCard image={image} onChange={() => {}} onBusy={() => {}} disabled={false} />)
   assert.match(html, /Slika bez pozadine \(showroom\)/)
   assert.match(html, /accept="image\/png,image\/webp"/)
   assert.match(html, /JPEG ne podržava prozirnost/)
-  assert.match(html, /glavna fotografija u okviru/)
+  assert.match(html, /Samo proizvodi s ovom slikom se prikazuju u showroomu/)
   assert.match(html, /repeating-conic-gradient/)
   assert.match(html, /object-contain/)
   assert.match(html, /cutout\.webp/)
   assert.match(html, /Monogram bez pozadine/)
   const empty = renderToString(<CutoutImageCard image={null} onChange={() => {}} onBusy={() => {}} disabled={false} />)
   assert.match(empty, /Nema slike bez pozadine/)
-  const room = renderToString(<RoomImageCard image={null} onChange={() => {}} onBusy={() => {}} disabled={false} />)
-  assert.match(room, /Slika u prostoru/)
-  assert.match(room, /accept="image\/jpeg,image\/png,image\/webp"/)
-  assert.doesNotMatch(room, /repeating-conic-gradient/)
+  assert.match(empty, /ne prikazuje u showroomu/)
 })
 
-test('obrazac proizvoda prikazuje sliku bez pozadine ispod slike u prostoru', async () => {
+test('obrazac proizvoda prikazuje sliku bez pozadine, a ne više sliku u prostoru', async () => {
   const { ProductForm } = await import('../src/components/product-form.tsx')
   const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } })
   client.setQueryData(['categories'], [])
   const cutoutImage = { id: 'cutout-id', url: 'https://example.com/cutout.webp', width: 900, height: 900, alt: { bs: '', en: '' } }
-  const product = { ...seedProducts[0], id: 'product-id', categoryId: 'category-id', price: 72, featured: false, roomImage: null, cutoutImage }
+  const product = { ...seedProducts[0], id: 'product-id', categoryId: 'category-id', price: 72, featured: false, cutoutImage }
   const html = render(client, <ProductForm product={product} onSaved={() => {}} onCancel={() => {}} />)
-  const room = html.indexOf('Slika u prostoru')
-  const cutout = html.indexOf('Slika bez pozadine (showroom)')
-  assert.ok(room > 0 && cutout > room)
+  assert.doesNotMatch(html, /Slika u prostoru/)
+  assert.match(html, /Slika bez pozadine \(showroom\)/)
   assert.match(html, /cutout\.webp/)
   client.clear()
 })

@@ -65,7 +65,6 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
     return {
       ...product,
       media: withUrls.filter((image) => image.kind === "gallery"),
-      roomImage: withUrls.find((image) => image.kind === "room") ?? null,
       cutoutImage: withUrls.find((image) => image.kind === "cutout") ?? null,
       variants: publicVariants(product, variants),
     };
@@ -130,7 +129,6 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
         const {
           newCategory: _newCategory,
           images,
-          roomImage,
           cutoutImage,
           variants,
           ...fields
@@ -267,10 +265,9 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
               .where(eq(mediaAssets.id, image.id));
           }
         }
-        // The room photo and the cutout are single photos: replace or remove them only
-        // when the request mentions them.
+        // The cutout is a single photo: replace or remove it only when the request mentions it.
         const linkSingle = async (
-          kind: "room" | "cutout",
+          kind: "cutout",
           value: { id: string; alt: { bs: string; en: string } } | null | undefined,
           label: string,
         ) => {
@@ -294,7 +291,6 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
             .set({ productId: id, alt: value.alt, isPrimary: false, kind })
             .where(eq(mediaAssets.id, value.id));
         };
-        await linkSingle("room", roomImage, "room photo");
         await linkSingle("cutout", cutoutImage, "cutout image");
         return saved;
       });

@@ -42,7 +42,7 @@ export const paymentMethodEnum = pgEnum("payment_method", [
 ]);
 export const discountKindEnum = pgEnum("discount_kind", ["percent", "fixed"]);
 /**
- * gallery: product gallery. room: the product photographed in a real interior.
+ * gallery: product gallery. room: no longer used (room photos were replaced by cutouts).
  * cutout: the product on a transparent background, placed on the showroom wall.
  * showroom: the showroom room photo (not linked to a product).
  */

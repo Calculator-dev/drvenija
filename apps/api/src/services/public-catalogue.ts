@@ -17,9 +17,9 @@ function publicImage(image: typeof mediaAssets.$inferSelect, row: typeof product
   }
 }
 
-const nonGallery = new Set<string>(["room", "cutout", "showroom"])
+const nonGallery = new Set<string>(["room", "cutout", "showroom"])  // "room" is no longer used
 
-function single(images: (typeof mediaAssets.$inferSelect)[], row: typeof products.$inferSelect, kind: "room" | "cutout") {
+function single(images: (typeof mediaAssets.$inferSelect)[], row: typeof products.$inferSelect, kind: "cutout") {
   const image = images.find(item => item.productId === row.id && item.kind === kind)
   return image ? publicImage(image, row) : null
 }
@@ -66,7 +66,6 @@ export function catalogueResponse(
       ...Object.fromEntries(["name", "slug", "tagline", "shortDescription", "description"].map(field => [field, localized(row.translations, field)])),
       seo: { title: localized(row.seo, "title"), description: localized(row.seo, "description") },
       media: images.filter(image => image.productId === row.id && !nonGallery.has(image.kind)).sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary)).map(image => publicImage(image, row)),
-      roomImage: single(images, row, "room"),
       cutoutImage: single(images, row, "cutout"),
     }
     }),

@@ -285,13 +285,7 @@
       "title": "Picture it in your space.",
       "text": "See the piece at real size on a living-room wall and try a wall colour. Need another size or colour? We will make it to measure.",
       "cta": "Ask for another size",
-      "photoText": "This is how the piece looks in a real room. Need another size or colour to suit your wall? We will make it to measure.",
-      "photoCaption": "Photo of the product in a real room.",
-      "showroomCta": "Try other products too",
-      "tabs": {
-        "showroom": "Try on the wall",
-        "photo": "Real photo"
-      }
+      "showroomCta": "Try other products too"
     }
   },
   "cart": {
@@ -633,6 +627,7 @@
     "allCategories": "All",
     "personalise": "Personalise and order",
     "viewProduct": "Product details",
-    "empty": "Products will appear here soon."
+    "empty": "Showroom products will appear here soon. Meanwhile, browse all products in the shop.",
+    "browseShop": "Browse the shop"
   }
 }
