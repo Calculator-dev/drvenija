@@ -2,9 +2,12 @@ import "server-only"
 import { connection } from "next/server"
 import { cache } from "react"
 import { serverApiUrl } from "./api-url"
+import { defaultShowroom, type ShowroomConfig } from "./showroom"
 import { activeVariants, defaultCheckoutSettings, defaultShippingPolicy, type CheckoutSettings, localizeCategory, localizeProduct, type CatalogueOffer, type Category, type Product, type Locale, type ShippingPolicy } from "./products"
 
-type Catalogue = { products: Product[]; categories: Category[]; shipping: ShippingPolicy; checkout: CheckoutSettings }
+type Catalogue = { products: Product[]; categories: Category[]; shipping: ShippingPolicy; checkout: CheckoutSettings; showroom: (Omit<ShowroomConfig, "image"> & { image: ShowroomConfig["image"] & { id: string } }) | null }
+
+const mediaUrl = <T extends { id: string }>(image: T) => ({ ...image, url: `/api/media/${image.id}` })
 
 // cache() deduplicates the fetch within one request (metadata, page, related products).
 export const getCatalogue = cache(async (): Promise<Catalogue> => {
@@ -13,7 +16,7 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
   const response = await fetch(`${serverApiUrl()}/public/catalogue`, { cache: "no-store", signal: AbortSignal.timeout(10000) })
   if (!response.ok) throw new Error("The product catalogue is temporarily unavailable")
   const data = await response.json() as Catalogue
-  return { ...data, shipping: data.shipping ?? defaultShippingPolicy, checkout: data.checkout ?? defaultCheckoutSettings, products: data.products.map(product => ({ ...product, media: product.media.map(image => ({ ...image, url: `/api/media/${image.id}` })), roomImage: product.roomImage ? { ...product.roomImage, url: `/api/media/${product.roomImage.id}` } : null })) }
+  return { ...data, shipping: data.shipping ?? defaultShippingPolicy, checkout: data.checkout ?? defaultCheckoutSettings, showroom: data.showroom ? { ...data.showroom, image: mediaUrl(data.showroom.image) } : null, products: data.products.map(product => ({ ...product, media: product.media.map(mediaUrl), roomImage: product.roomImage ? mediaUrl(product.roomImage) : null, cutoutImage: product.cutoutImage ? mediaUrl(product.cutoutImage) : null })) }
 })
 export async function getCartOffers(): Promise<{ offers: CatalogueOffer[]; shipping: ShippingPolicy }> {
   const { products, shipping } = await getCatalogue()
@@ -46,4 +49,9 @@ export async function getRelatedProducts(locale: Locale, productId: string, limi
   const sameCategory = others.filter(product => product.categoryId === current.categoryId)
   const rest = others.filter(product => product.categoryId !== current.categoryId).sort((a, b) => Number(b.featured) - Number(a.featured))
   return [...sameCategory, ...rest].slice(0, limit)
+}
+
+/** The CRM showroom when one is set, otherwise the built-in living room. */
+export async function getShowroom(): Promise<ShowroomConfig> {
+  return (await getCatalogue()).showroom ?? defaultShowroom
 }

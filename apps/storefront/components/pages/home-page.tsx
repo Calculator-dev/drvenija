@@ -402,6 +402,22 @@ export async function HomePage({ locale }: { locale: Locale }) {
         </Reveal>
       </section>
 
+      <section className="mx-auto max-w-375 px-4 pb-20 md:px-6 md:pb-24">
+        <Reveal>
+          <Link href={buildPath(locale, "/showroom")} className="group grid overflow-hidden rounded-xl border border-accent/25 bg-burgundy-deep md:grid-cols-[1.3fr_1fr]">
+            <span className="relative block aspect-4/3 overflow-hidden md:aspect-auto md:min-h-90">
+              <Image src="/images/showroom/living-room.webp" alt={t("showroom.imageAlt")} fill sizes="(min-width: 768px) 55vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
+            </span>
+            <span className="flex flex-col justify-center gap-4 px-7 py-10 md:px-12">
+              <span className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">{t("showroom.eyebrow")}</span>
+              <span className="font-serif text-[32px] leading-[1.1] md:text-[44px]">{t("showroom.title")}</span>
+              <span className="max-w-110 text-base leading-7 text-ivory/75">{t("showroom.description")}</span>
+              <span className="mt-2 inline-flex min-h-13 items-center self-start rounded-full bg-accent px-6.5 text-[15px] font-bold text-accent-foreground transition-colors group-hover:bg-accent-hover">{t("showroom.cta")}</span>
+            </span>
+          </Link>
+        </Reveal>
+      </section>
+
       <FaqSection freeFrom={shipping.freeFrom} fee={shipping.fee} />
 
       <section className="mx-auto max-w-375 px-4 pb-20 md:px-6 md:pb-24">

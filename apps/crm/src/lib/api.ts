@@ -1,6 +1,7 @@
 import { dashboardView, inquiryRows, orderRows, productRows, type AdminDashboard, type AdminInquiry, type AdminInquiryDetail, type AdminOrder, type AdminOrderDetail, type AdminProduct, type FulfilmentTarget, type OrderDecisionResult, type OrderStatusResult, type PaymentStatus, type ProductDetails } from "./admin-data"
 import { apiUrl as API_URL, supabase } from "./auth"
 import type { AdminDiscount, AdminReview, DiscountInput, NewsletterSubscriber, ReviewStatus } from "./marketing"
+import type { ShowroomInput, ShowroomSettings } from "./showroom"
 
 export class ApiError extends Error {
   constructor(message: string, readonly status: number) {
@@ -110,6 +111,14 @@ export function updateReview(id: string, status: ReviewStatus) {
 
 export function getNewsletterSubscribers() {
   return fetchJson<NewsletterSubscriber[]>("/admin/newsletter")
+}
+
+/** null until the showroom is saved for the first time. */
+export function getShowroom() {
+  return fetchJson<ShowroomSettings | null>("/admin/showroom")
+}
+export function saveShowroom(body: ShowroomInput) {
+  return fetchJson<{ ok: true }>("/admin/showroom", { method: "PUT", body })
 }
 
 export async function uploadProductImage(file: File): Promise<import("./admin-data").ProductImage> {

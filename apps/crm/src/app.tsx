@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 import { Link, NavLink, Outlet, useLocation, type RouteObject } from "react-router"
-import { Boxes, LayoutDashboard, Mail, MessageSquareMore, ShoppingCart, Sparkles, Star, TicketPercent } from "lucide-react"
+import { Boxes, LayoutDashboard, Mail, MessageSquareMore, ShoppingCart, Sofa, Sparkles, Star, TicketPercent } from "lucide-react"
 import { PageHeader } from "./components/page-header"
 import { DashboardPage } from "./pages/dashboard"
 import { DiscountsPage } from "./pages/discounts"
@@ -10,6 +10,7 @@ import { OrderPage, OrdersPage } from "./pages/orders"
 import { EditProductPage, NewProductPage } from "./pages/product-editor"
 import { ProductsPage } from "./pages/products"
 import { ReviewsPage } from "./pages/reviews"
+import { ShowroomPage } from "./pages/showroom"
 
 const navigation = [
   { to: "/", label: "Pregled", icon: LayoutDashboard },
@@ -19,6 +20,7 @@ const navigation = [
   { to: "/discounts", label: "Popusti", icon: TicketPercent },
   { to: "/reviews", label: "Recenzije", icon: Star },
   { to: "/newsletter", label: "Newsletter", icon: Mail },
+  { to: "/showroom", label: "Showroom", icon: Sofa },
 ] as const
 
 function Layout() {
@@ -93,6 +95,7 @@ export const routes: RouteObject[] = [
       { path: "discounts", element: <DiscountsPage /> },
       { path: "reviews", element: <ReviewsPage /> },
       { path: "newsletter", element: <NewsletterPage /> },
+      { path: "showroom", element: <ShowroomPage /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },

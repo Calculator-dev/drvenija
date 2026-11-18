@@ -9,10 +9,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/about",
     "/shop",
     "/custom",
+    "/showroom",
     "/en",
     "/en/about",
     "/en/shop",
     "/en/custom",
+    "/en/showroom",
   ]
 
   const [bs, en, categories] = await Promise.all([getProducts("bs"), getProducts("en"), getCategories("bs")])

@@ -5,7 +5,7 @@ import { ArrowLeft, PackagePlus } from "lucide-react";
 import { createProduct, getCategories, updateProduct } from "../lib/api";
 import { productPayload, variantDrafts, type VariantDraft } from "../lib/product-draft";
 import { ProductImages } from "./product-images";
-import { RoomImageCard } from "./room-image";
+import { CutoutImageCard, RoomImageCard } from "./room-image";
 import { VariantEditor } from "./variant-editor";
 import type { ProductDetails, ProductImage, RoomImage } from "../lib/admin-data";
 import { Button } from "./ui/button";
@@ -30,11 +30,15 @@ export function ProductForm({
   const [category, setCategory] = useState(product?.categoryId ?? "");
   const [images, setImages] = useState<ProductImage[]>(product?.media ?? []);
   const [roomImage, setRoomImage] = useState<RoomImage | null>(product?.roomImage ?? null);
+  const [cutoutImage, setCutoutImage] = useState<RoomImage | null>(product?.cutoutImage ?? null);
   const [variants, setVariants] = useState<VariantDraft[]>(() => variantDrafts(product));
   const [mainDimensions, setMainDimensions] = useState(
     () => product?.dimensions ?? variants[0]?.dimensions ?? "",
   );
-  const [uploading, setUploading] = useState(false);
+  // Count uploads, since the gallery, room photo and cutout can upload at the same time.
+  const [uploads, setUploads] = useState(0);
+  const uploading = uploads > 0;
+  const setUploading = (busy: boolean) => setUploads((count) => Math.max(0, count + (busy ? 1 : -1)));
   // Warn before leaving with unsaved edits; a successful save navigates away freely.
   const [dirty, setDirty] = useState(false);
   const saved = useRef(false);
@@ -55,6 +59,10 @@ export function ProductForm({
   const updateRoomImage = (next: RoomImage | null) => {
     setDirty(true);
     setRoomImage(next);
+  };
+  const updateCutoutImage = (next: RoomImage | null) => {
+    setDirty(true);
+    setCutoutImage(next);
   };
   const updateVariants = (next: SetStateAction<VariantDraft[]>) => {
     setDirty(true);
@@ -78,7 +86,7 @@ export function ProductForm({
     event.preventDefault();
     if (mutation.isPending || uploading || variants.length === 0) return;
     mutation.mutate(
-      productPayload({ form: new FormData(event.currentTarget), category, images, roomImage, variants, mainDimensions }),
+      productPayload({ form: new FormData(event.currentTarget), category, images, roomImage, cutoutImage, variants, mainDimensions }),
     );
   }
 
@@ -121,6 +129,12 @@ export function ProductForm({
         <RoomImageCard
           image={roomImage}
           onChange={updateRoomImage}
+          onBusy={setUploading}
+          disabled={mutation.isPending}
+        />
+        <CutoutImageCard
+          image={cutoutImage}
+          onChange={updateCutoutImage}
           onBusy={setUploading}
           disabled={mutation.isPending}
         />

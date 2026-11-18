@@ -69,6 +69,8 @@ status-email columns to `orders`, a `published` flag to `products`, and the
 this version of the API.
 Migration `0008_media_kind` adds `media_assets.kind` (`gallery` or `room`) for the
 per-product room photo. Apply it before deploying this version of the API.
+Migration `0009_showroom` adds the `cutout` and `showroom` photo kinds and the
+`showroom_settings` table. Apply it before deploying this version of the API.
 `drizzle/meta` holds a snapshot of the current schema, so `db:generate` only emits
 new changes. If you hand-write a migration, regenerate the snapshot as well.
 
@@ -172,6 +174,26 @@ undone). The order list shows each order's status and payment status.
 The storefront's custom-work form saves inquiries through `POST /public/inquiries`.
 They appear under **Upiti** in the CRM. Set `INQUIRY_NOTIFY_EMAIL` to also email each
 inquiry to the shop (reply-to is the customer's address).
+
+## Showroom
+
+`/showroom` (and "Na vašem zidu" on every product page) shows products on a living-room
+wall at real size, with wall colours to try. Set it up in the CRM under **Showroom**:
+
+- Upload a landscape photo of a room with an **empty wall** (an existing picture on the
+  wall would show behind smaller products).
+- Mark the **artwork area** (where a piece hangs) and enter its real width in cm. Products
+  are drawn at the size of the selected variant, read from its dimensions (e.g. "60 × 40 cm";
+  the first number is the width). Without parsable dimensions they fill the area.
+- Trace the **wall outline**; only that part is repainted when customers pick a wall colour.
+
+Until a photo is set, the storefront uses a built-in living room
+(`apps/storefront/public/images/showroom/`) with a precise per-pixel wall mask.
+
+For the best result, upload a **cutout** for each product in the product form ("Slika bez
+pozadine"): a PNG or WebP of the product on a transparent background. The showroom hangs
+it directly on the wall with a soft shadow; without one, the main photo is shown in a thin
+frame.
 
 ## Orders, payment and discounts
 

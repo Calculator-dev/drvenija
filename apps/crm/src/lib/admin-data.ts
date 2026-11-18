@@ -144,6 +144,8 @@ export type ProductDetails = AdminProduct & {
   media?: ProductImage[];
   /** Photo of the product in a real room, for the storefront's "Na vašem zidu" section. */
   roomImage?: RoomImage | null;
+  /** The product on a transparent background (PNG/WebP), placed on the storefront's showroom wall. */
+  cutoutImage?: RoomImage | null;
   id: string;
   categoryId: string;
   material: string;

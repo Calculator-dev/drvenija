@@ -3,6 +3,7 @@ import { categories, products, mediaAssets, productVariants, reviews } from "../
 import { and, asc, desc, eq, isNotNull } from "drizzle-orm"
 import { shippingPolicy } from "../lib/shipping.js"
 import { giftWrapPrice } from "../lib/pricing.js"
+import { publicShowroom } from "../routes/showroom.js"
 import { publicVariants } from "../lib/variants.js"
 
 function localized(rows: Record<string, Record<string, string>>, field: string) {
@@ -16,12 +17,20 @@ function publicImage(image: typeof mediaAssets.$inferSelect, row: typeof product
   }
 }
 
+const nonGallery = new Set<string>(["room", "cutout", "showroom"])
+
+function single(images: (typeof mediaAssets.$inferSelect)[], row: typeof products.$inferSelect, kind: "room" | "cutout") {
+  const image = images.find(item => item.productId === row.id && item.kind === kind)
+  return image ? publicImage(image, row) : null
+}
+
 export function catalogueResponse(
   categoryRows: (typeof categories.$inferSelect)[],
   productRows: (typeof products.$inferSelect)[],
   images: (typeof mediaAssets.$inferSelect)[],
   variantRows: (typeof productVariants.$inferSelect)[] = [],
   reviewRows: Array<Pick<typeof reviews.$inferSelect, "id" | "productId" | "authorName" | "rating" | "body" | "locale" | "createdAt">> = [],
+  showroom: Awaited<ReturnType<typeof publicShowroom>> = null,
 ) {
   const reviewsByProduct = new Map<string, typeof reviewRows>()
   for (const review of reviewRows) {
@@ -38,6 +47,7 @@ export function catalogueResponse(
   }
   return {
     shipping: shippingPolicy,
+    showroom,
     checkout: { giftWrapPrice, paymentMethods: ["bank_transfer", "cash_on_delivery"] as const },
     categories: categoryRows.map(row => ({ id: row.id, name: localized(row.translations, "name"), slug: localized(row.translations, "slug"), description: localized(row.translations, "description"), seo: { title: localized(row.seo, "title"), description: localized(row.seo, "description") } })),
     products: productRows.filter(row => row.published !== false).map(row => {
@@ -55,23 +65,22 @@ export function catalogueResponse(
       leadTime: row.leadTime, stockLabel: row.stockLabel,
       ...Object.fromEntries(["name", "slug", "tagline", "shortDescription", "description"].map(field => [field, localized(row.translations, field)])),
       seo: { title: localized(row.seo, "title"), description: localized(row.seo, "description") },
-      media: images.filter(image => image.productId === row.id && image.kind !== "room").sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary)).map(image => publicImage(image, row)),
-      roomImage: (() => {
-        const room = images.find(image => image.productId === row.id && image.kind === "room")
-        return room ? publicImage(room, row) : null
-      })(),
+      media: images.filter(image => image.productId === row.id && !nonGallery.has(image.kind)).sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary)).map(image => publicImage(image, row)),
+      roomImage: single(images, row, "room"),
+      cutoutImage: single(images, row, "cutout"),
     }
     }),
   }
 }
 export async function getPublicCatalogue() {
-  const [categoryRows, productRows, images, variantRows, reviewRows] = await Promise.all([
+  const [categoryRows, productRows, images, variantRows, reviewRows, showroom] = await Promise.all([
     db.select().from(categories).orderBy(categories.code),
     db.select().from(products).orderBy(desc(products.createdAt)),
     db.select().from(mediaAssets).where(isNotNull(mediaAssets.productId)).orderBy(mediaAssets.createdAt),
     db.select().from(productVariants).orderBy(productVariants.productId, asc(productVariants.sortOrder), productVariants.createdAt),
     db.select({ id: reviews.id, productId: reviews.productId, authorName: reviews.authorName, rating: reviews.rating, body: reviews.body, locale: reviews.locale, createdAt: reviews.createdAt })
       .from(reviews).where(and(eq(reviews.status, "approved"))).orderBy(desc(reviews.createdAt)),
+    publicShowroom(),
   ])
-  return catalogueResponse(categoryRows, productRows, images, variantRows, reviewRows)
+  return catalogueResponse(categoryRows, productRows, images, variantRows, reviewRows, showroom)
 }

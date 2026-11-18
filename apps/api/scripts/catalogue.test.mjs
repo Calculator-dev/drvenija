@@ -59,6 +59,13 @@ test("product validation accepts one room photo that is not also a gallery photo
     productInput.safeParse({ ...payload, images: [{ ...photo, isPrimary: true }], roomImage: photo }).success,
     false,
   );
+  // The cutout is its own photo too.
+  assert.deepEqual(productInput.parse({ ...payload, cutoutImage: photo }).cutoutImage, photo);
+  assert.equal(productInput.safeParse({ ...payload, roomImage: photo, cutoutImage: photo }).success, false);
+  assert.equal(
+    productInput.safeParse({ ...payload, images: [{ ...photo, isPrimary: true }], cutoutImage: photo }).success,
+    false,
+  );
 });
 
 test("product creation saves complete data, supports new categories, and handles conflicts", async () => {

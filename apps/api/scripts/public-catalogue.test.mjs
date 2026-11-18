@@ -13,7 +13,7 @@ test('live catalogue serializes translations, categories and primary-first stabl
   assert.equal(product.media[0].alt.en, 'Slika')
   assert.ok(!JSON.stringify(result).includes('private-secret'))
   assert.equal(product.rating, null)
-  assert.deepEqual(catalogueResponse([], [], []), { shipping: { freeFrom: 150, fee: 10 }, checkout: { giftWrapPrice: 5, paymentMethods: ['bank_transfer', 'cash_on_delivery'] }, products: [], categories: [] })
+  assert.deepEqual(catalogueResponse([], [], []), { shipping: { freeFrom: 150, fee: 10 }, showroom: null, checkout: { giftWrapPrice: 5, paymentMethods: ['bank_transfer', 'cash_on_delivery'] }, products: [], categories: [] })
 })
 
 test('catalogue hides unpublished products and summarises approved reviews', () => {
@@ -39,4 +39,8 @@ test('the room photo is returned separately and never appears in the gallery', (
   assert.equal(product.roomImage.url, '/public/media/room')
   assert.equal(product.roomImage.alt.bs, 'U dnevnoj sobi')
   assert.equal(catalogueResponse([], [base], [images[0]]).products[0].roomImage, null)
+  const cutout = { id: 'cutout', productId: 'product', isPrimary: false, kind: 'cutout', alt: {}, width: 100, height: 100, mimeType: 'image/webp' }
+  const withCutout = catalogueResponse([], [base], [...images, cutout]).products[0]
+  assert.equal(withCutout.cutoutImage.url, '/public/media/cutout')
+  assert.deepEqual(withCutout.media.map(image => image.id), ['gallery'])
 })
