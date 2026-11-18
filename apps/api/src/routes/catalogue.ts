@@ -64,8 +64,9 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
     const withUrls = await withImageUrls(media);
     return {
       ...product,
-      media: withUrls.filter((image) => image.kind !== "room"),
+      media: withUrls.filter((image) => image.kind === "gallery"),
       roomImage: withUrls.find((image) => image.kind === "room") ?? null,
+      cutoutImage: withUrls.find((image) => image.kind === "cutout") ?? null,
       variants: publicVariants(product, variants),
     };
   });
@@ -130,6 +131,7 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
           newCategory: _newCategory,
           images,
           roomImage,
+          cutoutImage,
           variants,
           ...fields
         } = input;
@@ -265,31 +267,35 @@ export const catalogueRoutes: FastifyPluginAsync = async (app) => {
               .where(eq(mediaAssets.id, image.id));
           }
         }
-        if (roomImage !== undefined) {
+        // The room photo and the cutout are single photos: replace or remove them only
+        // when the request mentions them.
+        const linkSingle = async (
+          kind: "room" | "cutout",
+          value: { id: string; alt: { bs: string; en: string } } | null | undefined,
+          label: string,
+        ) => {
+          if (value === undefined) return;
           await tx
             .update(mediaAssets)
             .set({ productId: null, kind: "gallery" })
-            .where(and(eq(mediaAssets.productId, id), eq(mediaAssets.kind, "room")));
-          if (roomImage) {
-            const [asset] = await tx
-              .select()
-              .from(mediaAssets)
-              .where(eq(mediaAssets.id, roomImage.id))
-              .for("update");
-            if (!asset)
-              throw app.httpErrors.badRequest(
-                "The room photo no longer exists. Upload it again.",
-              );
-            if (asset.productId && asset.productId !== id)
-              throw app.httpErrors.conflict(
-                "The room photo is already linked to another product",
-              );
-            await tx
-              .update(mediaAssets)
-              .set({ productId: id, alt: roomImage.alt, isPrimary: false, kind: "room" })
-              .where(eq(mediaAssets.id, roomImage.id));
-          }
-        }
+            .where(and(eq(mediaAssets.productId, id), eq(mediaAssets.kind, kind)));
+          if (!value) return;
+          const [asset] = await tx
+            .select()
+            .from(mediaAssets)
+            .where(eq(mediaAssets.id, value.id))
+            .for("update");
+          if (!asset || asset.kind === "showroom")
+            throw app.httpErrors.badRequest(`The ${label} no longer exists. Upload it again.`);
+          if (asset.productId && asset.productId !== id)
+            throw app.httpErrors.conflict(`The ${label} is already linked to another product`);
+          await tx
+            .update(mediaAssets)
+            .set({ productId: id, alt: value.alt, isPrimary: false, kind })
+            .where(eq(mediaAssets.id, value.id));
+        };
+        await linkSingle("room", roomImage, "room photo");
+        await linkSingle("cutout", cutoutImage, "cutout image");
         return saved;
       });
       return reply.code(productId ? 200 : 201).send(product);

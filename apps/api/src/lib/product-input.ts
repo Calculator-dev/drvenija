@@ -70,6 +70,18 @@ export const productInput = z
       })
       .nullable()
       .optional(),
+    // The product on a transparent background (PNG/WebP), placed on the showroom wall.
+    // Same rules as roomImage.
+    cutoutImage: z
+      .object({
+        id: z.string().uuid(),
+        alt: z.object({
+          bs: z.string().trim().max(300),
+          en: z.string().trim().max(300),
+        }),
+      })
+      .nullable()
+      .optional(),
   })
   .strict()
   .refine((value) => Boolean(value.categoryId) !== Boolean(value.newCategory), {
@@ -81,6 +93,13 @@ export const productInput = z
       !value.roomImage ||
       !value.images?.some((image) => image.id === value.roomImage!.id),
     { message: "The room photo cannot also be a gallery photo", path: ["roomImage"] },
+  )
+  .refine(
+    (value) =>
+      !value.cutoutImage ||
+      (!value.images?.some((image) => image.id === value.cutoutImage!.id) &&
+        value.roomImage?.id !== value.cutoutImage.id),
+    { message: "The cutout must be a separate photo", path: ["cutoutImage"] },
   )
   .refine(
     (value) =>

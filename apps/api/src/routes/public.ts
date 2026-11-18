@@ -3,7 +3,7 @@ import { imageUrl } from "../services/backblaze.js"
 import type { FastifyPluginAsync } from "fastify"
 import { z } from "zod"
 import { randomBytes } from "node:crypto"
-import { inArray, sql, eq, and, isNotNull } from "drizzle-orm"
+import { inArray, sql, eq, and, isNotNull, or } from "drizzle-orm"
 import { db } from "../db/client.js"
 import { categories, products, customers, orders, orderItems, mediaAssets, productVariants, discountCodes } from "../db/schema.js"
 import { sendOrderConfirmationEmail } from "../services/order-email.js"
@@ -42,7 +42,7 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
   })
   app.get("/media/:id", async (request, reply) => {
     const { id } = z.object({ id: z.string().uuid() }).parse(request.params)
-    const [asset] = await db.select().from(mediaAssets).where(and(eq(mediaAssets.id, id), isNotNull(mediaAssets.productId))).limit(1)
+    const [asset] = await db.select().from(mediaAssets).where(and(eq(mediaAssets.id, id), or(isNotNull(mediaAssets.productId), eq(mediaAssets.kind, "showroom")))).limit(1)
     if (!asset) return reply.code(404).send({ message: "Image not found" })
     reply.header("Cache-Control", "no-store")
     return reply.redirect(await imageUrl(asset.storageKey))

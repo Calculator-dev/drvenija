@@ -1,5 +1,7 @@
+import { sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   index,
   integer,
   uniqueIndex,
@@ -39,8 +41,12 @@ export const paymentMethodEnum = pgEnum("payment_method", [
   "cash_on_delivery",
 ]);
 export const discountKindEnum = pgEnum("discount_kind", ["percent", "fixed"]);
-/** Gallery photos appear in the product gallery; the room photo shows the product in a real interior. */
-export const mediaKindEnum = pgEnum("media_kind", ["gallery", "room"]);
+/**
+ * gallery: product gallery. room: the product photographed in a real interior.
+ * cutout: the product on a transparent background, placed on the showroom wall.
+ * showroom: the showroom room photo (not linked to a product).
+ */
+export const mediaKindEnum = pgEnum("media_kind", ["gallery", "room", "cutout", "showroom"]);
 export const reviewStatusEnum = pgEnum("review_status", [
   "pending",
   "approved",
@@ -276,3 +282,24 @@ export const newsletterSubscribers = pgTable("newsletter_subscribers", {
     .defaultNow()
     .notNull(),
 }).enableRLS();
+
+export type ShowroomArea = { x: number; y: number; width: number; height: number };
+export type ShowroomPoint = [number, number];
+
+/**
+ * The single showroom (row id 1): a room photo, the area on its wall where artwork hangs,
+ * the outline of the wall (for repainting it) and the real width of that area in cm.
+ * Areas and outlines are percentages of the photo's width and height.
+ */
+export const showroomSettings = pgTable("showroom_settings", {
+  id: integer("id").primaryKey().default(1),
+  imageId: uuid("image_id").references(() => mediaAssets.id, { onDelete: "set null" }),
+  artArea: jsonb("art_area").$type<ShowroomArea>().notNull(),
+  wallOutline: jsonb("wall_outline").$type<ShowroomPoint[]>().notNull(),
+  areaWidthCm: integer("area_width_cm").notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+}, (table) => [
+  check("showroom_settings_single_row", sql`${table.id} = 1`),
+]).enableRLS();
