@@ -615,6 +615,7 @@
     "walls": {
       "original": "Originalna boja",
       "white": "Bijela",
+      "cream": "Krem",
       "sage": "Žalfija",
       "blue": "Plavo-siva",
       "terracotta": "Terakota",
@@ -628,6 +629,9 @@
     "personalise": "Personaliziraj i naruči",
     "viewProduct": "Detalji proizvoda",
     "empty": "Proizvodi za showroom se uskoro pojavljuju ovdje. U međuvremenu pogledajte sve proizvode u shopu.",
-    "browseShop": "Pogledaj shop"
+    "browseShop": "Pogledaj shop",
+    "customColour": "Odaberite bilo koju boju",
+    "hexLabel": "Kod boje (npr. #E8D9C0)",
+    "customHint": "Ne vidite svoju boju? Odaberite bilo koju u krugu u bojama ili upišite kod boje."
   }
 }

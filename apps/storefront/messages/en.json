@@ -615,6 +615,7 @@
     "walls": {
       "original": "Original colour",
       "white": "White",
+      "cream": "Cream",
       "sage": "Sage",
       "blue": "Blue-grey",
       "terracotta": "Terracotta",
@@ -628,6 +629,9 @@
     "personalise": "Personalise and order",
     "viewProduct": "Product details",
     "empty": "Showroom products will appear here soon. Meanwhile, browse all products in the shop.",
-    "browseShop": "Browse the shop"
+    "browseShop": "Browse the shop",
+    "customColour": "Pick any colour",
+    "hexLabel": "Colour code (e.g. #E8D9C0)",
+    "customHint": "Don't see your colour? Pick any in the rainbow circle or type a colour code."
   }
 }
