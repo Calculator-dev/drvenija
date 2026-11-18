@@ -27,7 +27,8 @@
     "checkout": "Checkout | Drvenija",
     "success": "Narudžba zaprimljena | Drvenija",
     "wishlist": "Sačuvano | Drvenija",
-    "order": "Status narudžbe | Drvenija"
+    "order": "Status narudžbe | Drvenija",
+    "showroom": "Showroom | Drvenija"
   },
   "notFound": {
     "title": "Stranica nije pronađena",
@@ -48,7 +49,8 @@
       "allProducts": "Svi proizvodi",
       "customizable": "Personalizirani proizvodi",
       "customWork": "Custom izrada",
-      "about": "O nama"
+      "about": "O nama",
+      "showroom": "Showroom"
     },
     "tagline": "Pleksiglas, mediapan, pokloni i poslovni natpisi izrađeni u Sarajevu.",
     "searchLabel": "Pretraži proizvode",
@@ -184,6 +186,13 @@
       "title": "Pratite nas na Instagramu",
       "follow": "Zaprati",
       "tileLabel": "Drvenija na Instagramu"
+    },
+    "showroom": {
+      "eyebrow": "Showroom",
+      "title": "Isprobajte na zidu prije kupovine.",
+      "description": "Postavite bilo koji naš proizvod u dnevnu sobu, u stvarnoj veličini, i promijenite boju zida.",
+      "cta": "Otvori showroom",
+      "imageAlt": "Dnevna soba s praznim zidom za isprobavanje proizvoda"
     }
   },
   "shop": {
@@ -274,10 +283,15 @@
     "mockup": {
       "eyebrow": "Na vašem zidu",
       "title": "Zamislite ga u svom prostoru.",
-      "text": "Isprobajte nekoliko boja zida i pogledajte kako komad djeluje iznad sofe. Trebate drugu veličinu ili boju? Napravit ćemo je po mjeri.",
+      "text": "Pogledajte komad u stvarnoj veličini na zidu dnevne sobe i isprobajte boju zida. Trebate drugu veličinu ili boju? Napravit ćemo je po mjeri.",
       "cta": "Zatraži drugu veličinu",
       "photoText": "Ovako komad izgleda u stvarnom prostoru. Trebate drugu veličinu ili boju da se uklopi u vaš zid? Napravit ćemo je po mjeri.",
-      "photoCaption": "Fotografija proizvoda u stvarnom prostoru."
+      "photoCaption": "Fotografija proizvoda u stvarnom prostoru.",
+      "showroomCta": "Isprobaj i druge proizvode",
+      "tabs": {
+        "showroom": "Isprobaj na zidu",
+        "photo": "Stvarna fotografija"
+      }
     }
   },
   "cart": {
@@ -483,16 +497,6 @@
       }
     }
   },
-  "mockup": {
-    "wallColour": "Boja zida",
-    "walls": {
-      "linen": "Lan",
-      "sage": "Žalfija",
-      "clay": "Glina",
-      "charcoal": "Grafit"
-    },
-    "note": "Ilustracija služi kao orijentacija; stvarna veličina zavisi od odabranih dimenzija."
-  },
   "chat": {
     "open": "Pitajte nas",
     "close": "Zatvori",
@@ -606,5 +610,29 @@
       "error": "Recenzija nije poslana.",
       "thanks": "Hvala na recenziji!"
     }
+  },
+  "showroom": {
+    "eyebrow": "Showroom",
+    "title": "Isprobajte na zidu",
+    "description": "Odaberite proizvod i pogledajte ga na zidu dnevne sobe, u stvarnoj veličini. Promijenite boju zida i veličinu da vidite šta vam najbolje odgovara.",
+    "roomAlt": "Dnevna soba sa sofom i proizvodom na zidu",
+    "wallColour": "Boja zida",
+    "size": "Veličina",
+    "walls": {
+      "original": "Originalna boja",
+      "white": "Bijela",
+      "sage": "Žalfija",
+      "blue": "Plavo-siva",
+      "terracotta": "Terakota",
+      "burgundy": "Bordo",
+      "charcoal": "Grafit"
+    },
+    "realSize": "Prikazano u stvarnoj veličini: {size}. Boje zidova su orijentacione.",
+    "approximate": "Približan prikaz — dimenzije ovog proizvoda nisu upisane. Boje zidova su orijentacione.",
+    "pickTitle": "Odaberite proizvod",
+    "allCategories": "Sve",
+    "personalise": "Personaliziraj i naruči",
+    "viewProduct": "Detalji proizvoda",
+    "empty": "Proizvodi će se uskoro pojaviti ovdje."
   }
 }

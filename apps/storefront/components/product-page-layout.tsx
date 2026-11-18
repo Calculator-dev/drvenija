@@ -7,10 +7,11 @@ import { ProductDetail } from "@/components/product-detail"
 import { ProductGallery } from "@/components/product-gallery"
 import { ProductReviews } from "@/components/product-reviews"
 import { Reveal } from "@/components/reveal"
-import { WallMockup } from "@/components/wall-mockup"
+import { ProductWallSection } from "@/components/product-wall-section"
+import type { ShowroomConfig } from "@/lib/showroom"
 import { activeVariants, buildPath, categoryPath, type Locale, type LocalizedCategory, type LocalizedProduct, isSvg } from "@/lib/products"
 
-export function ProductPageLayout({ locale, product, related, category }: { locale: Locale; product: LocalizedProduct; related: LocalizedProduct[]; category?: LocalizedCategory }) {
+export function ProductPageLayout({ locale, product, related, category, showroom }: { locale: Locale; product: LocalizedProduct; related: LocalizedProduct[]; category?: LocalizedCategory; showroom: ShowroomConfig }) {
   const t = useTranslations("product")
   const shop = useTranslations("shop")
   const common = useTranslations("common")
@@ -69,33 +70,7 @@ export function ProductPageLayout({ locale, product, related, category }: { loca
         </div>
       </section>
 
-      <section className="border-t border-border/60 bg-secondary/60">
-        <div className="mx-auto grid max-w-375 items-center gap-10 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:gap-16">
-          {product.roomImage ? (
-            <figure>
-              <div className="relative aspect-4/3 overflow-hidden rounded-sm border border-accent/25 bg-muted">
-                <Image
-                  unoptimized={isSvg(product.roomImage.url)}
-                  src={product.roomImage.url}
-                  alt={product.roomImage.alt[locale]}
-                  fill
-                  sizes="(min-width: 1024px) 58vw, 100vw"
-                  className="object-cover"
-                />
-              </div>
-              <figcaption className="mt-3 text-xs text-muted-foreground">{t("mockup.photoCaption")}</figcaption>
-            </figure>
-          ) : (
-            <WallMockup image={product.primaryImage} locale={locale} />
-          )}
-          <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent-ink">{t("mockup.eyebrow")}</p>
-            <h2 className="mt-4 font-serif text-4xl leading-tight tracking-tight md:text-5xl">{t("mockup.title")}</h2>
-            <p className="mt-5 max-w-md text-base leading-8 text-foreground/70">{product.roomImage ? t("mockup.photoText") : t("mockup.text")}</p>
-            <Link href={buildPath(locale, "/custom")} className="mt-7 inline-flex items-center gap-2 border-b border-foreground pb-1 text-sm font-semibold">{t("mockup.cta")}</Link>
-          </Reveal>
-        </div>
-      </section>
+      <ProductWallSection locale={locale} product={product} showroom={showroom} />
 
       <section className="bg-sand">
         <div className="mx-auto grid max-w-375 md:grid-cols-2">
