@@ -31,43 +31,80 @@ export const defaultShowroom: ShowroomConfig = {
   wallMaskUrl: "/images/showroom/living-room-wall.png",
 }
 
-/** Typical relative luminance of a painted wall in a room photo (the built-in room measures 0.42). */
-const wallLuminance = 0.42
-
+/** Suggested wall colours; customers can also pick any colour. */
 export const wallColours = [
-  { key: "original", hex: null },
-  { key: "white", hex: "#f2efe9" },
+  { key: "white", hex: "#f4f2ee" },
+  { key: "cream", hex: "#e8d9c0" },
   { key: "sage", hex: "#9fae92" },
   { key: "blue", hex: "#8fa3b5" },
   { key: "terracotta", hex: "#c0785a" },
   { key: "burgundy", hex: "#6e2230" },
   { key: "charcoal", hex: "#45464a" },
 ] as const
-export type WallColourKey = (typeof wallColours)[number]["key"]
 
-function relativeLuminance(hex: string) {
-  const channel = (index: number) => {
-    const value = parseInt(hex.slice(1 + index * 2, 3 + index * 2), 16) / 255
-    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+/** A wall colour as #rrggbb, or null for the photo's own colour. */
+export type WallColour = string | null
+
+export function isHexColour(value: string) {
+  return /^#[0-9a-f]{6}$/i.test(value)
+}
+
+/** "#abc" or "abcdef" → "#aabbcc"; null when it is not a colour. */
+export function normaliseHex(value: string): string | null {
+  let hex = value.trim().replace(/^#/, "")
+  if (/^[0-9a-f]{3}$/i.test(hex)) hex = hex.split("").map(c => c + c).join("")
+  return /^[0-9a-f]{6}$/i.test(hex) ? `#${hex.toLowerCase()}` : null
+}
+
+// sRGB ↔ linear light. Decoding uses a 256-entry table and encoding a 4096-entry one,
+// so repainting a photo of about a million pixels stays fast.
+const toLinear = new Float32Array(256).map((_, i) => {
+  const c = i / 255
+  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+})
+const encodeSteps = 4096
+const toSrgb = new Uint8ClampedArray(encodeSteps + 1).map((_, i) => {
+  const c = i / encodeSteps
+  return Math.round((c <= 0.0031308 ? c * 12.92 : 1.055 * c ** (1 / 2.4) - 0.055) * 255)
+})
+
+/**
+ * The wall's reference brightness per channel (in linear light): the 75th percentile of
+ * wall pixels. Pixels at this brightness get exactly the chosen colour; darker ones keep
+ * their shadow and brighter ones (lamp light) their glow.
+ */
+export function wallReference(photo: Uint8ClampedArray, mask: Uint8ClampedArray) {
+  const samples: number[][] = [[], [], []]
+  const step = Math.max(1, Math.floor(photo.length / 4 / 60000))
+  for (let i = 0; i < photo.length / 4; i += step) {
+    if (mask[i * 4 + 3] < 128) continue
+    for (let c = 0; c < 3; c++) samples[c].push(toLinear[photo[i * 4 + c]])
   }
-  return 0.2126 * channel(0) + 0.7152 * channel(1) + 0.0722 * channel(2)
+  return samples.map(values => {
+    if (!values.length) return 0.4
+    values.sort((a, b) => a - b)
+    return Math.max(values[Math.floor(values.length * 0.75)], 0.02)
+  }) as [number, number, number]
 }
 
 /**
- * How to repaint the wall while keeping the photo's light and shadow: first give it the
- * colour's hue and saturation ("color" blend), then darken ("multiply") or lighten
- * ("screen") with a grey so the wall ends up about as light as the chosen paint.
+ * Repaints the wall: each wall pixel becomes the chosen colour scaled by how light that
+ * pixel is compared with the wall's reference, per channel, so shadows, lamp light and
+ * texture stay. Writes into `out` (RGBA, transparent outside the wall).
  */
-export function wallPaint(hex: string) {
-  const target = relativeLuminance(hex)
-  const toHex = (value: number) => {
-    const level = Math.round(Math.max(0, Math.min(1, value)) * 255).toString(16).padStart(2, "0")
-    return `#${level}${level}${level}`
+export function repaintWall(photo: Uint8ClampedArray, mask: Uint8ClampedArray, reference: [number, number, number], hex: string, out: Uint8ClampedArray) {
+  const target = [1, 3, 5].map(i => toLinear[parseInt(hex.slice(i, i + 2), 16)])
+  const scale = target.map((value, c) => (value / reference[c]) * encodeSteps)
+  for (let i = 0; i < photo.length; i += 4) {
+    const alpha = mask[i + 3]
+    if (alpha === 0) { out[i + 3] = 0; continue }
+    for (let c = 0; c < 3; c++) {
+      const level = toLinear[photo[i + c]] * scale[c]
+      out[i + c] = toSrgb[level >= encodeSteps ? encodeSteps : level | 0]
+    }
+    out[i + 3] = alpha
   }
-  // Grey levels are in sRGB; convert the linear ratio back with the sRGB curve.
-  const encode = (linear: number) => linear <= 0.0031308 ? linear * 12.92 : 1.055 * linear ** (1 / 2.4) - 0.055
-  if (target <= wallLuminance) return { hue: hex, mode: "multiply" as const, grey: toHex(encode(target / wallLuminance)) }
-  return { hue: hex, mode: "screen" as const, grey: toHex(encode((target - wallLuminance) / (1 - wallLuminance))) }
+  return out
 }
 
 /** "60 × 40 cm", "60x40cm", "Ø 50 cm" or "120 cm" → width and (if given) height in cm. */

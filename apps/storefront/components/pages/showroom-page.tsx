@@ -10,7 +10,7 @@ import { useCart } from "@/components/cart-provider"
 import { ShowroomViewer } from "@/components/showroom-viewer"
 import { StarRating } from "@/components/star-rating"
 import { activeVariants, buildPath, formatPrice, isSvg, type Locale, type LocalizedCategory } from "@/lib/products"
-import type { ShowroomConfig, ShowroomProduct, WallColourKey } from "@/lib/showroom"
+import type { ShowroomConfig, ShowroomProduct, WallColour } from "@/lib/showroom"
 import { cn } from "@/lib/utils"
 
 /** All products, one at a time, on the showroom wall. The chosen product is kept in the URL. */
@@ -30,7 +30,7 @@ export function ShowroomPage({ locale, products, categories, showroom, initialSl
   const [selectedId, setSelectedId] = useState(initial?.id)
   const [categoryId, setCategoryId] = useState("all")
   const [variantId, setVariantId] = useState<string | undefined>(undefined)
-  const [wall, setWall] = useState<WallColourKey>("original")
+  const [wall, setWall] = useState<WallColour>(null)
   const selected = products.find(item => item.id === selectedId) ?? products[0]
   const visible = useMemo(() => products.filter(item => categoryId === "all" || item.categoryId === categoryId), [categoryId, products])
 

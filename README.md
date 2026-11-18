@@ -189,6 +189,11 @@ wall at real size, with wall colours to try. Set it up in the CRM under **Showro
   the first number is the width). Without parsable dimensions they fill the area.
 - Trace the **wall outline**; only that part is repainted when customers pick a wall colour.
 
+Customers can choose a suggested wall colour or any colour (colour picker or a code such as
+`#E8D9C0`). The wall is repainted pixel by pixel in the browser: each wall pixel takes the
+chosen colour scaled by how light it is compared with the rest of the wall, so shadows,
+lamp light and texture stay, even for white.
+
 Until a photo is set, the storefront uses a built-in living room
 (`apps/storefront/public/images/showroom/`) with a precise per-pixel wall mask.
 
