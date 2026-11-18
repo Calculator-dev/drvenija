@@ -3,18 +3,17 @@
 import Image from "next/image"
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { activeVariants, isSvg, type Locale, type LocalizedProduct } from "@/lib/products"
-import { outlinePoints, parseDimensionsCm, productPlacement, wallColours, wallPaint, type ShowroomConfig, type WallColourKey } from "@/lib/showroom"
+import { activeVariants, isSvg, type Locale } from "@/lib/products"
+import { outlinePoints, parseDimensionsCm, productPlacement, wallColours, wallPaint, type ShowroomConfig, type ShowroomProduct, type WallColourKey } from "@/lib/showroom"
 import { cn } from "@/lib/utils"
 
 /**
- * A product hanging on the showroom wall at real size (from the selected size's
- * dimensions), with wall colours to try. Uses the product's cutout when it has one,
- * otherwise its main photo in a thin frame.
+ * A product's cutout hanging on the showroom wall at real size (from the selected size's
+ * dimensions), with wall colours to try.
  */
 export function ShowroomViewer({ config, product, locale, variantId, onVariantChange, wall: controlledWall, onWallChange, priority = false, className }: {
   config: ShowroomConfig
-  product: LocalizedProduct
+  product: ShowroomProduct
   locale: Locale
   /** Controlled size; when left out the viewer keeps its own. */
   variantId?: string
@@ -35,8 +34,7 @@ export function ShowroomViewer({ config, product, locale, variantId, onVariantCh
   const variant = variants.find(item => item.id === selectedId) ?? variants[0]!
   const chooseVariant = (id: string) => (onVariantChange ? onVariantChange(id) : setOwnVariantId(id))
 
-  const art = product.cutoutImage ?? product.primaryImage
-  const isCutout = Boolean(product.cutoutImage)
+  const art = product.cutoutImage
   const aspect = art.width > 0 && art.height > 0 ? art.width / art.height : 1
   const placement = productPlacement(config, aspect, parseDimensionsCm(variant.dimensions))
   const colour = wallColours.find(item => item.key === wall)
@@ -75,13 +73,13 @@ export function ShowroomViewer({ config, product, locale, variantId, onVariantCh
           )
         )}
         <div
-          className={cn("absolute transition-all duration-500", !isCutout && "border-[3px] border-[#1d1715] bg-[#1d1715] shadow-[0_14px_28px_-10px_rgba(0,0,0,0.6)]")}
+          className="absolute transition-all duration-500"
           style={{
             left: `${placement.left}%`,
             top: `${placement.top}%`,
             width: `${placement.width}%`,
             height: `${placement.height}%`,
-            filter: isCutout ? "drop-shadow(0 10px 14px rgba(0,0,0,0.38))" : undefined,
+            filter: "drop-shadow(0 10px 14px rgba(0,0,0,0.38))",
           }}
         >
           <Image
@@ -90,7 +88,7 @@ export function ShowroomViewer({ config, product, locale, variantId, onVariantCh
             alt={art.alt[locale]}
             fill
             sizes="(min-width: 1024px) 30vw, 50vw"
-            className={isCutout ? "object-contain" : "object-cover"}
+            className="object-contain"
           />
         </div>
       </div>

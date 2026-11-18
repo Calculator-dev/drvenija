@@ -285,13 +285,7 @@
       "title": "Zamislite ga u svom prostoru.",
       "text": "Pogledajte komad u stvarnoj veličini na zidu dnevne sobe i isprobajte boju zida. Trebate drugu veličinu ili boju? Napravit ćemo je po mjeri.",
       "cta": "Zatraži drugu veličinu",
-      "photoText": "Ovako komad izgleda u stvarnom prostoru. Trebate drugu veličinu ili boju da se uklopi u vaš zid? Napravit ćemo je po mjeri.",
-      "photoCaption": "Fotografija proizvoda u stvarnom prostoru.",
-      "showroomCta": "Isprobaj i druge proizvode",
-      "tabs": {
-        "showroom": "Isprobaj na zidu",
-        "photo": "Stvarna fotografija"
-      }
+      "showroomCta": "Isprobaj i druge proizvode"
     }
   },
   "cart": {
@@ -633,6 +627,7 @@
     "allCategories": "Sve",
     "personalise": "Personaliziraj i naruči",
     "viewProduct": "Detalji proizvoda",
-    "empty": "Proizvodi će se uskoro pojaviti ovdje."
+    "empty": "Proizvodi za showroom se uskoro pojavljuju ovdje. U međuvremenu pogledajte sve proizvode u shopu.",
+    "browseShop": "Pogledaj shop"
   }
 }

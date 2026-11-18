@@ -142,10 +142,8 @@ export function productRows(products: AdminProduct[]) {
 
 export type ProductDetails = AdminProduct & {
   media?: ProductImage[];
-  /** Photo of the product in a real room, for the storefront's "Na vašem zidu" section. */
-  roomImage?: RoomImage | null;
   /** The product on a transparent background (PNG/WebP), placed on the storefront's showroom wall. */
-  cutoutImage?: RoomImage | null;
+  cutoutImage?: CutoutImage | null;
   id: string;
   categoryId: string;
   material: string;
@@ -185,7 +183,8 @@ export type ProductImage = {
   isPrimary: boolean;
 };
 
-export type RoomImage = Omit<ProductImage, "isPrimary">;
+/** A single product photo outside the gallery (the cutout). */
+export type CutoutImage = Omit<ProductImage, "isPrimary">;
 
 export type AdminOrderDetail = {
   id: string;

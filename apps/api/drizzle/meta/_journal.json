@@ -71,6 +71,13 @@
       "when": 1794979918033,
       "tag": "0009_showroom",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1794982132848,
+      "tag": "0010_detach_room_photos",
+      "breakpoints": true
     }
   ]
 }

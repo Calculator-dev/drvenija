@@ -402,7 +402,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-375 px-4 pb-20 md:px-6 md:pb-24">
+      {products.some(product => product.cutoutImage) && <section className="mx-auto max-w-375 px-4 pb-20 md:px-6 md:pb-24">
         <Reveal>
           <Link href={buildPath(locale, "/showroom")} className="group grid overflow-hidden rounded-xl border border-accent/25 bg-burgundy-deep md:grid-cols-[1.3fr_1fr]">
             <span className="relative block aspect-4/3 overflow-hidden md:aspect-auto md:min-h-90">
@@ -416,7 +416,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
             </span>
           </Link>
         </Reveal>
-      </section>
+      </section>}
 
       <FaqSection freeFrom={shipping.freeFrom} fee={shipping.fee} />
 

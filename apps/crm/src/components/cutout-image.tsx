@@ -1,13 +1,13 @@
 import { useState, type ReactNode } from "react"
 import { uploadProductImage } from "../lib/api"
-import type { RoomImage } from "../lib/admin-data"
+import type { CutoutImage } from "../lib/admin-data"
 import { cn } from "../lib/utils"
 import { Card } from "./ui/card"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 
 type ImageCardProps = {
-  image: RoomImage | null; onChange: (image: RoomImage | null) => void; onBusy: (busy: boolean) => void; disabled: boolean
+  image: CutoutImage | null; onChange: (image: CutoutImage | null) => void; onBusy: (busy: boolean) => void; disabled: boolean
 }
 
 /** Light/grey squares behind a transparent image, so see-through areas are visible. */
@@ -96,39 +96,20 @@ function SingleImageCard({ image, onChange, onBusy, disabled, title, description
 }
 
 /**
- * One photo of the product hanging in a real room. The storefront shows it in the
- * "Na vašem zidu" section instead of the drawn room; without it the drawing is used.
- */
-export function RoomImageCard(props: ImageCardProps) {
-  return (
-    <SingleImageCard
-      {...props}
-      title="Slika u prostoru"
-      description="Fotografija proizvoda na zidu u stvarnoj prostoriji, npr. iznad sofe ili u hodniku. Prikazuje se na stranici proizvoda u dijelu „Na vašem zidu“. Bez nje se prikazuje nacrtana soba. JPEG, PNG ili WebP do 10 MB; najbolje vodoravna fotografija."
-      accept={["image/jpeg", "image/png", "image/webp"]}
-      fileError={() => "Odaberite JPEG, PNG ili WebP datoteku manju od 10 MB."}
-      emptyText="Nema slike u prostoru — na webshopu se prikazuje nacrtana soba."
-      previewAlt="Proizvod u prostoru"
-      altPlaceholder="Npr. Ajetul-kursija iznad sofe u dnevnoj sobi"
-    />
-  )
-}
-
-/**
- * The product on a transparent background. The storefront's showroom places it on the
- * wall of the showroom photo; without it the main photo is shown in a frame.
+ * The product on a transparent background. Only products with one appear in the
+ * webshop's showroom and get the "Na vašem zidu" section on their page.
  */
 export function CutoutImageCard(props: ImageCardProps) {
   return (
     <SingleImageCard
       {...props}
       title="Slika bez pozadine (showroom)"
-      description="Fotografija samo proizvoda, bez pozadine (prozirna pozadina), u formatu PNG ili WebP do 10 MB. Showroom na webshopu je postavlja na zid sobe u stvarnoj veličini. Bez nje se u showroomu prikazuje glavna fotografija u okviru. JPEG ne podržava prozirnost, zato nije dozvoljen."
+      description="Fotografija samo proizvoda, bez pozadine (prozirna pozadina), u formatu PNG ili WebP do 10 MB. Showroom na webshopu je postavlja na zid sobe u stvarnoj veličini. Samo proizvodi s ovom slikom se prikazuju u showroomu i imaju dio „Na vašem zidu“ na svojoj stranici. JPEG ne podržava prozirnost, zato nije dozvoljen."
       accept={["image/png", "image/webp"]}
       fileError={file => file.type === "image/jpeg"
         ? "JPEG nema prozirnu pozadinu. Odaberite PNG ili WebP datoteku s prozirnom pozadinom."
         : "Odaberite PNG ili WebP datoteku manju od 10 MB."}
-      emptyText="Nema slike bez pozadine — showroom na webshopu prikazuje glavnu fotografiju u okviru."
+      emptyText="Nema slike bez pozadine — proizvod se ne prikazuje u showroomu ni u dijelu „Na vašem zidu“."
       previewAlt="Proizvod bez pozadine"
       altPlaceholder="Npr. Ajetul-kursija od pleksiglasa"
       transparent

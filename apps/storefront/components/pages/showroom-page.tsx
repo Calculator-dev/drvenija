@@ -9,14 +9,14 @@ import { toast } from "sonner"
 import { useCart } from "@/components/cart-provider"
 import { ShowroomViewer } from "@/components/showroom-viewer"
 import { StarRating } from "@/components/star-rating"
-import { activeVariants, buildPath, formatPrice, isSvg, type Locale, type LocalizedCategory, type LocalizedProduct } from "@/lib/products"
-import type { ShowroomConfig, WallColourKey } from "@/lib/showroom"
+import { activeVariants, buildPath, formatPrice, isSvg, type Locale, type LocalizedCategory } from "@/lib/products"
+import type { ShowroomConfig, ShowroomProduct, WallColourKey } from "@/lib/showroom"
 import { cn } from "@/lib/utils"
 
 /** All products, one at a time, on the showroom wall. The chosen product is kept in the URL. */
 export function ShowroomPage({ locale, products, categories, showroom, initialSlug }: {
   locale: Locale
-  products: LocalizedProduct[]
+  products: ShowroomProduct[]
   categories: LocalizedCategory[]
   showroom: ShowroomConfig
   initialSlug?: string
@@ -39,6 +39,7 @@ export function ShowroomPage({ locale, products, categories, showroom, initialSl
       <div className="mx-auto max-w-3xl px-4 py-24 text-center md:px-6">
         <h1 className="font-serif text-5xl">{t("title")}</h1>
         <p className="mt-5 text-muted-foreground">{t("empty")}</p>
+        <Link href={buildPath(locale, "/shop")} className="mt-8 inline-flex h-12 items-center justify-center bg-accent px-6 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent-hover">{t("browseShop")}</Link>
       </div>
     )
   }
@@ -47,7 +48,7 @@ export function ShowroomPage({ locale, products, categories, showroom, initialSl
   const variant = variants.find(item => item.id === variantId) ?? variants[0]!
   const productHref = `${buildPath(locale, "/product")}/${selected.localizedSlug}`
 
-  const choose = (item: LocalizedProduct) => {
+  const choose = (item: ShowroomProduct) => {
     setSelectedId(item.id)
     setVariantId(undefined)
     router.replace(`${pathname}?proizvod=${encodeURIComponent(item.localizedSlug)}`, { scroll: false })
@@ -112,7 +113,7 @@ export function ShowroomPage({ locale, products, categories, showroom, initialSl
         </div>
         <ul className="mt-6 grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
           {visible.map(item => {
-            const image = item.cutoutImage ?? item.primaryImage
+            const image = item.cutoutImage
             const active = item.id === selected.id
             return (
               <li key={item.id}>
@@ -123,7 +124,7 @@ export function ShowroomPage({ locale, products, categories, showroom, initialSl
                   className={cn("group block w-full text-left", active && "pointer-events-none")}
                 >
                   <span className={cn("relative block aspect-square overflow-hidden rounded-sm border-2 bg-muted transition-colors", active ? "border-accent" : "border-transparent group-hover:border-accent/50")}>
-                    <Image unoptimized={isSvg(image.url)} src={image.url} alt="" fill sizes="(min-width: 1024px) 12vw, 30vw" className={item.cutoutImage ? "object-contain p-2" : "object-cover"} />
+                    <Image unoptimized={isSvg(image.url)} src={image.url} alt="" fill sizes="(min-width: 1024px) 12vw, 30vw" className="object-contain p-2" />
                   </span>
                   <span className={cn("mt-2 block truncate text-xs", active ? "font-semibold text-accent-ink" : "text-foreground/80")}>{item.localizedName}</span>
                 </button>

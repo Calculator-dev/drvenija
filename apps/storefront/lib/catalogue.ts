@@ -16,7 +16,7 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
   const response = await fetch(`${serverApiUrl()}/public/catalogue`, { cache: "no-store", signal: AbortSignal.timeout(10000) })
   if (!response.ok) throw new Error("The product catalogue is temporarily unavailable")
   const data = await response.json() as Catalogue
-  return { ...data, shipping: data.shipping ?? defaultShippingPolicy, checkout: data.checkout ?? defaultCheckoutSettings, showroom: data.showroom ? { ...data.showroom, image: mediaUrl(data.showroom.image) } : null, products: data.products.map(product => ({ ...product, media: product.media.map(mediaUrl), roomImage: product.roomImage ? mediaUrl(product.roomImage) : null, cutoutImage: product.cutoutImage ? mediaUrl(product.cutoutImage) : null })) }
+  return { ...data, shipping: data.shipping ?? defaultShippingPolicy, checkout: data.checkout ?? defaultCheckoutSettings, showroom: data.showroom ? { ...data.showroom, image: mediaUrl(data.showroom.image) } : null, products: data.products.map(product => ({ ...product, media: product.media.map(mediaUrl), cutoutImage: product.cutoutImage ? mediaUrl(product.cutoutImage) : null })) }
 })
 export async function getCartOffers(): Promise<{ offers: CatalogueOffer[]; shipping: ShippingPolicy }> {
   const { products, shipping } = await getCatalogue()

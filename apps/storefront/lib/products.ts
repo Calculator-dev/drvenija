@@ -67,9 +67,8 @@ export type Product = {
   variants?: ProductVariant[]
   seo: SeoFields
   media: MediaAsset[]
-  /** Photo of the product in a real room (CRM "Slika u prostoru"), or null. */
-  roomImage?: MediaAsset | null
-  /** The product on a transparent background, for the showroom wall (CRM "Slika bez pozadine"). */
+  /** The product on a transparent background (CRM "Slika bez pozadine"). Only products with one
+   * appear in the showroom and get the "On your wall" section. */
   cutoutImage?: MediaAsset | null
   /** Average of approved reviews, or null when there are none. */
   rating?: { average: number; count: number } | null

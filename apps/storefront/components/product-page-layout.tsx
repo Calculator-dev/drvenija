@@ -8,6 +8,7 @@ import { ProductGallery } from "@/components/product-gallery"
 import { ProductReviews } from "@/components/product-reviews"
 import { Reveal } from "@/components/reveal"
 import { ProductWallSection } from "@/components/product-wall-section"
+import { hasCutout } from "@/lib/showroom"
 import type { ShowroomConfig } from "@/lib/showroom"
 import { activeVariants, buildPath, categoryPath, type Locale, type LocalizedCategory, type LocalizedProduct, isSvg } from "@/lib/products"
 
@@ -70,7 +71,7 @@ export function ProductPageLayout({ locale, product, related, category, showroom
         </div>
       </section>
 
-      <ProductWallSection locale={locale} product={product} showroom={showroom} />
+      {hasCutout(product) && <ProductWallSection locale={locale} product={product} showroom={showroom} />}
 
       <section className="bg-sand">
         <div className="mx-auto grid max-w-375 md:grid-cols-2">

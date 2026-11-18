@@ -71,6 +71,8 @@ Migration `0008_media_kind` adds `media_assets.kind` (`gallery` or `room`) for t
 per-product room photo. Apply it before deploying this version of the API.
 Migration `0009_showroom` adds the `cutout` and `showroom` photo kinds and the
 `showroom_settings` table. Apply it before deploying this version of the API.
+Migration `0010_detach_room_photos` detaches room photos ("Slika u prostoru", replaced
+by cutouts); the media cleanup script then removes them from storage.
 `drizzle/meta` holds a snapshot of the current schema, so `db:generate` only emits
 new changes. If you hand-write a migration, regenerate the snapshot as well.
 
@@ -190,10 +192,10 @@ wall at real size, with wall colours to try. Set it up in the CRM under **Showro
 Until a photo is set, the storefront uses a built-in living room
 (`apps/storefront/public/images/showroom/`) with a precise per-pixel wall mask.
 
-For the best result, upload a **cutout** for each product in the product form ("Slika bez
-pozadine"): a PNG or WebP of the product on a transparent background. The showroom hangs
-it directly on the wall with a soft shadow; without one, the main photo is shown in a thin
-frame.
+Only products with a **cutout** appear in the showroom and get "Na vašem zidu" on their
+page. Upload it in the product form ("Slika bez pozadine"): a PNG or WebP of the product on
+a transparent background. The showroom hangs it directly on the wall with a soft shadow.
+The homepage showroom teaser appears once at least one product has a cutout.
 
 ## Orders, payment and discounts
 
@@ -234,11 +236,6 @@ Configure `BACKBLAZE_ENDPOINT`, `BACKBLAZE_REGION`, `BACKBLAZE_KEY_ID`,
 `BACKBLAZE_APP_KEY`, and `BACKBLAZE_BUCKET_NAME` in `apps/api/.env`. The application
 key needs read/write access to the configured bucket and the `products/` prefix.
 The bucket can remain private; no browser CORS configuration is needed.
-
-Each product can also have one **room photo** ("Slika u prostoru"): the product photographed
-on a wall in a real room. The storefront shows it in the product page's "Na vašem zidu"
-section; without one, that section shows a drawn room with the product's main photo.
-The room photo is never part of the gallery.
 
 Choose a primary image and enter Bosnian/English image descriptions. Saving the
 product links its images in the same database transaction as product changes.

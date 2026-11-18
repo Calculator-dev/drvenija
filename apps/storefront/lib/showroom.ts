@@ -1,5 +1,14 @@
 /** Showroom maths shared by the showroom page and the product page's "On your wall" section. */
 
+import type { LocalizedProduct } from "./products"
+
+/** Products that can hang on the showroom wall: those with a cutout ("Slika bez pozadine"). */
+export type ShowroomProduct = LocalizedProduct & { cutoutImage: NonNullable<LocalizedProduct["cutoutImage"]> }
+
+export function hasCutout(product: LocalizedProduct): product is ShowroomProduct {
+  return Boolean(product.cutoutImage)
+}
+
 export type ShowroomArea = { x: number; y: number; width: number; height: number }
 export type ShowroomConfig = {
   image: { url: string; width: number; height: number }

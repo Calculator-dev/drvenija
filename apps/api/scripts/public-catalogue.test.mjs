@@ -28,19 +28,16 @@ test('catalogue hides unpublished products and summarises approved reviews', () 
   assert.equal(result.products[0].reviews.length, 2)
 })
 
-test('the room photo is returned separately and never appears in the gallery', () => {
+test('the cutout is returned separately and never appears in the gallery', () => {
   const base = { id: 'product', sku: 'SKU', categoryId: 'category', price: 45, translations: { bs: { name: 'Ime', slug: 'ime' } }, seo: {}, leadTime: {}, stockLabel: {}, type: 'standard', material: 'mediapan', featured: false, customizable: false }
   const images = [
     { id: 'gallery', productId: 'product', isPrimary: true, kind: 'gallery', alt: { bs: 'Slika' }, width: 100, height: 100, mimeType: 'image/webp' },
-    { id: 'room', productId: 'product', isPrimary: false, kind: 'room', alt: { bs: 'U dnevnoj sobi' }, width: 100, height: 100, mimeType: 'image/webp' },
+    { id: 'cutout', productId: 'product', isPrimary: false, kind: 'cutout', alt: { bs: 'Bez pozadine' }, width: 100, height: 100, mimeType: 'image/webp' },
   ]
   const [product] = catalogueResponse([], [base], images).products
   assert.deepEqual(product.media.map(image => image.id), ['gallery'])
-  assert.equal(product.roomImage.url, '/public/media/room')
-  assert.equal(product.roomImage.alt.bs, 'U dnevnoj sobi')
-  assert.equal(catalogueResponse([], [base], [images[0]]).products[0].roomImage, null)
-  const cutout = { id: 'cutout', productId: 'product', isPrimary: false, kind: 'cutout', alt: {}, width: 100, height: 100, mimeType: 'image/webp' }
-  const withCutout = catalogueResponse([], [base], [...images, cutout]).products[0]
-  assert.equal(withCutout.cutoutImage.url, '/public/media/cutout')
-  assert.deepEqual(withCutout.media.map(image => image.id), ['gallery'])
+  assert.equal(product.cutoutImage.url, '/public/media/cutout')
+  assert.equal(product.cutoutImage.alt.bs, 'Bez pozadine')
+  assert.equal('roomImage' in product, false)
+  assert.equal(catalogueResponse([], [base], [images[0]]).products[0].cutoutImage, null)
 })
