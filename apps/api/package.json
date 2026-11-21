@@ -11,7 +11,9 @@
     "db:migrate": "node --env-file=.env --import tsx src/db/migrate.ts",
     "db:check": "node --env-file=.env --import tsx src/db/check.ts",
     "test": "tsc -p tsconfig.build.json && node --test scripts/*.test.mjs",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "db:migrate:ci": "node --import tsx src/db/migrate.ts",
+    "start:prod": "node dist/server.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1139.0",

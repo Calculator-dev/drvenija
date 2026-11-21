@@ -26,6 +26,11 @@ Other root commands, also run in CI (`.github/workflows/ci.yml`):
 - `pnpm test`: API and CRM tests. Tests mock the database, Supabase and storage.
 - `pnpm build`: production builds of all apps.
 
+## Deployment
+
+See [DEPLOY.md](DEPLOY.md): the webshop and CRM run on Cloudflare Workers, the API on Render,
+all on free plans.
+
 ## Configuration
 
 | App | File | Variables |
