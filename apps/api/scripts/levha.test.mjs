@@ -73,6 +73,9 @@ test('POST /public/levha-requests prices on the server and refuses unknown texts
     assert.equal(ok.json().price, 100)
     assert.equal(inserted[0].price, 100)
     assert.equal(inserted[0].ayahName, 'Bismillah')
+    const tooSmall = await app.inject({ method: 'POST', url: '/public/levha-requests', payload: { ...body, configuration: { ...base, size: { width: 30, height: 40 } } } })
+    assert.equal(tooSmall.statusCode, 400, 'smaller than the 40 × 40 minimum is refused')
+    assert.equal(inserted.length, 1)
     ayahs = [{ ...ayahs[0], active: false }]
     assert.equal((await app.inject({ method: 'POST', url: '/public/levha-requests', payload: body })).statusCode, 400)
   } finally {

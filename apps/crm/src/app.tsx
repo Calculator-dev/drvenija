@@ -1,10 +1,13 @@
 import { useEffect, useRef } from "react"
 import { Link, NavLink, Outlet, useLocation, type RouteObject } from "react-router"
-import { Boxes, LayoutDashboard, Mail, MessageSquareMore, ShoppingCart, Sofa, Sparkles, Star, TicketPercent } from "lucide-react"
+import { Boxes, Frame, LayoutDashboard, Mail, MessageSquareMore, ShoppingCart, Sofa, Sparkles, Star, TicketPercent } from "lucide-react"
 import { PageHeader } from "./components/page-header"
 import { DashboardPage } from "./pages/dashboard"
 import { DiscountsPage } from "./pages/discounts"
 import { InquiriesPage, InquiryPage } from "./pages/inquiries"
+import { LevhaPricingPage } from "./pages/levha-pricing"
+import { LevhaRequestPage, LevhaRequestsPage } from "./pages/levha-requests"
+import { LevhaTextsPage } from "./pages/levha-texts"
 import { NewsletterPage } from "./pages/newsletter"
 import { OrderPage, OrdersPage } from "./pages/orders"
 import { EditProductPage, NewProductPage } from "./pages/product-editor"
@@ -17,6 +20,7 @@ const navigation = [
   { to: "/products", label: "Proizvodi", icon: Boxes },
   { to: "/orders", label: "Narudžbe", icon: ShoppingCart },
   { to: "/inquiries", label: "Upiti", icon: MessageSquareMore },
+  { to: "/levha", label: "Levhe", icon: Frame },
   { to: "/discounts", label: "Popusti", icon: TicketPercent },
   { to: "/reviews", label: "Recenzije", icon: Star },
   { to: "/newsletter", label: "Newsletter", icon: Mail },
@@ -92,6 +96,10 @@ export const routes: RouteObject[] = [
       { path: "orders/:id", element: <OrderPage /> },
       { path: "inquiries", element: <InquiriesPage /> },
       { path: "inquiries/:id", element: <InquiryPage /> },
+      { path: "levha", element: <LevhaRequestsPage /> },
+      { path: "levha/tekstovi", element: <LevhaTextsPage /> },
+      { path: "levha/cijene", element: <LevhaPricingPage /> },
+      { path: "levha/:id", element: <LevhaRequestPage /> },
       { path: "discounts", element: <DiscountsPage /> },
       { path: "reviews", element: <ReviewsPage /> },
       { path: "newsletter", element: <NewsletterPage /> },

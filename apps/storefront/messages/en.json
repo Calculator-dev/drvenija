@@ -28,7 +28,8 @@
     "success": "Order received | Drvenija",
     "wishlist": "Saved | Drvenija",
     "order": "Order status | Drvenija",
-    "showroom": "Showroom | Drvenija"
+    "showroom": "Showroom | Drvenija",
+    "levha": "Design your own levha | Drvenija"
   },
   "notFound": {
     "title": "Page not found",
@@ -50,7 +51,8 @@
       "customizable": "Customizable products",
       "customWork": "Custom work",
       "about": "About",
-      "showroom": "Showroom"
+      "showroom": "Showroom",
+      "levha": "Design a levha"
     },
     "tagline": "Plexiglass, MDF, gifts, and branded signage made in Sarajevo.",
     "searchLabel": "Search products",
@@ -633,5 +635,74 @@
     "customColour": "Pick any colour",
     "hexLabel": "Colour code (e.g. #E8D9C0)",
     "customHint": "Don't see your colour? Pick any in the rainbow circle or type a colour code."
+  },
+  "levha": {
+    "metaTitle": "Design your own levha | Drvenija",
+    "eyebrow": "Made-to-order levha",
+    "title": "Design your own levha",
+    "description": "Choose the frame, size, background, letters and text — and see straight away how the levha looks on a living-room wall, at real size.",
+    "unavailable": "Custom levhas are not available right now. Please try again soon.",
+    "steps": {
+      "frame": "Frame",
+      "size": "Size",
+      "background": "Background",
+      "letters": "Letters",
+      "text": "Text",
+      "order": "Price and order"
+    },
+    "frames": {
+      "black": "Black",
+      "wood": "Wood",
+      "white": "White"
+    },
+    "materials": {
+      "plywood": "Plywood",
+      "plexiglass": "Plexiglass",
+      "mdf": "MDF"
+    },
+    "colours": {
+      "black": "Black",
+      "white": "White",
+      "wood": "Wood",
+      "gold": "Gold mirror",
+      "gray": "Gray mirror",
+      "raw": "Natural"
+    },
+    "customSize": "Custom size",
+    "width": "Width",
+    "height": "Height",
+    "customSizeHint": "At least {width} × {height} cm. Sizes larger than those offered are priced on request.",
+    "sameColour": "Same colour as the background",
+    "locked": "Finish the previous step first",
+    "chooseText": "Verse or inscription",
+    "chooseTextPlaceholder": "Choose a text…",
+    "ownTextOption": "My own text (a verse or inscription)",
+    "ownText": "Own text",
+    "ownTextLabel": "Which verse or text would you like?",
+    "ownTextPlaceholder": "E.g. Ayat al-Kursi, Al-Baqara 255, or type the text in Arabic",
+    "ownPartLabel": "Which part of the text? (optional)",
+    "ownPartPlaceholder": "E.g. only the first line, or the whole verse",
+    "ownTextNote": "We will review your text and let you know whether we can make it and how it will look.",
+    "customPlaceholderPreview": "بسم الله",
+    "previewAlt": "Living room with your levha on the wall",
+    "previewEmpty": "Choose a frame to start",
+    "previewNote": "The levha is shown at real size. Colours and materials on screen are approximate.",
+    "price": "Price",
+    "priceOnRequest": "On request",
+    "priceNote": "The price includes the frame, background and letters. We send you a confirmation before production.",
+    "priceOnRequestNote": "For this size we calculate the price separately and send it after you submit.",
+    "priceOwnTextNote": "For your own text we confirm the price after reviewing it.",
+    "form": {
+      "name": "Full name",
+      "phone": "Phone",
+      "notes": "Notes",
+      "notesPlaceholder": "Deadline, dedication, mounting…",
+      "submit": "Send my levha",
+      "sending": "Sending…",
+      "error": "Your levha was not sent. Please try again."
+    },
+    "doneTitle": "Thank you! We received your levha.",
+    "doneText": "Your levha number is {number}. We emailed you a confirmation and will get back to you with the production time.",
+    "backToShop": "Back to the shop"
   }
 }

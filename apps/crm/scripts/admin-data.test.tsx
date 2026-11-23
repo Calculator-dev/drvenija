@@ -15,8 +15,11 @@ function render(client: QueryClient, element: React.ReactElement | null, path = 
 
 test('API odgovor kontrolne ploče prikazuje se bez greške', () => {
   const data = dashboardView(seedDashboard)
-  assert.equal(data.totals.length, 6)
+  assert.equal(data.totals.length, 7)
   assert.deepEqual(data.totals[5], { label: 'Recenzije na čekanju', value: '2', href: '/reviews' })
+  assert.deepEqual(data.totals[6], { label: 'Nove levhe', value: '3', href: '/levha' })
+  const { levhaRequestsNew: _omitted, ...olderTotals } = seedDashboard.totals
+  assert.equal(dashboardView({ ...seedDashboard, totals: olderTotals }).totals[6].value, '0')
   assert.equal(data.totals[0].value, '4')
   const client = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity, retry: false } } })
   client.setQueryData(['dashboard'], data)
@@ -28,6 +31,8 @@ test('API odgovor kontrolne ploče prikazuje se bez greške', () => {
   assert.match(html, /98,00\u00a0KM/)
   assert.match(html, /Recenzije na čekanju/)
   assert.match(html, /href="\/reviews"/)
+  assert.match(html, /Nove levhe/)
+  assert.match(html, /href="\/levha"/)
   client.clear()
 })
 

@@ -58,7 +58,10 @@ export const publicLevhaRoutes: FastifyPluginAsync = async app => {
       ayahName = ayah.name[input.locale] || ayah.name.bs
     }
     // The price is always worked out here, from the saved prices.
-    const price = levhaPrice(await getLevhaPricing(), configuration)
+    const pricing = await getLevhaPricing()
+    if (configuration.size.width < pricing.minWidth || configuration.size.height < pricing.minHeight)
+      return reply.code(400).send({ message: `The smallest levha is ${pricing.minWidth} × ${pricing.minHeight} cm` })
+    const price = levhaPrice(pricing, configuration)
     let saved: { id: string; number: string } | undefined
     for (let attempt = 0; attempt < 3 && !saved; attempt++) {
       [saved] = await db.insert(levhaRequests).values({

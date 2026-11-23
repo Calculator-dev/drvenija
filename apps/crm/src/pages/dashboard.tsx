@@ -10,11 +10,11 @@ export function DashboardPage() {
   const query = useQuery({ queryKey: ["dashboard"], queryFn: getDashboard })
   return (
     <>
-      <PageHeader eyebrow="Upravljanje" title="Pregled" description="Današnje stanje narudžbi, proizvodnje, upita i recenzija." />
+      <PageHeader eyebrow="Upravljanje" title="Pregled" description="Današnje stanje narudžbi, proizvodnje, upita, levhi i recenzija." />
       {query.isError && !query.data && (
         <div className="mt-6"><p role="alert" className="text-destructive">Pregled nije moguće učitati: {query.error.message}</p><Button variant="outline" className="mt-3" onClick={() => void query.refetch()}>Pokušaj ponovo</Button></div>
       )}
-      <div className="mt-6 grid gap-4 md:grid-cols-3 2xl:grid-cols-6">
+      <div className="mt-6 grid gap-4 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7">
         {query.data?.totals.map(item => item.href ? (
           <Link key={item.label} to={item.href} className="rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <Card className="h-full p-5 transition-colors hover:bg-muted/60">
