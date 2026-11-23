@@ -4,7 +4,7 @@ import Image from "next/image"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
 import { WallPaintCanvas } from "@/components/wall-paint-canvas"
-import { finish, frameWidthCm, type Background, type FrameColour, type Letters } from "@/lib/levha"
+import { finish, frameFinish, frameWidthCm, type Background, type FrameColour, type Letters } from "@/lib/levha"
 import { productPlacement, type ShowroomConfig, type WallColour } from "@/lib/showroom"
 
 export type PreviewText = { arabic: string; image: { url: string } | null }
@@ -26,11 +26,9 @@ export function LevhaPreview({ config, wall, frame, size, background, letters, t
 }) {
   const t = useTranslations("levha")
   const placement = productPlacement(config, size.width / size.height, { width: size.width, height: size.height })
-  const framePadding = `${(frameWidthCm / size.width) * 100}%`
-  // Before a background is chosen the frame is an empty frame: cut out its inside so the wall shows.
+  // Frame bar thickness as a share of the levha's width and height.
   const fx = (frameWidthCm / size.width) * 100
   const fy = (frameWidthCm / size.height) * 100
-  const hollow = `polygon(evenodd, 0 0, 100% 0, 100% 100%, 0 100%, 0 0, ${fx}% ${fy}%, ${fx}% ${100 - fy}%, ${100 - fx}% ${100 - fy}%, ${100 - fx}% ${fy}%, ${fx}% ${fy}%)`
 
   return (
     <div className="relative isolate overflow-hidden rounded-sm border border-accent/25 bg-muted" style={{ aspectRatio: `${config.image.width} / ${config.image.height}` }}>
@@ -41,13 +39,12 @@ export function LevhaPreview({ config, wall, frame, size, background, letters, t
           className="absolute transition-all duration-500"
           style={{ left: `${placement.left}%`, top: `${placement.top}%`, width: `${placement.width}%`, height: `${placement.height}%`, filter: "drop-shadow(0 12px 16px rgba(0,0,0,0.42))" }}
         >
-          <div
-            className="h-full w-full"
-            style={{ ...finish("frame", frame), padding: framePadding, boxShadow: "inset 1px 1px 2px rgba(255,255,255,0.35), inset -1px -1px 2px rgba(0,0,0,0.45)", clipPath: background ? undefined : hollow }}
-          >
+          <FrameBars colour={frame} fx={fx} fy={fy} />
+          {background && (
+          <div className="absolute" style={{ left: `${fx}%`, right: `${fx}%`, top: `${fy}%`, bottom: `${fy}%` }}>
             <div
               className="relative h-full w-full overflow-hidden"
-              style={{ ...(background ? finish("background", background.colour, background.material) : {}), boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 2px 5px rgba(0,0,0,0.55)" }}
+              style={{ ...finish("background", background.colour, background.material), boxShadow: "inset 0 3px 5px rgba(0,0,0,0.45), inset 2px 0 4px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(0,0,0,0.18)" }}
             >
               {background?.material === "plexiglass" && (
                 // A soft diagonal reflection on glossy plexiglass.
@@ -77,12 +74,45 @@ export function LevhaPreview({ config, wall, frame, size, background, letters, t
               )}
             </div>
           </div>
+          )}
         </div>
       ) : (
         <p className="absolute inset-x-0 top-[28%] mx-auto w-fit rounded-full bg-black/45 px-4 py-2 text-sm text-ivory">{t("previewEmpty")}</p>
       )}
     </div>
   )
+}
+
+/**
+ * The frame as four bars mitred at the corners, like a real picture frame, so the grain
+ * follows each bar. Each bar has the profile of the owner's frames: a lit outer edge, a flat
+ * face, a step down and a thin inner lip against the panel. Light comes from the upper left.
+ */
+function FrameBars({ colour, fx, fy }: { colour: FrameColour; fx: number; fy: number }) {
+  // From the outer edge (0%) to the panel (100%).
+  const profile = (to: string, edge: number) => `linear-gradient(${to}, rgba(255,255,255,${edge}) 0%, rgba(255,255,255,0.06) 7%, rgba(0,0,0,0) 14%, rgba(0,0,0,0.04) 66%, rgba(0,0,0,0.38) 72%, rgba(0,0,0,0.16) 79%, rgba(255,255,255,0.07) 84%, rgba(0,0,0,0.04) 94%, rgba(0,0,0,0.3) 100%)`
+  const bars = [
+    { side: "top", to: "to bottom", tint: "rgba(0,0,0,0.04)", direction: "h", box: { left: 0, top: 0, width: "100%", height: `${fy}%` }, clip: `polygon(0 0, 100% 0, ${100 - fx}% 100%, ${fx}% 100%)` },
+    { side: "bottom", to: "to top", tint: "rgba(0,0,0,0.16)", direction: "h", box: { left: 0, bottom: 0, width: "100%", height: `${fy}%` }, clip: `polygon(${fx}% 0, ${100 - fx}% 0, 100% 100%, 0 100%)` },
+    { side: "left", to: "to right", tint: "rgba(255,255,255,0.06)", direction: "v", box: { left: 0, top: 0, width: `${fx}%`, height: "100%" }, clip: `polygon(0 0, 100% ${fy}%, 100% ${100 - fy}%, 0 100%)` },
+    { side: "right", to: "to left", tint: "rgba(0,0,0,0.1)", direction: "v", box: { right: 0, top: 0, width: `${fx}%`, height: "100%" }, clip: `polygon(0 ${fy}%, 100% 0, 100% 100%, 0 ${100 - fy}%)` },
+  ] as const
+  return bars.map(bar => {
+    const wood = frameFinish(colour, bar.direction)
+    return (
+      <div
+        key={bar.side}
+        aria-hidden
+        className="absolute"
+        style={{
+          ...bar.box,
+          clipPath: bar.clip,
+          backgroundImage: `${profile(bar.to, bar.side === "top" || bar.side === "left" ? 0.32 : 0.1)}, linear-gradient(${bar.tint}, ${bar.tint}), ${wood.backgroundImage}`,
+          backgroundSize: `100% 100%, 100% 100%, ${wood.backgroundSize ?? "100% 100%"}`,
+        }}
+      />
+    )
+  })
 }
 
 // Letters stand off the panel: a tight shadow for the edge and a softer one for depth.

@@ -52,7 +52,7 @@ export const frameWidthCm = 2.5
  */
 export function finish(kind: "frame" | "background" | "letters", colour: FrameColour | LevhaColour, material?: string): React.CSSProperties {
   const texture = (file: string, size = "220px") => ({ backgroundImage: `url(/images/levha/${file}.webp)`, backgroundSize: size })
-  if (colour === "wood") return kind === "frame" ? texture("wood-frame", "160px") : texture("plywood-wood", kind === "letters" ? "120px" : "260px")
+  if (colour === "wood") return kind === "frame" ? frameFinish("wood", "h") : kind === "letters" ? texture("plywood-wood", "240px") : { ...texture("plywood-wood", "cover"), backgroundPosition: "center" }
   if (colour === "raw") return texture("mdf", "160px")
   // Gold mirror reads pale and bright, as on the real pieces.
   if (colour === "gold") return { backgroundImage: "linear-gradient(115deg, #a8822e 0%, #f0d58e 18%, #fff7da 30%, #e3c470 44%, #b9913a 58%, #f3dc98 74%, #caa24c 88%, #94701f 100%)" }
@@ -60,10 +60,20 @@ export function finish(kind: "frame" | "background" | "letters", colour: FrameCo
   if (colour === "black") {
     if (material === "plexiglass") return { backgroundImage: "linear-gradient(125deg, #050506 0%, #1d1e22 35%, #3a3b40 42%, #121316 50%, #08080a 100%)" }
     // Black-stained wood frame and matte black plywood (texture from a real panel).
-    return kind === "frame" ? texture("wood-black", "160px") : texture("plywood-black", "260px")
+    return kind === "frame" ? frameFinish("black", "h") : texture("plywood-black", "260px")
   }
   // white
   return { backgroundImage: kind === "frame" ? "linear-gradient(135deg, #fbfaf7, #e4e1da)" : "linear-gradient(135deg, #f7f5f0, #e9e5dd)" }
+}
+
+/**
+ * One bar of the frame. The grain runs along the bar, so the top and bottom bars use a
+ * horizontal texture and the sides a vertical one (both taken from photos of real frames).
+ */
+export function frameFinish(colour: FrameColour, direction: "h" | "v"): React.CSSProperties {
+  if (colour === "white") return { backgroundImage: direction === "h" ? "linear-gradient(180deg, #fbfaf7, #e9e6df)" : "linear-gradient(90deg, #fbfaf7, #e9e6df)" }
+  const file = colour === "wood" ? "wood-frame" : "wood-black"
+  return { backgroundImage: `url(/images/levha/${file}-${direction}.webp)`, backgroundSize: direction === "h" ? "auto 100%" : "100% auto" }
 }
 
 export type LevhaConfiguration = {
