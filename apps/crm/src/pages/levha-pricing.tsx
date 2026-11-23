@@ -81,8 +81,6 @@ function PricingEditor({ pricing }: { pricing: LevhaPricing }) {
   // The live example uses the form as it is now, as soon as it is valid.
   const live = pricingPayload(draft).body
   const example = live ? pricingExample(live) : null
-  const longest = live ? Math.max(live.maxAutoWidth, live.maxAutoHeight) : null
-  const shortest = live ? Math.min(live.maxAutoWidth, live.maxAutoHeight) : null
   const saveError = mutation.error instanceof ApiError && mutation.error.status === 400
     ? `Podaci nisu ispravni (${mutation.error.message}). Provjerite polja i pokušajte ponovo.`
     : mutation.error?.message
@@ -101,8 +99,7 @@ function PricingEditor({ pricing }: { pricing: LevhaPricing }) {
         <h2 className="font-serif text-2xl">Kako se računa cijena</h2>
         <ol className="mt-3 list-decimal space-y-1 pl-5">
           <li>Standardna veličina: njena cijena iz liste ispod.</li>
-          <li>Druge veličine od najmanje dozvoljene ({live ? `${live.minWidth} × ${live.minHeight} cm` : "najmanja širina × visina"}) do najveće s automatskom cijenom ({longest !== null ? `${longest} × ${shortest} cm, u bilo kojoj orijentaciji` : "najveća širina × visina, u bilo kojoj orijentaciji"}): površina u m² × cijena po m².</li>
-          <li>Veće veličine: „cijena na upit“ — kupac šalje zahtjev bez cijene.</li>
+          <li>Vlastita veličina (najmanje {live ? `${live.minWidth} × ${live.minHeight} cm` : "najmanja širina × visina"}) ili vlastiti tekst: kupac ne vidi cijenu i šalje upit. Vi provjerite da li se može izraditi i javite mu cijenu.</li>
           <li>Na osnovnu cijenu se dodaje doplata za materijal pozadine i doplata za materijal slova (zbir postotaka), a rezultat se zaokružuje na cijeli KM.</li>
         </ol>
         <p className="mt-3 rounded-lg bg-muted/60 p-3 font-medium" role="status" aria-live="polite">
@@ -141,21 +138,12 @@ function PricingEditor({ pricing }: { pricing: LevhaPricing }) {
 
       <Card className="space-y-4 p-6">
         <h2 className="font-serif text-2xl">Veličine po mjeri</h2>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          <Field label="Cijena po m² (KM)" hint="Osnovna cijena veličine po mjeri.">
-            <Input type="number" min={0} step={1} value={draft.pricePerSqm} onChange={event => update(current => ({ ...current, pricePerSqm: event.target.value }))} />
-          </Field>
+        <div className="grid gap-4 md:grid-cols-2">
           <Field label="Najmanja širina (cm)" hint="Manje veličine se ne mogu naručiti.">
             <Input type="number" min={10} max={1000} step={1} value={draft.minWidth} onChange={event => update(current => ({ ...current, minWidth: event.target.value }))} />
           </Field>
           <Field label="Najmanja visina (cm)">
             <Input type="number" min={10} max={1000} step={1} value={draft.minHeight} onChange={event => update(current => ({ ...current, minHeight: event.target.value }))} />
-          </Field>
-          <Field label="Najveća širina s cijenom (cm)" hint="Veće: cijena na upit.">
-            <Input type="number" min={10} max={1000} step={1} value={draft.maxAutoWidth} onChange={event => update(current => ({ ...current, maxAutoWidth: event.target.value }))} />
-          </Field>
-          <Field label="Najveća visina s cijenom (cm)">
-            <Input type="number" min={10} max={1000} step={1} value={draft.maxAutoHeight} onChange={event => update(current => ({ ...current, maxAutoHeight: event.target.value }))} />
           </Field>
         </div>
       </Card>

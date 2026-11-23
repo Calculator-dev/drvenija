@@ -7,8 +7,8 @@ import { useTranslations } from "next-intl"
 import { LevhaPreview, type PreviewText } from "@/components/levha-preview"
 import { WallColourPicker } from "@/components/wall-colour-picker"
 import {
-  backgroundOptions, finish, frameColours, letterOptions, levhaPrice, sameColour, submitLevhaRequest,
-  type Background, type BackgroundMaterial, type FrameColour, type LetterMaterial, type Letters, type LevhaCatalogue, type LevhaConfiguration,
+  backgroundOptions, contactMethods, finish, frameColours, letterOptions, levhaPrice, sameColour, submitLevhaRequest,
+  type Background, type BackgroundMaterial, type ContactMethod, type FrameColour, type LetterMaterial, type Letters, type LevhaCatalogue, type LevhaConfiguration,
 } from "@/lib/levha"
 import { buildPath, formatPrice, OrderError, type Locale } from "@/lib/products"
 import type { ShowroomConfig, WallColour } from "@/lib/showroom"
@@ -76,7 +76,7 @@ export function LevhaConfigurator({ locale, levha, showroom }: { locale: Locale;
 
   const steps = { frame: Boolean(frame), size: Boolean(size), background: Boolean(background), letters: Boolean(letters), text: textDone }
   const complete = Object.values(steps).every(Boolean)
-  const price = complete && size && background && letters ? levhaPrice(pricing, { size, background, letters }) : null
+  const price = complete && size && background && letters ? levhaPrice(pricing, { size, background, letters, ownText: isCustomText }) : null
 
   const preview = <LevhaPreview config={showroom} wall={wall} frame={frame} size={previewSize} background={steps.size ? background : null} letters={steps.size ? letters : null} text={previewText} subtitle={steps.letters ? previewSubtitle : null} />
 
@@ -200,7 +200,6 @@ export function LevhaConfigurator({ locale, levha, showroom }: { locale: Locale;
             <OrderStep
               locale={locale}
               price={price}
-              ownText={isCustomText}
               configuration={{
                 frame, size, background, letters,
                 ayahId: ayah ? ayah.id : null,
@@ -229,20 +228,24 @@ function firstLetterColour(material: LetterMaterial, background: Background): Le
   return { material, colour } as Letters
 }
 
-function OrderStep({ locale, price, ownText, configuration }: { locale: Locale; price: number | null; ownText: boolean; configuration: Parameters<typeof submitLevhaRequest>[0]["configuration"] }) {
+function OrderStep({ locale, price, configuration }: { locale: Locale; price: number | null; configuration: Parameters<typeof submitLevhaRequest>[0]["configuration"] }) {
   const t = useTranslations("levha")
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [notes, setNotes] = useState("")
+  const [contact, setContact] = useState<ContactMethod>("email")
+  // No price: a custom size or the customer's own text, which the shop confirms first.
+  const isRequest = price === null
+  const channel = t(`contact.channel${contact === "email" ? "Email" : contact === "whatsapp" ? "Whatsapp" : "Viber"}`)
   const [state, setState] = useState<{ status: "idle" | "sending" } | { status: "done"; number: string; price: number | null } | { status: "error"; message: string }>({ status: "idle" })
   const priceText = useMemo(() => price === null ? t("priceOnRequest") : formatPrice(price, locale), [price, locale, t])
 
   if (state.status === "done") {
     return (
       <section className="border border-accent/50 bg-card p-6" role="status">
-        <p className="flex items-center gap-2 font-serif text-2xl"><Check className="h-5 w-5 text-accent" aria-hidden />{t("doneTitle")}</p>
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">{t("doneText", { number: state.number })}</p>
+        <p className="flex items-center gap-2 font-serif text-2xl"><Check className="h-5 w-5 text-accent" aria-hidden />{isRequest ? t("doneRequestTitle") : t("doneTitle")}</p>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">{t(isRequest ? "doneRequestText" : "doneText", { number: state.number, channel })}</p>
         <Link href={buildPath(locale, "/shop")} className="mt-5 inline-flex h-11 items-center bg-accent px-5 text-sm font-semibold text-accent-foreground hover:bg-accent-hover">{t("backToShop")}</Link>
       </section>
     )
@@ -252,7 +255,7 @@ function OrderStep({ locale, price, ownText, configuration }: { locale: Locale; 
     event.preventDefault()
     setState({ status: "sending" })
     try {
-      const result = await submitLevhaRequest({ locale, configuration, customer: { fullName: fullName.trim(), email: email.trim(), ...(phone.trim() ? { phone: phone.trim() } : {}) }, ...(notes.trim() ? { notes: notes.trim() } : {}) })
+      const result = await submitLevhaRequest({ locale, configuration, customer: { fullName: fullName.trim(), email: email.trim(), ...(phone.trim() ? { phone: phone.trim() } : {}), contact }, ...(notes.trim() ? { notes: notes.trim() } : {}) })
       setState({ status: "done", ...result })
     } catch (error) {
       setState({ status: "error", message: error instanceof OrderError ? error.message : "" })
@@ -261,22 +264,49 @@ function OrderStep({ locale, price, ownText, configuration }: { locale: Locale; 
 
   return (
     <section aria-labelledby="levha-order" className="border border-accent/50 bg-card p-6">
-      <h2 id="levha-order" className="font-serif text-3xl">{t("steps.order")}</h2>
-      <div className="mt-4 flex flex-wrap items-baseline justify-between gap-3 border-y border-border py-4">
-        <span className="text-sm text-muted-foreground">{t("price")}</span>
-        <span className="text-3xl font-bold">{priceText}</span>
-      </div>
-      <p className="mt-3 text-xs leading-5 text-muted-foreground">{price === null ? t("priceOnRequestNote") : ownText ? t("priceOwnTextNote") : t("priceNote")}</p>
+      <h2 id="levha-order" className="font-serif text-3xl">{isRequest ? t("requestTitle") : t("steps.order")}</h2>
+      {isRequest ? (
+        <p className="mt-4 border-y border-border py-4 text-sm leading-6 text-muted-foreground">{t("requestNote")}</p>
+      ) : (
+        <>
+          <div className="mt-4 flex flex-wrap items-baseline justify-between gap-3 border-y border-border py-4">
+            <span className="text-sm text-muted-foreground">{t("price")}</span>
+            <span className="text-3xl font-bold">{priceText}</span>
+          </div>
+          <p className="mt-3 text-xs leading-5 text-muted-foreground">{t("priceNote")}</p>
+        </>
+      )}
       <form onSubmit={send} className="mt-5 grid gap-3">
         <InputField id="levha-name" label={t("form.name")} value={fullName} onChange={setFullName} required minLength={2} autoComplete="name" />
         <div className="grid gap-3 sm:grid-cols-2">
           <InputField id="levha-email" label="Email" type="email" value={email} onChange={setEmail} required autoComplete="email" />
-          <InputField id="levha-phone" label={t("form.phone")} type="tel" value={phone} onChange={setPhone} autoComplete="tel" />
+          <InputField
+            id="levha-phone"
+            label={contact === "email" ? t("form.phone") : `${t("contact.phoneFor", { app: t(`contact.${contact}`) })} *`}
+            type="tel"
+            value={phone}
+            onChange={setPhone}
+            required={contact !== "email"}
+            minLength={contact === "email" ? undefined : 6}
+            placeholder={contact === "email" ? undefined : t("contact.phoneHint")}
+            autoComplete="tel"
+          />
         </div>
         <TextArea id="levha-notes" label={t("form.notes")} value={notes} onChange={setNotes} placeholder={t("form.notesPlaceholder")} rows={3} />
+        <fieldset>
+          <legend className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{t("contact.title")}</legend>
+          <div className="mt-2 grid grid-cols-3 gap-2">
+            {contactMethods.map(method => (
+              <label key={method} className={cn("flex h-12 cursor-pointer items-center justify-center gap-2 border text-sm has-focus-visible:outline-2 has-focus-visible:outline-accent", contact === method ? "border-accent bg-accent font-semibold text-accent-foreground" : "border-input text-muted-foreground hover:border-accent/60 hover:text-foreground")}>
+                <input type="radio" name="levha-contact" value={method} checked={contact === method} onChange={() => setContact(method)} className="sr-only" />
+                {t(`contact.${method}`)}
+              </label>
+            ))}
+          </div>
+        </fieldset>
         {state.status === "error" && <p role="alert" className="text-sm text-destructive">{t("form.error")}{state.message ? ` (${state.message})` : ""}</p>}
         <button type="submit" disabled={state.status === "sending"} className="mt-1 h-12 bg-accent px-6 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent-hover disabled:opacity-60">
-          {state.status === "sending" ? t("form.sending") : t("form.submit")}
+          {state.status === "sending" ? t("form.sending") : isRequest ? t("form.submitRequest") : t("form.submit")}
         </button>
       </form>
     </section>

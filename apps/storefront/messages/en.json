@@ -671,7 +671,7 @@
     "customSize": "Custom size",
     "width": "Width",
     "height": "Height",
-    "customSizeHint": "At least {width} × {height} cm. Sizes larger than those offered are priced on request.",
+    "customSizeHint": "At least {width} × {height} cm. For a custom size we first check it can be made, then send you the price.",
     "sameColour": "Same colour as the background",
     "locked": "Finish the previous step first",
     "chooseText": "Verse or inscription",
@@ -690,8 +690,6 @@
     "price": "Price",
     "priceOnRequest": "On request",
     "priceNote": "The price includes the frame, background and letters. We send you a confirmation before production.",
-    "priceOnRequestNote": "For this size we calculate the price separately and send it after you submit.",
-    "priceOwnTextNote": "For your own text we confirm the price after reviewing it.",
     "form": {
       "name": "Full name",
       "phone": "Phone",
@@ -699,10 +697,11 @@
       "notesPlaceholder": "Deadline, dedication, mounting…",
       "submit": "Send my levha",
       "sending": "Sending…",
-      "error": "Your levha was not sent. Please try again."
+      "error": "Your levha was not sent. Please try again.",
+      "submitRequest": "Send request"
     },
     "doneTitle": "Thank you! We received your levha.",
-    "doneText": "Your levha number is {number}. We emailed you a confirmation and will get back to you with the production time.",
+    "doneText": "Your levha number is {number}. We will get back to you {channel} with a confirmation and production time.",
     "backToShop": "Back to the shop",
     "subtitle": {
       "title": "Text below the ayah",
@@ -712,6 +711,21 @@
       "label": "Text below",
       "placeholder": "E.g. The Hodžić family",
       "summary": "Text below"
+    },
+    "requestTitle": "Levha request",
+    "requestNote": "For a custom size or your own text we first check whether the levha can be made. We will get back to you with the price and production time — you pay nothing until you confirm.",
+    "doneRequestTitle": "Thank you! We received your request.",
+    "doneRequestText": "Your request number is {number}. We will check whether the levha can be made and get back to you {channel} with the price.",
+    "contact": {
+      "title": "How should we contact you?",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "viber": "Viber",
+      "phoneFor": "Number for {app}",
+      "phoneHint": "With country code, e.g. +387 61 234 567",
+      "channelEmail": "by email",
+      "channelWhatsapp": "on WhatsApp",
+      "channelViber": "on Viber"
     }
   }
 }

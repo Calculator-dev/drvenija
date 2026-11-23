@@ -19,12 +19,11 @@ test('reference levha: black frame, black plywood, gold plexiglass letters, 80 �
   assert.equal(levhaPrice(pricing, { ...base, letters: { material: 'plywood', colour: 'white' } }), 80)
 })
 
-test('custom sizes: priced by area up to the largest standard size, on request above, refused below 40 × 40', () => {
-  assert.equal(levhaPrice(pricing, { ...base, size: { width: 60, height: 40 } }), Math.round(0.24 * 250 * 1.25))
-  // Portrait orientation of an allowed size is priced too.
-  assert.equal(typeof levhaPrice(pricing, { ...base, size: { width: 60, height: 100 } }), 'number')
-  assert.equal(levhaPrice(pricing, { ...base, size: { width: 120, height: 60 } }), null)
-  assert.equal(levhaPrice(pricing, { ...base, size: { width: 30, height: 40 } }), null)
+test('custom sizes and own texts have no price: the shop confirms them first', () => {
+  for (const size of [{ width: 60, height: 40 }, { width: 40, height: 80 }, { width: 120, height: 60 }])
+    assert.equal(levhaPrice(pricing, { ...base, size }), null, `${size.width} × ${size.height}`)
+  assert.equal(levhaPrice(pricing, { ...base, size: { width: 100, height: 60 } }), 150)
+  assert.equal(levhaPrice(pricing, { ...base, ayahId: null, customAyah: { text: 'Ajetul-kursija' } }), null)
 })
 
 test('configuration: same-colour letters are blocked and exactly one text is required', () => {
@@ -52,7 +51,9 @@ test('text under the ayah: none by default, a translation needs a listed text, o
 test('price settings validation and request numbers', () => {
   assert.equal(levhaPricingInput.safeParse(pricing).success, true)
   assert.equal(levhaPricingInput.safeParse({ ...pricing, sizes: [...pricing.sizes, pricing.sizes[0]] }).success, false)
-  assert.equal(levhaPricingInput.safeParse({ ...pricing, maxAutoWidth: 20 }).success, false)
+  assert.equal(levhaPricingInput.safeParse({ ...pricing, minWidth: 5 }).success, false)
+  // Prices saved before per-m² pricing was dropped still load.
+  assert.deepEqual(levhaPricingInput.parse({ ...pricing, pricePerSqm: 250, maxAutoWidth: 100, maxAutoHeight: 60 }), pricing)
   assert.match(createLevhaNumber(new Date('2026-11-23T10:00:00Z')), /^LVH-261123-[0-9A-F]{6}$/)
 })
 
@@ -60,7 +61,7 @@ test('email summary lists every choice and the custom text', () => {
   const rows = levhaSummary({ configuration: { ...base, ayahId: null, customAyah: { text: 'Ajetul-kursija', part: 'prvi dio' } }, ayahName: null, subtitleText: 'Moja porodica', price: null }, 'bs')
   assert.deepEqual(rows, [
     ['Okvir', 'Crni'], ['Dimenzije', '80 × 40 cm'], ['Pozadina', 'šperploča, crna'], ['Slova', 'pleksiglas, zlatno ogledalo'],
-    ['Vlastiti tekst', 'Ajetul-kursija'], ['Dio teksta', 'prvi dio'], ['Tekst ispod', 'Moja porodica'], ['Cijena', 'na upit'],
+    ['Vlastiti tekst', 'Ajetul-kursija'], ['Dio teksta', 'prvi dio'], ['Tekst ispod', 'Moja porodica'], ['Cijena', 'na upit (potvrđujemo da li se može izraditi)'],
   ])
 })
 
@@ -93,6 +94,17 @@ test('POST /public/levha-requests prices on the server and refuses unknown texts
     const tooSmall = await app.inject({ method: 'POST', url: '/public/levha-requests', payload: { ...body, configuration: { ...base, size: { width: 30, height: 40 } } } })
     assert.equal(tooSmall.statusCode, 400, 'smaller than the 40 × 40 minimum is refused')
     assert.equal(inserted.length, 1)
+    // Contact: email by default; WhatsApp and Viber need a phone number.
+    assert.equal(inserted[0].contactMethod, 'email')
+    const viber = { ...body, customer: { ...body.customer, contact: 'viber' } }
+    assert.equal((await app.inject({ method: 'POST', url: '/public/levha-requests', payload: viber })).statusCode, 400)
+    assert.equal((await app.inject({ method: 'POST', url: '/public/levha-requests', payload: { ...viber, customer: { ...viber.customer, phone: '+387 61 234 567' } } })).statusCode, 201)
+    assert.equal(inserted.at(-1).contactMethod, 'viber')
+    assert.equal((await app.inject({ method: 'POST', url: '/public/levha-requests', payload: { ...body, customer: { ...body.customer, contact: 'sms' } } })).statusCode, 400)
+    // A custom size is saved as a request without a price.
+    const custom = await app.inject({ method: 'POST', url: '/public/levha-requests', payload: { ...body, configuration: { ...base, size: { width: 60, height: 40 } } } })
+    assert.equal(custom.json().price, null)
+    assert.equal(inserted.at(-1).price, null)
     ayahs = [{ ...ayahs[0], active: false }]
     assert.equal((await app.inject({ method: 'POST', url: '/public/levha-requests', payload: body })).statusCode, 400)
   } finally {

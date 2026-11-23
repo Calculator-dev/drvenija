@@ -305,6 +305,8 @@ export const showroomSettings = pgTable("showroom_settings", {
   check("showroom_settings_single_row", sql`${table.id} = 1`),
 ]).enableRLS();
 
+export const levhaContactEnum = pgEnum("levha_contact", ["email", "whatsapp", "viber"]);
+
 export const levhaRequestStatusEnum = pgEnum("levha_request_status", [
   "new",
   "contacted",
@@ -352,11 +354,14 @@ export const levhaRequests = pgTable("levha_requests", {
   ayahName: text("ayah_name"),
   // The text under the ayah as it will be made (translation or the customer's own), if any.
   subtitleText: text("subtitle_text"),
-  // Whole KM shown to the customer; null when the size is priced on request.
+  // Whole KM shown to the customer; null when the shop must first confirm it can be made
+  // (a size other than a standard one, or the customer's own text).
   price: integer("price"),
   fullName: varchar("full_name", { length: 160 }).notNull(),
   email: varchar("email", { length: 190 }).notNull(),
   phone: varchar("phone", { length: 60 }),
+  // How the customer wants to be contacted.
+  contactMethod: levhaContactEnum("contact_method").notNull().default("email"),
   notes: text("notes"),
   status: levhaRequestStatusEnum("status").notNull().default("new"),
   adminNote: text("admin_note"),

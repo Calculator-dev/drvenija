@@ -17,13 +17,10 @@ export type LevhaColour = Background["colour"] | Letters["colour"]
 
 export type LevhaPricing = {
   sizes: Array<{ width: number; height: number; price: number }>
-  pricePerSqm: number
   backgroundSurchargePct: Record<BackgroundMaterial, number>
   letterSurchargePct: Record<LetterMaterial, number>
   minWidth: number
   minHeight: number
-  maxAutoWidth: number
-  maxAutoHeight: number
 }
 
 export type LevhaAyah = { id: string; name: { bs: string; en: string }; arabic: string; translation: { bs: string; en: string } | null; image: { id: string; url: string; width: number; height: number } | null }
@@ -34,21 +31,16 @@ export function sameColour(background: Pick<Background, "colour">, letters: Pick
   return background.colour === letters.colour
 }
 
-/** Price in whole KM, or null when the size is priced on request (or below the minimum). */
-export function levhaPrice(pricing: LevhaPricing, choice: { size: { width: number; height: number }; background: Pick<Background, "material">; letters: Pick<Letters, "material"> }) {
-  const { width, height } = choice.size
-  if (width < pricing.minWidth || height < pricing.minHeight) return null
-  const standard = pricing.sizes.find(size => size.width === width && size.height === height)
-  let base: number
-  if (standard) base = standard.price
-  else {
-    const longest = Math.max(pricing.maxAutoWidth, pricing.maxAutoHeight)
-    const shortest = Math.min(pricing.maxAutoWidth, pricing.maxAutoHeight)
-    if (Math.max(width, height) > longest || Math.min(width, height) > shortest) return null
-    base = (width * height / 10_000) * pricing.pricePerSqm
-  }
+/**
+ * Price in whole KM, or null when the shop first confirms the levha can be made: any size
+ * other than a standard one, or the customer's own text. Mirrors the API.
+ */
+export function levhaPrice(pricing: LevhaPricing, choice: { size: { width: number; height: number }; background: Pick<Background, "material">; letters: Pick<Letters, "material">; ownText: boolean }) {
+  if (choice.ownText) return null
+  const standard = pricing.sizes.find(size => size.width === choice.size.width && size.height === choice.size.height)
+  if (!standard) return null
   const surcharge = pricing.backgroundSurchargePct[choice.background.material] + pricing.letterSurchargePct[choice.letters.material]
-  return Math.max(0, Math.round(base * (1 + surcharge / 100)))
+  return Math.max(0, Math.round(standard.price * (1 + surcharge / 100)))
 }
 
 /** Frame profile width in cm, used to draw the frame at real scale. */
@@ -84,7 +76,10 @@ export type LevhaConfiguration = {
   subtitle: { kind: "none" } | { kind: "translation" } | { kind: "custom"; text: string }
 }
 
-export async function submitLevhaRequest(input: { locale: Locale; configuration: LevhaConfiguration; customer: { fullName: string; email: string; phone?: string }; notes?: string }) {
+export const contactMethods = ["email", "whatsapp", "viber"] as const
+export type ContactMethod = (typeof contactMethods)[number]
+
+export async function submitLevhaRequest(input: { locale: Locale; configuration: LevhaConfiguration; customer: { fullName: string; email: string; phone?: string; contact: ContactMethod }; notes?: string }) {
   const response = await fetch(`${browserApiUrl()}/public/levha-requests`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

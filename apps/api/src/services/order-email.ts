@@ -182,22 +182,24 @@ type LevhaEmail = {
   ayahName: string | null
   subtitleText?: string | null
   price: number | null
-  customer: { fullName: string; email: string; phone?: string }
+  customer: { fullName: string; email: string; phone?: string; contact?: import("../lib/levha.js").LevhaContactMethod }
   notes?: string
 }
+
+const contactNames = { email: "Email", whatsapp: "WhatsApp", viber: "Viber" } as const
 
 const levhaLabels = {
   bs: {
     frame: { black: "Crni", wood: "Drveni", white: "Bijeli" },
     material: { plywood: "šperploča", plexiglass: "pleksiglas", mdf: "MDF" },
     colour: { black: "crna", white: "bijela", wood: "drvo", gold: "zlatno ogledalo", gray: "sivo ogledalo", raw: "prirodni" },
-    rows: { frame: "Okvir", size: "Dimenzije", background: "Pozadina", letters: "Slova", text: "Tekst", custom: "Vlastiti tekst", part: "Dio teksta", subtitle: "Tekst ispod", price: "Cijena", onRequest: "na upit", notes: "Napomena" },
+    rows: { frame: "Okvir", size: "Dimenzije", background: "Pozadina", letters: "Slova", text: "Tekst", custom: "Vlastiti tekst", part: "Dio teksta", subtitle: "Tekst ispod", price: "Cijena", onRequest: "na upit (potvrđujemo da li se može izraditi)", notes: "Napomena" },
   },
   en: {
     frame: { black: "Black", wood: "Wood", white: "White" },
     material: { plywood: "plywood", plexiglass: "plexiglass", mdf: "MDF" },
     colour: { black: "black", white: "white", wood: "wood", gold: "gold mirror", gray: "gray mirror", raw: "natural" },
-    rows: { frame: "Frame", size: "Size", background: "Background", letters: "Letters", text: "Text", custom: "Own text", part: "Part of the text", subtitle: "Text below", price: "Price", onRequest: "on request", notes: "Notes" },
+    rows: { frame: "Frame", size: "Size", background: "Background", letters: "Letters", text: "Text", custom: "Own text", part: "Part of the text", subtitle: "Text below", price: "Price", onRequest: "on request (we confirm it can be made)", notes: "Notes" },
   },
 } as const
 
@@ -226,10 +228,18 @@ const table = (rows: Array<[string, string]>) => `<table style="border-collapse:
 /** Confirmation to the customer and a notification to the shop (INQUIRY_NOTIFY_EMAIL). */
 export async function sendLevhaRequestEmails(input: LevhaEmail) {
   const bosnian = input.locale === "bs"
+  const contact = input.customer.contact ?? "email"
+  const confirm = input.price === null
+  const channel = contact === "email"
+    ? (bosnian ? "na ovaj email" : "by email")
+    : (bosnian ? `putem ${contact === "whatsapp" ? "WhatsAppa" : "Vibera"} na broj ${input.customer.phone ?? ""}` : `on ${contactNames[contact]} at ${input.customer.phone ?? ""}`)
+  const intro = confirm
+    ? (bosnian ? `Provjerit ćemo da li se ova levha može izraditi i javiti vam se ${channel} s cijenom i rokom izrade.` : `We will check whether this levha can be made and get back to you ${channel} with the price and production time.`)
+    : (bosnian ? `Pregledat ćemo vašu levhu i javiti vam se ${channel} s potvrdom i rokom izrade.` : `We will review your levha and get back to you ${channel} with a confirmation and production time.`)
   const customerHtml = `<div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#222">
     <h1 style="font-size:24px">${bosnian ? "Hvala, primili smo vašu levhu" : "Thank you, we received your levha"}</h1>
     <p>${escapeHtml(bosnian ? `Poštovani/a ${input.customer.fullName},` : `Dear ${input.customer.fullName},`)}</p>
-    <p>${bosnian ? "Pregledat ćemo vašu levhu i javiti vam se s potvrdom i rokom izrade." : "We will review your levha and get back to you with a confirmation and production time."}</p>
+    <p>${escapeHtml(intro)}</p>
     <p><strong>${bosnian ? "Broj" : "Number"}:</strong> ${escapeHtml(input.number)}</p>
     ${table(levhaSummary(input, input.locale))}
     <p>${bosnian ? "Srdačno," : "Kind regards,"}<br>Drvenija</p>
@@ -238,10 +248,11 @@ export async function sendLevhaRequestEmails(input: LevhaEmail) {
   const shop = env.INQUIRY_NOTIFY_EMAIL
     ? await sendEmail({
         to: env.INQUIRY_NOTIFY_EMAIL,
-        subject: `Nova levha ${input.number}: ${input.customer.fullName}`,
+        subject: `${confirm ? "Upit za levhu" : "Nova levha"} ${input.number}: ${input.customer.fullName} (${contactNames[contact]})`,
         replyTo: input.customer.email,
-        html: `<div style="font-family:Arial,sans-serif;max-width:620px;color:#222"><h1 style="font-size:22px">Nova levha ${escapeHtml(input.number)}</h1>
-          ${table([["Ime", input.customer.fullName], ["Email", input.customer.email], ...(input.customer.phone ? [["Telefon", input.customer.phone] as [string, string]] : []), ...levhaSummary(input, "bs")])}</div>`,
+        html: `<div style="font-family:Arial,sans-serif;max-width:620px;color:#222"><h1 style="font-size:22px">${confirm ? "Upit za levhu" : "Nova levha"} ${escapeHtml(input.number)}</h1>
+          ${confirm ? "<p>Potrebno je potvrditi da li se može izraditi i javiti kupcu cijenu.</p>" : ""}
+          ${table([["Ime", input.customer.fullName], ["Kontakt", contactNames[contact]], ["Email", input.customer.email], ...(input.customer.phone ? [["Telefon", input.customer.phone] as [string, string]] : []), ...levhaSummary(input, "bs")])}</div>`,
       })
     : ({ sent: false, reason: "not_configured" } as const)
   return { customer, shop }

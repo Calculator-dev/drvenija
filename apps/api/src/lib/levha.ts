@@ -18,6 +18,9 @@ export const letterOptions = {
   plexiglass: ["black", "gold", "gray"],
 } as const
 
+export const levhaContactMethods = ["email", "whatsapp", "viber"] as const
+export type LevhaContactMethod = (typeof levhaContactMethods)[number]
+
 export type BackgroundMaterial = keyof typeof backgroundOptions
 export type LetterMaterial = keyof typeof letterOptions
 
@@ -29,16 +32,12 @@ export function sameColour(background: { colour: string }, letters: { colour: st
 export type LevhaPricing = {
   /** Standard sizes in cm with their base price (plywood background and letters). */
   sizes: Array<{ width: number; height: number; price: number }>
-  /** Base price for a custom size, per square metre of the panel. */
-  pricePerSqm: number
   /** Surcharges in percent of the base price, by material. */
   backgroundSurchargePct: Record<BackgroundMaterial, number>
   letterSurchargePct: Record<LetterMaterial, number>
-  /** Smallest custom size; larger than `maxAuto` is priced on request. */
+  /** Smallest size a customer can ask for. Any size other than a standard one is a request without a price. */
   minWidth: number
   minHeight: number
-  maxAutoWidth: number
-  maxAutoHeight: number
 }
 
 /** Starting prices: black frame, black plywood and gold plexiglass letters at 80 × 40 = 100 KM. */
@@ -48,28 +47,21 @@ export const defaultLevhaPricing: LevhaPricing = {
     { width: 80, height: 50, price: 90 },
     { width: 100, height: 60, price: 120 },
   ],
-  pricePerSqm: 250,
   backgroundSurchargePct: { plywood: 0, plexiglass: 25 },
   letterSurchargePct: { plywood: 0, mdf: 0, plexiglass: 25 },
   minWidth: 40,
   minHeight: 40,
-  maxAutoWidth: 100,
-  maxAutoHeight: 60,
 }
 
 const whole = z.number().int().min(0).max(1_000_000)
 const cm = z.number().int().min(10).max(1000)
 export const levhaPricingInput = z.object({
   sizes: z.array(z.object({ width: cm, height: cm, price: whole }).strict()).min(1).max(12),
-  pricePerSqm: whole,
   backgroundSurchargePct: z.object({ plywood: z.number().int().min(-100).max(1000), plexiglass: z.number().int().min(-100).max(1000) }).strict(),
   letterSurchargePct: z.object({ plywood: z.number().int().min(-100).max(1000), mdf: z.number().int().min(-100).max(1000), plexiglass: z.number().int().min(-100).max(1000) }).strict(),
   minWidth: cm,
   minHeight: cm,
-  maxAutoWidth: cm,
-  maxAutoHeight: cm,
-}).strict()
-  .refine(value => value.maxAutoWidth >= value.minWidth && value.maxAutoHeight >= value.minHeight, { message: "The largest priced size must be at least the smallest size", path: ["maxAutoWidth"] })
+})
   .refine(value => new Set(value.sizes.map(size => `${size.width}x${size.height}`)).size === value.sizes.length, { message: "Sizes must be different", path: ["sizes"] })
 
 const background = z.discriminatedUnion("material", [
@@ -106,21 +98,16 @@ export const levhaConfiguration = z.object({
 
 export type LevhaConfiguration = z.infer<typeof levhaConfiguration>
 
-/** Price in whole KM, or null when the size is priced on request. */
-export function levhaPrice(pricing: LevhaPricing, configuration: Pick<LevhaConfiguration, "size" | "background" | "letters">) {
+/**
+ * Price in whole KM, or null when the shop has to confirm the levha first: any size other
+ * than a standard one, or the customer's own text.
+ */
+export function levhaPrice(pricing: LevhaPricing, configuration: Pick<LevhaConfiguration, "size" | "background" | "letters" | "customAyah">) {
+  if (configuration.customAyah) return null
   const { width, height } = configuration.size
-  if (width < pricing.minWidth || height < pricing.minHeight) return null
   const standard = pricing.sizes.find(size => size.width === width && size.height === height)
-  let base: number
-  if (standard) {
-    base = standard.price
-  } else {
-    // Custom sizes up to the largest priced size (either orientation) are priced by area.
-    const longest = Math.max(pricing.maxAutoWidth, pricing.maxAutoHeight)
-    const shortest = Math.min(pricing.maxAutoWidth, pricing.maxAutoHeight)
-    if (Math.max(width, height) > longest || Math.min(width, height) > shortest) return null
-    base = (width * height / 10_000) * pricing.pricePerSqm
-  }
+  if (!standard) return null
+  const base = standard.price
   const surcharge = pricing.backgroundSurchargePct[configuration.background.material] + pricing.letterSurchargePct[configuration.letters.material]
   return Math.max(0, Math.round(base * (1 + surcharge / 100)))
 }

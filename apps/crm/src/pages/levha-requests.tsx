@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { ArrowLeft, Check, Mail, Phone, X } from "lucide-react"
+import { ArrowLeft, Check, Mail, MessageCircle, Phone, X } from "lucide-react"
 import { Link, useParams } from "react-router"
 import { DataTable } from "../components/data-table"
 import { LevhaTabs } from "../components/levha-tabs"
@@ -12,7 +12,7 @@ import { control } from "../components/ui/field"
 import { getLevhaAyahs, getLevhaRequest, getLevhaRequests, updateLevhaRequest } from "../lib/api"
 import { formatDateTime } from "../lib/format"
 import {
-  configurationSummary, priceLabel, requestRows, requestStatuses, requestStatusLabels, requestUpdateBody, textDirection,
+  configurationSummary, contactLabels, contactLink, priceLabel, requestRows, requestStatuses, requestStatusLabels, requestUpdateBody, textDirection,
   type AdminLevhaRequestDetail, type LevhaRequestStatus,
 } from "../lib/levha"
 import { localeLabel } from "../lib/marketing"
@@ -36,7 +36,7 @@ export function LevhaRequestsPage() {
       <PageHeader
         eyebrow="Prodaja"
         title="Levhe po mjeri"
-        description="Zahtjevi iz konfiguratora levhi na webshopu. Kupac vidi cijenu iz cjenovnika ili „na upit“ za veće dimenzije; javite mu se da potvrdite narudžbu."
+        description="Zahtjevi iz konfiguratora levhi na webshopu. Standardna veličina s tekstom iz liste ima cijenu. Vlastita veličina ili vlastiti tekst stižu kao upit bez cijene: provjerite izradu i javite kupcu cijenu putem kanala koji je odabrao."
       />
       <LevhaTabs />
       <div role="group" aria-label="Filtriraj po statusu" className="mt-6 flex flex-wrap gap-2">
@@ -54,6 +54,7 @@ export function LevhaRequestsPage() {
           { key: "text", label: "Tekst" },
           { key: "size", label: "Veličina" },
           { key: "price", label: "Cijena" },
+          { key: "contact", label: "Kontakt" },
           { key: "status", label: "Status", render: row => <LevhaStatusBadge status={row.statusKey} /> },
           { key: "createdAt", label: "Datum" },
         ]}
@@ -111,6 +112,7 @@ function LevhaRequestDetails({ request, back }: { request: AdminLevhaRequestDeta
   })
   const noteChanged = note.trim() !== (request.adminNote ?? "")
   const custom = configuration.customAyah
+  const chat = contactLink(request.contactMethod ?? "email", request.phone)
 
   return (
     <div className="space-y-6 pt-6">
@@ -130,7 +132,7 @@ function LevhaRequestDetails({ request, back }: { request: AdminLevhaRequestDeta
             <h2 className="font-serif text-2xl">Odabrana levha</h2>
             <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
               {configurationSummary(configuration).map(item => <Detail key={item.label} label={item.label} value={item.value} />)}
-              <Detail label="Cijena prikazana kupcu" value={request.price === null ? "Na upit (veličina izvan cjenovnika)" : priceLabel(request.price)} />
+              <Detail label="Cijena prikazana kupcu" value={request.price === null ? "Bez cijene – upit (vlastita veličina ili tekst). Potvrdite izradu i javite cijenu." : priceLabel(request.price)} />
             </dl>
           </Card>
 
@@ -178,12 +180,14 @@ function LevhaRequestDetails({ request, back }: { request: AdminLevhaRequestDeta
         <div className="space-y-6">
           <Card className="p-6">
             <h2 className="font-serif text-2xl">Kontakt</h2>
+            <p className="mt-3 text-sm">Želi kontakt putem: <strong>{contactLabels[request.contactMethod ?? "email"]}</strong></p>
             <dl className="mt-5 space-y-3 text-sm">
               <div><dt className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Email</dt><dd className="mt-1 wrap-break-word"><a href={`mailto:${request.email}`} className="underline underline-offset-4">{request.email}</a></dd></div>
               <div><dt className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Telefon</dt><dd className="mt-1">{request.phone ? <a href={`tel:${request.phone.replace(/[^\d+]/g, "")}`} className="underline underline-offset-4">{request.phone}</a> : "Nije navedeno"}</dd></div>
             </dl>
             <div className="mt-6 flex flex-wrap gap-3">
-              <a href={`mailto:${request.email}?subject=${encodeURIComponent(`Levha ${request.number}`)}`} className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm text-primary-foreground"><Mail className="mr-2 h-4 w-4" aria-hidden />Pošalji email</a>
+              {chat && <a href={chat} target="_blank" rel="noreferrer" className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm text-primary-foreground"><MessageCircle className="mr-2 h-4 w-4" aria-hidden />Otvori {contactLabels[request.contactMethod]}</a>}
+              <a href={`mailto:${request.email}?subject=${encodeURIComponent(`Levha ${request.number}`)}`} className={cn("inline-flex h-10 items-center rounded-md px-4 text-sm", chat ? "border border-border hover:bg-muted" : "bg-primary text-primary-foreground")}><Mail className="mr-2 h-4 w-4" aria-hidden />Pošalji email</a>
               {request.phone && <a href={`tel:${request.phone.replace(/[^\d+]/g, "")}`} className="inline-flex h-10 items-center rounded-md border border-border px-4 text-sm hover:bg-muted"><Phone className="mr-2 h-4 w-4" aria-hidden />Pozovi</a>}
             </div>
           </Card>

@@ -671,7 +671,7 @@
     "customSize": "Vlastita dimenzija",
     "width": "Širina",
     "height": "Visina",
-    "customSizeHint": "Najmanje {width} × {height} cm. Za veće dimenzije od ponuđenih cijenu javljamo na upit.",
+    "customSizeHint": "Najmanje {width} × {height} cm. Za vlastitu dimenziju prvo provjeravamo izradu, pa vam javljamo cijenu.",
     "sameColour": "Ista boja kao pozadina",
     "locked": "Prvo završite prethodni korak",
     "chooseText": "Ajet ili natpis",
@@ -690,8 +690,6 @@
     "price": "Cijena",
     "priceOnRequest": "Na upit",
     "priceNote": "Cijena uključuje okvir, pozadinu i slova. Prije izrade vam šaljemo potvrdu.",
-    "priceOnRequestNote": "Za ovu dimenziju cijenu računamo posebno i javljamo vam je nakon slanja.",
-    "priceOwnTextNote": "Za vlastiti tekst cijenu potvrđujemo nakon pregleda teksta.",
     "form": {
       "name": "Ime i prezime",
       "phone": "Telefon",
@@ -699,10 +697,11 @@
       "notesPlaceholder": "Rok, posveta, način montaže…",
       "submit": "Pošalji levhu",
       "sending": "Slanje…",
-      "error": "Levha nije poslana. Pokušajte ponovo."
+      "error": "Levha nije poslana. Pokušajte ponovo.",
+      "submitRequest": "Pošalji upit"
     },
     "doneTitle": "Hvala! Primili smo vašu levhu.",
-    "doneText": "Broj vaše levhe je {number}. Poslali smo vam potvrdu emailom i javit ćemo vam se s rokom izrade.",
+    "doneText": "Broj vaše levhe je {number}. Javit ćemo vam se {channel} s potvrdom i rokom izrade.",
     "backToShop": "Nazad u shop",
     "subtitle": {
       "title": "Tekst ispod ajeta",
@@ -712,6 +711,21 @@
       "label": "Tekst ispod",
       "placeholder": "Npr. Porodica Hodžić",
       "summary": "Tekst ispod"
+    },
+    "requestTitle": "Upit za levhu",
+    "requestNote": "Za vlastitu dimenziju ili vlastiti tekst prvo provjeravamo da li se levha može izraditi. Javit ćemo vam se s cijenom i rokom — ništa ne plaćate dok ne potvrdite.",
+    "doneRequestTitle": "Hvala! Primili smo vaš upit.",
+    "doneRequestText": "Broj upita je {number}. Provjerit ćemo da li se levha može izraditi i javiti vam se {channel} s cijenom.",
+    "contact": {
+      "title": "Kako da vas kontaktiramo?",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "viber": "Viber",
+      "phoneFor": "Broj za {app}",
+      "phoneHint": "S pozivnim brojem, npr. +387 61 234 567",
+      "channelEmail": "emailom",
+      "channelWhatsapp": "na WhatsApp",
+      "channelViber": "na Viber"
     }
   }
 }

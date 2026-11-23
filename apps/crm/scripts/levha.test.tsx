@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { routes } from '../src/app.tsx'
 import {
-  ayahDraft, ayahPayload, ayahSaveError, ayahSortOrder, ayahVisibilityBody, combinationRows, configurationSummary, levhaPrice,
+  ayahDraft, ayahPayload, ayahSaveError, ayahSortOrder, ayahVisibilityBody, combinationRows, configurationSummary, contactLink, levhaPrice,
   newSizeDraft, nextSortOrder, priceLabel, pricingDraft, pricingExample, pricingPayload, requestRows, requestTextLabel,
   requestUpdateBody, textDirection, wholeKm,
   type AdminLevhaAyah, type AdminLevhaRequest, type AdminLevhaRequestDetail, type LevhaPricing,
@@ -19,13 +19,10 @@ const pricing: LevhaPricing = {
     { width: 80, height: 50, price: 90 },
     { width: 100, height: 60, price: 120 },
   ],
-  pricePerSqm: 250,
   backgroundSurchargePct: { plywood: 0, plexiglass: 25 },
   letterSurchargePct: { plywood: 0, mdf: 0, plexiglass: 25 },
   minWidth: 40,
   minHeight: 40,
-  maxAutoWidth: 100,
-  maxAutoHeight: 60,
 }
 
 const arabic = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ'
@@ -61,6 +58,7 @@ const requests: AdminLevhaRequest[] = [
     status: 'contacted',
     ayahName: 'Bismillah',
     subtitleText: 'Porodica Hodžić',
+    contactMethod: 'email',
     configuration: { frame: 'black', size: { width: 80, height: 40 }, background: { material: 'plywood', colour: 'black' }, letters: { material: 'plexiglass', colour: 'gold' }, ayahId: ayah.id, customAyah: null },
     createdAt: '2026-11-20T10:00:00.000Z',
   },
@@ -72,6 +70,7 @@ const requests: AdminLevhaRequest[] = [
     status: 'new',
     ayahName: null,
     subtitleText: null,
+    contactMethod: 'whatsapp',
     configuration: { frame: 'wood', size: { width: 150, height: 80 }, background: { material: 'plexiglass', colour: 'gray' }, letters: { material: 'mdf', colour: 'raw' }, ayahId: null, customAyah: { text: `${arabic}\nالْحَمْدُ لِلَّهِ`, part: 'Samo prvi red' } },
     createdAt: '2026-11-22T10:00:00.000Z',
   },
@@ -99,11 +98,9 @@ test('cijena levhe se računa kao na API-ju', () => {
   assert.equal(choose(80, 40, 'plywood', 'plexiglass'), 100)
   assert.equal(choose(80, 40, 'plywood', 'plywood'), 80)
   assert.equal(choose(100, 60, 'plexiglass', 'plexiglass'), 180)
-  // Other sizes are priced by area, in either orientation, up to the largest priced size.
-  assert.equal(choose(60, 40, 'plywood', 'mdf'), 60)
-  assert.equal(choose(60, 100, 'plywood', 'plywood'), 150)
-  assert.equal(choose(45, 45, 'plexiglass', 'plywood'), 63)
-  // Larger or smaller sizes are priced on request.
+  // Any other size is a request without a price.
+  assert.equal(choose(60, 40, 'plywood', 'mdf'), null)
+  assert.equal(choose(40, 80, 'plywood', 'plywood'), null)
   assert.equal(choose(110, 50, 'plywood', 'plywood'), null)
   assert.equal(choose(70, 70, 'plywood', 'plywood'), null)
   assert.equal(choose(30, 40, 'plywood', 'plywood'), null)
@@ -120,13 +117,13 @@ test('primjer i tabela kombinacija prate cjenovnik', () => {
   assert.deepEqual(rows[5].prices.map(cell => cell.price), ['150 KM', '150 KM', '180 KM'])
   assert.equal(rows[5].background, 'Pleksiglas')
   assert.equal(wholeKm(1250), '1.250 KM')
-  assert.equal(priceLabel(null), 'Na upit')
+  assert.equal(priceLabel(null), 'Upit – potvrditi')
+  assert.equal(levhaPrice(pricing, { size: { width: 60, height: 40 }, background: { material: 'plywood' }, letters: { material: 'plexiglass' } }), null, 'vlastita veličina nema cijenu')
 })
 
 test('obrazac cijena vraća isti cjenovnik i provjerava pravila API-ja', () => {
   const draft = pricingDraft(pricing)
   assert.deepEqual(pricingPayload(draft), { body: pricing })
-  assert.deepEqual(pricingPayload({ ...draft, pricePerSqm: ' 300 ' }).body?.pricePerSqm, 300)
 
   const errors = (change: Partial<typeof draft>) => pricingPayload({ ...draft, ...change }).errors ?? []
   assert.deepEqual(errors({ sizes: [] }), ['Dodajte najmanje jednu standardnu veličinu.'])
@@ -136,13 +133,10 @@ test('obrazac cijena vraća isti cjenovnik i provjerava pravila API-ja', () => {
   assert.match(errors({ sizes: [{ ...draft.sizes[0], height: '1001' }] })[0], /od 10 do 1000/)
   assert.match(errors({ sizes: [{ ...draft.sizes[0], price: '12.5' }] })[0], /Veličina 1: cijena mora biti cijeli iznos/)
   assert.match(errors({ sizes: [{ ...draft.sizes[0], price: '' }] })[0], /cijena/)
-  assert.match(errors({ pricePerSqm: '-1' })[0], /Cijena po m²/)
   assert.match(errors({ backgroundSurchargePct: { plywood: '-101', plexiglass: '25' } })[0], /pozadinu od šperploče .* od −100 do 1000/)
   assert.match(errors({ letterSurchargePct: { plywood: '0', mdf: '1001', plexiglass: '25' } })[0], /slova od MDF-a/)
   assert.ok(pricingPayload({ ...draft, letterSurchargePct: { plywood: '-100', mdf: '1000', plexiglass: '0' } }).body)
   assert.match(errors({ minWidth: '5' })[0], /Najmanja širina/)
-  assert.deepEqual(errors({ maxAutoHeight: '30' }), ['Najveća veličina s automatskom cijenom mora biti najmanje jednaka najmanjoj veličini.'])
-  assert.ok(pricingPayload({ ...draft, maxAutoWidth: '40', maxAutoHeight: '40' }).body)
   assert.notEqual(newSizeDraft().key, newSizeDraft().key)
 })
 
@@ -156,7 +150,13 @@ test('izbori levhe i zahtjevi imaju čitljive bosanske nazive', () => {
   assert.deepEqual(configurationSummary({ ...requests[0].configuration, frame: 'white', background: { material: 'plywood', colour: 'wood' }, letters: { material: 'plexiglass', colour: 'gold' } }).map(item => item.value), ['Bijeli', '80 × 40 cm', 'Šperploča, drvo', 'Pleksiglas, zlatno ogledalo'])
   const rows = requestRows(requests)
   assert.deepEqual(rows.map(row => row.number), ['LVH-261122-EF34GH', 'LVH-261120-AB12CD'], 'najnoviji prvi')
-  assert.equal(rows[0].price, 'Na upit')
+  assert.equal(rows[0].price, 'Upit – potvrditi')
+  assert.equal(rows[0].contact, 'WhatsApp')
+  assert.equal(rows[1].contact, 'Email')
+  assert.equal(contactLink('whatsapp', '061 234 567'), 'https://wa.me/38761234567')
+  assert.equal(contactLink('viber', '+387 61 234 567'), 'viber://chat?number=%2B38761234567')
+  assert.equal(contactLink('email', '061 234 567'), null)
+  assert.equal(contactLink('viber', null), null)
   assert.equal(rows[0].status, 'Novi')
   assert.equal(rows[0].statusKey, 'new')
   assert.match(rows[0].text, /^Vlastiti tekst: /)
@@ -213,7 +213,9 @@ test('lista zahtjeva za levhe prikazuje tabelu, filtere i statuse', () => {
   assert.ok(html.indexOf('LVH-261122-EF34GH') < html.indexOf('LVH-261120-AB12CD'), 'najnoviji prvi')
   assert.match(html, /Emir Kovač/)
   assert.match(html, /150 × 80 cm/)
-  assert.match(html, /Na upit/)
+  assert.match(html, /Upit – potvrditi/)
+  assert.match(html, />Kontakt</)
+  assert.match(html, />WhatsApp</)
   assert.match(html, /100 KM/)
   assert.match(html, /href="\/levha\/22222222-2222-4222-8222-222222222222"/)
   client.setQueryData(['levha-requests'], [])
@@ -229,7 +231,9 @@ test('detalji zahtjeva prikazuju sve izbore, tekst zdesna nalijevo, kontakt i st
   assert.match(html, /Drveni/)
   assert.match(html, /Pleksiglas, sivo ogledalo/)
   assert.match(html, /MDF, prirodni/)
-  assert.match(html, /Na upit \(veličina izvan cjenovnika\)/)
+  assert.match(html, /Bez cijene – upit/)
+  assert.match(html, /Želi kontakt putem: <strong>WhatsApp<\/strong>/)
+  assert.match(html, /href="https:\/\/wa.me\/38761123456"[^>]*>.*?Otvori (<!-- -->)?WhatsApp/)
   assert.match(html, /Vlastiti tekst|vlastiti tekst/)
   assert.match(html, /dir="rtl"[^>]*class="[^"]*whitespace-pre-wrap/)
   assert.ok(html.includes(`${arabic}\nالْحَمْدُ لِلَّهِ`), 'prelomi redova su sačuvani')
@@ -307,14 +311,13 @@ test('stranica cijena prikazuje polja, pravilo, primjer i sve kombinacije', () =
   client.setQueryData(['levha-pricing'], pricing)
   const html = render(client, '/levha/cijene')
   assert.match(html, /Kako se računa cijena/)
-  assert.match(html, /cijena na upit/)
+  assert.match(html, /kupac ne vidi cijenu i šalje upit/)
   assert.match(html, /40 × 40 cm/)
-  assert.match(html, /100 × 60 cm, u bilo kojoj orijentaciji/)
+  assert.doesNotMatch(html, /po m²/)
   assert.match(html, /Primjer: 80 × 40, šperploča pozadina, pleksiglas slova = 100 KM/)
   assert.match(html, /Standardne veličine/)
   assert.match(html, /Dodaj veličinu/)
   assert.match(html, /Ukloni veličinu 3/)
-  assert.match(html, /value="250"/)
   assert.match(html, /Pozadina: pleksiglas \(%\)/)
   assert.match(html, /Slova: MDF \(%\)/)
   assert.match(html, /Sve kombinacije/)

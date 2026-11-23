@@ -27,15 +27,12 @@ export type LevhaPricing = {
   /** Standard sizes in cm with their base price (plywood background and letters). */
   sizes: Array<{ width: number; height: number; price: number }>
   /** Base price for a custom size, per square metre of the panel. */
-  pricePerSqm: number
   /** Surcharges in percent of the base price, by material. */
   backgroundSurchargePct: Record<BackgroundMaterial, number>
   letterSurchargePct: Record<LetterMaterial, number>
-  /** Smallest custom size; larger than `maxAuto` is priced on request. */
+  /** Smallest size a customer can ask for. Sizes other than the standard ones are requests without a price. */
   minWidth: number
   minHeight: number
-  maxAutoWidth: number
-  maxAutoHeight: number
 }
 
 export type LevhaConfiguration = {
@@ -47,6 +44,17 @@ export type LevhaConfiguration = {
   customAyah: { text: string; part?: string } | null
   /** Line under the ayah. Older requests have none. */
   subtitle?: { kind: "none" } | { kind: "translation" } | { kind: "custom"; text: string }
+}
+
+export type LevhaContactMethod = "email" | "whatsapp" | "viber"
+export const contactLabels: Record<LevhaContactMethod, string> = { email: "Email", whatsapp: "WhatsApp", viber: "Viber" }
+
+/** Link that opens a chat with the customer in the app they chose (null for email or without a phone). */
+export function contactLink(method: LevhaContactMethod, phone: string | null) {
+  // Local numbers (06x…) are Bosnian: replace the leading 0 with 387.
+  const digits = phone?.replace(/\D/g, "").replace(/^00/, "").replace(/^0/, "387") ?? ""
+  if (method === "email" || digits.length < 6) return null
+  return method === "whatsapp" ? `https://wa.me/${digits}` : `viber://chat?number=%2B${digits}`
 }
 
 export type LevhaRequestStatus = "new" | "contacted" | "accepted" | "declined"
@@ -61,6 +69,8 @@ export type AdminLevhaRequest = {
   ayahName: string | null
   /** The exact text to cut under the ayah (translation or the customer's own), or null. */
   subtitleText: string | null
+  /** How the customer wants to be contacted. */
+  contactMethod: LevhaContactMethod
   configuration: LevhaConfiguration
   createdAt: string
 }
@@ -135,7 +145,7 @@ export const sizeLabel = (size: { width: number; height: number }) => `${size.wi
 
 /** Whole KM: "100 KM", "1.250 KM". */
 export const wholeKm = (amount: number) => `${new Intl.NumberFormat("bs-BA", { maximumFractionDigits: 0 }).format(amount)} KM`
-export const priceLabel = (price: number | null) => (price === null ? "Na upit" : wholeKm(price))
+export const priceLabel = (price: number | null) => (price === null ? "Upit – potvrditi" : wholeKm(price))
 
 /** Text direction for a text the customer typed: right-to-left when it contains Arabic letters. */
 export const textDirection = (text: string): "rtl" | "ltr" =>
@@ -171,6 +181,7 @@ export function requestRows(requests: AdminLevhaRequest[]) {
       text: requestTextLabel(request),
       size: sizeLabel(request.configuration.size),
       price: priceLabel(request.price),
+      contact: contactLabels[request.contactMethod ?? "email"],
       status: requestStatusLabel(request.status),
       statusKey: request.status,
       createdAt: formatDate(request.createdAt),
@@ -191,21 +202,11 @@ export function levhaPrice(
   pricing: LevhaPricing,
   configuration: { size: { width: number; height: number }; background: { material: BackgroundMaterial }; letters: { material: LetterMaterial } },
 ) {
-  const { width, height } = configuration.size
-  if (width < pricing.minWidth || height < pricing.minHeight) return null
-  const standard = pricing.sizes.find(size => size.width === width && size.height === height)
-  let base: number
-  if (standard) {
-    base = standard.price
-  } else {
-    // Custom sizes up to the largest priced size (either orientation) are priced by area.
-    const longest = Math.max(pricing.maxAutoWidth, pricing.maxAutoHeight)
-    const shortest = Math.min(pricing.maxAutoWidth, pricing.maxAutoHeight)
-    if (Math.max(width, height) > longest || Math.min(width, height) > shortest) return null
-    base = (width * height / 10_000) * pricing.pricePerSqm
-  }
+  // Only standard sizes have a price; any other size is a request the shop confirms first.
+  const standard = pricing.sizes.find(size => size.width === configuration.size.width && size.height === configuration.size.height)
+  if (!standard) return null
   const surcharge = pricing.backgroundSurchargePct[configuration.background.material] + pricing.letterSurchargePct[configuration.letters.material]
-  return Math.max(0, Math.round(base * (1 + surcharge / 100)))
+  return Math.max(0, Math.round(standard.price * (1 + surcharge / 100)))
 }
 
 /** One worked example: the first standard size, plywood background, plexiglass letters. */
@@ -234,13 +235,10 @@ export function combinationRows(pricing: LevhaPricing) {
 export type SizeDraft = { key: string; width: string; height: string; price: string }
 export type PricingDraft = {
   sizes: SizeDraft[]
-  pricePerSqm: string
   backgroundSurchargePct: Record<BackgroundMaterial, string>
   letterSurchargePct: Record<LetterMaterial, string>
   minWidth: string
   minHeight: string
-  maxAutoWidth: string
-  maxAutoHeight: string
 }
 
 let sizeKey = 0
@@ -256,13 +254,10 @@ export const MAX_SIZES = 12
 export function pricingDraft(pricing: LevhaPricing): PricingDraft {
   return {
     sizes: pricing.sizes.map(size => newSizeDraft(size)),
-    pricePerSqm: String(pricing.pricePerSqm),
     backgroundSurchargePct: { plywood: String(pricing.backgroundSurchargePct.plywood), plexiglass: String(pricing.backgroundSurchargePct.plexiglass) },
     letterSurchargePct: { plywood: String(pricing.letterSurchargePct.plywood), mdf: String(pricing.letterSurchargePct.mdf), plexiglass: String(pricing.letterSurchargePct.plexiglass) },
     minWidth: String(pricing.minWidth),
     minHeight: String(pricing.minHeight),
-    maxAutoWidth: String(pricing.maxAutoWidth),
-    maxAutoHeight: String(pricing.maxAutoHeight),
   }
 }
 
@@ -292,9 +287,6 @@ export function pricingPayload(draft: PricingDraft): { body: LevhaPricing; error
   })
   if (new Set(sizes.map(size => `${size.width}x${size.height}`)).size !== sizes.length) add("Standardne veličine se ne smiju ponavljati (ista širina i visina).")
 
-  const pricePerSqm = integer(draft.pricePerSqm)
-  if (!within(pricePerSqm, 0, 1_000_000)) add("Cijena po m² mora biti cijeli iznos u KM, 0 ili više.")
-
   const percent = (raw: string, label: string) => {
     const value = integer(raw)
     if (!within(value, -100, 1000)) add(`Doplata za ${label} mora biti cijeli broj od −100 do 1000 %.`)
@@ -317,13 +309,9 @@ export function pricingPayload(draft: PricingDraft): { body: LevhaPricing; error
   }
   const minWidth = cm(draft.minWidth, "Najmanja širina")
   const minHeight = cm(draft.minHeight, "Najmanja visina")
-  const maxAutoWidth = cm(draft.maxAutoWidth, "Najveća širina s automatskom cijenom")
-  const maxAutoHeight = cm(draft.maxAutoHeight, "Najveća visina s automatskom cijenom")
-  if ((Number.isInteger(maxAutoWidth) && Number.isInteger(minWidth) && maxAutoWidth < minWidth) || (Number.isInteger(maxAutoHeight) && Number.isInteger(minHeight) && maxAutoHeight < minHeight))
-    add("Najveća veličina s automatskom cijenom mora biti najmanje jednaka najmanjoj veličini.")
 
   if (errors.length) return { errors }
-  return { body: { sizes, pricePerSqm, backgroundSurchargePct, letterSurchargePct, minWidth, minHeight, maxAutoWidth, maxAutoHeight } }
+  return { body: { sizes, backgroundSurchargePct, letterSurchargePct, minWidth, minHeight } }
 }
 
 // Text (ayah) form ------------------------------------------------------------------------

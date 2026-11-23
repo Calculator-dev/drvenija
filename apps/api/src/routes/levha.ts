@@ -3,7 +3,7 @@ import { asc, desc, eq, inArray } from "drizzle-orm"
 import { z } from "zod"
 import { db } from "../db/client.js"
 import { levhaAyahs, levhaRequests, levhaSettings, mediaAssets } from "../db/schema.js"
-import { createLevhaNumber, defaultLevhaPricing, levhaConfiguration, levhaPrice, levhaPricingInput, type LevhaPricing } from "../lib/levha.js"
+import { createLevhaNumber, defaultLevhaPricing, levhaConfiguration, levhaContactMethods, levhaPrice, levhaPricingInput, type LevhaPricing } from "../lib/levha.js"
 import { publicFormRateLimit } from "../lib/rate-limits.js"
 import { sendLevhaRequestEmails } from "../services/order-email.js"
 import { withImageUrls } from "./media.js"
@@ -13,7 +13,9 @@ const text300 = z.string().trim().max(300)
 
 export async function getLevhaPricing(): Promise<LevhaPricing> {
   const [row] = await db.select().from(levhaSettings).where(eq(levhaSettings.id, 1)).limit(1)
-  return row?.pricing ?? defaultLevhaPricing
+  // Older saved prices may carry fields that are no longer used; keep only the current ones.
+  const saved = row ? levhaPricingInput.safeParse(row.pricing) : null
+  return saved?.success ? saved.data : defaultLevhaPricing
 }
 
 /** Active texts and prices for the storefront configurator (part of GET /public/catalogue). */
@@ -43,7 +45,10 @@ export const levhaRequestInput = z.object({
     fullName: z.string().trim().min(2).max(160),
     email: z.string().trim().email().max(190),
     phone: z.string().trim().max(60).optional().transform(value => value || undefined),
-  }).strict(),
+    /** How the customer wants to hear from the shop. WhatsApp and Viber need a phone number. */
+    contact: z.enum(levhaContactMethods).default("email"),
+  }).strict()
+    .refine(value => value.contact === "email" || (value.phone?.replace(/\D/g, "").length ?? 0) >= 6, { message: "A phone number is needed for WhatsApp or Viber", path: ["phone"] }),
   notes: z.string().trim().max(2000).optional().transform(value => value || undefined),
 }).strict()
 
@@ -71,7 +76,7 @@ export const publicLevhaRoutes: FastifyPluginAsync = async app => {
     for (let attempt = 0; attempt < 3 && !saved; attempt++) {
       [saved] = await db.insert(levhaRequests).values({
         number: createLevhaNumber(), locale: input.locale, configuration, ayahName, subtitleText, price,
-        fullName: input.customer.fullName, email: input.customer.email, phone: input.customer.phone, notes: input.notes,
+        fullName: input.customer.fullName, email: input.customer.email, phone: input.customer.phone, contactMethod: input.customer.contact, notes: input.notes,
       }).onConflictDoNothing({ target: levhaRequests.number }).returning({ id: levhaRequests.id, number: levhaRequests.number })
     }
     if (!saved) throw new Error("Could not allocate a levha request number")
@@ -140,7 +145,7 @@ export const adminLevhaRoutes: FastifyPluginAsync = async app => {
   app.put("/levha/ayahs/:id", async request => saveAyah(ayahInput.parse(request.body), params.parse(request.params).id))
 
   app.get("/levha/requests", async () => db
-    .select({ id: levhaRequests.id, number: levhaRequests.number, fullName: levhaRequests.fullName, price: levhaRequests.price, status: levhaRequests.status, ayahName: levhaRequests.ayahName, subtitleText: levhaRequests.subtitleText, configuration: levhaRequests.configuration, createdAt: levhaRequests.createdAt })
+    .select({ id: levhaRequests.id, number: levhaRequests.number, fullName: levhaRequests.fullName, price: levhaRequests.price, status: levhaRequests.status, ayahName: levhaRequests.ayahName, subtitleText: levhaRequests.subtitleText, contactMethod: levhaRequests.contactMethod, configuration: levhaRequests.configuration, createdAt: levhaRequests.createdAt })
     .from(levhaRequests).orderBy(desc(levhaRequests.createdAt)))
 
   app.get("/levha/requests/:id", async (request, reply) => {
