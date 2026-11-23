@@ -5,7 +5,7 @@ import globals from "globals"
 import tseslint from "typescript-eslint"
 
 export default tseslint.config(
-  { ignores: ["**/node_modules/**", "**/dist/**", "**/.next/**", "**/.open-next/**", "**/.wrangler/**", "**/next-env.d.ts", "apps/api/drizzle/**"] },
+  { ignores: ["**/node_modules/**", "**/dist/**", "**/.next/**", "**/next-env.d.ts", "apps/api/drizzle/**"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -16,11 +16,6 @@ export default tseslint.config(
   {
     files: ["apps/api/**/*.{ts,mjs}", "scripts/**/*.mjs", "*.mjs", "apps/*/*.{mjs,ts}"],
     languageOptions: { globals: globals.node },
-  },
-  {
-    // Cloudflare Workers run with web-standard globals (fetch, Response, AbortSignal).
-    files: ["deploy/**/*.js"],
-    languageOptions: { globals: globals.serviceworker },
   },
   {
     files: ["apps/crm/**/*.{ts,tsx}", "apps/storefront/**/*.{ts,tsx}"],
