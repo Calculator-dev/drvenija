@@ -13,7 +13,7 @@ test('live catalogue serializes translations, categories and primary-first stabl
   assert.equal(product.media[0].alt.en, 'Slika')
   assert.ok(!JSON.stringify(result).includes('private-secret'))
   assert.equal(product.rating, null)
-  assert.deepEqual(catalogueResponse([], [], []), { shipping: { freeFrom: 150, fee: 10 }, showroom: null, checkout: { giftWrapPrice: 5, paymentMethods: ['bank_transfer', 'cash_on_delivery'] }, products: [], categories: [] })
+  assert.deepEqual(catalogueResponse([], [], []), { shipping: { freeFrom: 150, fee: 10 }, showroom: null, levha: null, checkout: { giftWrapPrice: 5, paymentMethods: ['bank_transfer', 'cash_on_delivery'] }, products: [], categories: [] })
 })
 
 test('catalogue hides unpublished products and summarises approved reviews', () => {

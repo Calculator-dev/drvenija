@@ -92,6 +92,7 @@ export const seedDashboard = {
     inquiriesLast30Days: 7,
     productsActive: 12,
     reviewsPending: 2,
+    levhaRequestsNew: 3,
   },
   recentOrders: [
     { id: "b3f22b86-3991-46a6-b67b-0b2d696be12e", orderNumber: "DRV-104251", customer: "Amina K.", status: "submitted", paymentStatus: "pending_manual" as const, paymentMethod: "bank_transfer" as const, amount: 98, createdAt: "2026-04-25T09:00:00.000Z" },

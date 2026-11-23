@@ -28,6 +28,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
     { href: "/shop?material=plexiglass", label: common("materials.plexiglass") },
     { href: "/shop?material=mediapan", label: common("materials.mediapan") },
     { href: "/shop?type=custom", label: t("nav.customizable") },
+    { href: "/levha", label: t("nav.levha") },
     { href: "/showroom", label: t("nav.showroom") },
     { href: "/custom", label: t("nav.customWork") },
     { href: "/about", label: t("nav.about") },

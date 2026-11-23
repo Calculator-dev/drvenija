@@ -326,7 +326,7 @@ export async function unsubscribeNewsletter(token: string) {
 
 export class OrderError extends Error {}
 
-function browserApiUrl() {
+export function browserApiUrl() {
   // Localhost is only a development default; production builds must set NEXT_PUBLIC_API_URL.
   const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? (process.env.NODE_ENV === "production" ? "" : "http://localhost:4000")).replace(/\/$/, "")
   if (!apiUrl) throw new OrderError("Order service is not configured")

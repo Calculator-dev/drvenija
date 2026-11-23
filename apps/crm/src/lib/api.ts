@@ -2,6 +2,7 @@ import { dashboardView, inquiryRows, orderRows, productRows, type AdminDashboard
 import { apiUrl as API_URL, supabase } from "./auth"
 import type { AdminDiscount, AdminReview, DiscountInput, NewsletterSubscriber, ReviewStatus } from "./marketing"
 import type { ShowroomInput, ShowroomSettings } from "./showroom"
+import type { AdminLevhaAyah, AdminLevhaRequest, AdminLevhaRequestDetail, LevhaAyahInput, LevhaPricing, LevhaRequestUpdate } from "./levha"
 
 export class ApiError extends Error {
   constructor(message: string, readonly status: number) {
@@ -119,6 +120,33 @@ export function getShowroom() {
 }
 export function saveShowroom(body: ShowroomInput) {
   return fetchJson<{ ok: true }>("/admin/showroom", { method: "PUT", body })
+}
+
+export function getLevhaPricing() {
+  return fetchJson<{ pricing: LevhaPricing }>("/admin/levha/settings").then(result => result.pricing)
+}
+export function saveLevhaPricing(body: LevhaPricing) {
+  return fetchJson<{ pricing: LevhaPricing }>("/admin/levha/settings", { method: "PUT", body }).then(result => result.pricing)
+}
+
+export function getLevhaAyahs() {
+  return fetchJson<AdminLevhaAyah[]>("/admin/levha/ayahs")
+}
+/** The response has no `image`; the list is reloaded after saving. */
+export function saveLevhaAyah(id: string | undefined, body: LevhaAyahInput) {
+  return id
+    ? fetchJson<Omit<AdminLevhaAyah, "image">>(`/admin/levha/ayahs/${encodeURIComponent(id)}`, { method: "PUT", body })
+    : fetchJson<Omit<AdminLevhaAyah, "image">>("/admin/levha/ayahs", { method: "POST", body })
+}
+
+export function getLevhaRequests() {
+  return fetchJson<AdminLevhaRequest[]>("/admin/levha/requests")
+}
+export function getLevhaRequest(id: string) {
+  return fetchJson<AdminLevhaRequestDetail>(`/admin/levha/requests/${encodeURIComponent(id)}`)
+}
+export function updateLevhaRequest(id: string, body: LevhaRequestUpdate) {
+  return fetchJson<AdminLevhaRequestDetail>(`/admin/levha/requests/${encodeURIComponent(id)}`, { method: "PUT", body })
 }
 
 export async function uploadProductImage(file: File): Promise<import("./admin-data").ProductImage> {

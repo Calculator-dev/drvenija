@@ -11,6 +11,7 @@ import { discountFor, discountProblem, normalizeCode, orderTotals } from "../lib
 import { publicVariants } from "../lib/variants.js"
 import { publicInquiryRoutes } from "./inquiries.js"
 import { publicCustomerRoutes } from "./customer.js"
+import { publicLevhaRoutes } from "./levha.js"
 import { publicFormRateLimit } from "../lib/rate-limits.js"
 
 const localeSchema = z.enum(["bs", "en"]).default("bs")
@@ -24,6 +25,7 @@ export function createOrderNumber(now = new Date()) {
 export const publicRoutes: FastifyPluginAsync = async (app) => {
   app.register(publicInquiryRoutes)
   app.register(publicCustomerRoutes)
+  app.register(publicLevhaRoutes)
   const variantsFor = async (ids: string[]) => {
     if (ids.length === 0) return new Map<string, Array<typeof productVariants.$inferSelect>>()
     const rows = await db.select().from(productVariants).where(inArray(productVariants.productId, ids))
@@ -42,7 +44,7 @@ export const publicRoutes: FastifyPluginAsync = async (app) => {
   })
   app.get("/media/:id", async (request, reply) => {
     const { id } = z.object({ id: z.string().uuid() }).parse(request.params)
-    const [asset] = await db.select().from(mediaAssets).where(and(eq(mediaAssets.id, id), or(isNotNull(mediaAssets.productId), eq(mediaAssets.kind, "showroom")))).limit(1)
+    const [asset] = await db.select().from(mediaAssets).where(and(eq(mediaAssets.id, id), or(isNotNull(mediaAssets.productId), inArray(mediaAssets.kind, ["showroom", "calligraphy"])))).limit(1)
     if (!asset) return reply.code(404).send({ message: "Image not found" })
     reply.header("Cache-Control", "no-store")
     return reply.redirect(await imageUrl(asset.storageKey))

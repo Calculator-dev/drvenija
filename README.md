@@ -177,6 +177,32 @@ The storefront's custom-work form saves inquiries through `POST /public/inquirie
 They appear under **Upiti** in the CRM. Set `INQUIRY_NOTIFY_EMAIL` to also email each
 inquiry to the shop (reply-to is the customer's address).
 
+## Custom levha ("Napravi levhu")
+
+`/levha` lets customers design a calligraphy panel step by step — frame (black, wood, white),
+size (standard sizes or their own, at least 40 × 40 cm), background (plywood: black, white,
+wood; plexiglass: black, gold mirror, gray mirror), letters (plywood, raw MDF or plexiglass)
+and the text (a predefined text, or their own ayah and which part of it). The levha is drawn
+live at real size on the showroom wall, layer by layer. Letters cannot be the same colour as
+the background. After the last step the price is shown and the customer sends the levha with
+their contact details; the shop and the customer get an email.
+
+In the CRM under **Levhe**:
+
+- **Cijene**: a base price per standard size, a price per m² for custom sizes up to the
+  largest standard size (larger is "na upit") and percentage surcharges for plexiglass. The
+  starting values give 100 KM for an 80 × 40 levha with a black frame, black plywood and gold
+  plexiglass letters. The API recalculates every price; the webshop only displays it.
+- **Tekstovi**: the texts customers can choose. Upload each one's calligraphy as a PNG/WebP on
+  a transparent background (exported from the CNC file); the preview fills its shapes with the
+  chosen letter material. Without it the preview sets the Arabic text in a calligraphic font.
+  Migration `0011_levha` adds five starter texts.
+- **Zahtjevi**: incoming levhas with every choice, the price shown to the customer, status and
+  an internal note.
+
+Material textures are in `apps/storefront/public/images/levha/`; replace them with photos of
+the real materials (seamless, about 512 px) to make the preview more faithful.
+
 ## Showroom
 
 `/showroom` (and "Na vašem zidu" on every product page) shows products on a living-room

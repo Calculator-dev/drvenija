@@ -22,6 +22,8 @@ export type AdminDashboard = {
     inquiriesLast30Days: number;
     productsActive: number;
     reviewsPending: number;
+    /** Custom levha requests not yet handled; older API versions omit it. */
+    levhaRequestsNew?: number;
   };
   recentOrders: AdminOrder[];
 };
@@ -120,6 +122,11 @@ export function dashboardView(data: AdminDashboard) {
         label: "Recenzije na čekanju",
         value: String(data.totals.reviewsPending ?? 0),
         href: "/reviews",
+      },
+      {
+        label: "Nove levhe",
+        value: String(data.totals.levhaRequestsNew ?? 0),
+        href: "/levha",
       },
     ] as Array<{ label: string; value: string; href?: string }>,
     recentOrders: orderRows(data.recentOrders),

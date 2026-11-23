@@ -28,7 +28,8 @@
     "success": "Narudžba zaprimljena | Drvenija",
     "wishlist": "Sačuvano | Drvenija",
     "order": "Status narudžbe | Drvenija",
-    "showroom": "Showroom | Drvenija"
+    "showroom": "Showroom | Drvenija",
+    "levha": "Napravi svoju levhu | Drvenija"
   },
   "notFound": {
     "title": "Stranica nije pronađena",
@@ -50,7 +51,8 @@
       "customizable": "Personalizirani proizvodi",
       "customWork": "Custom izrada",
       "about": "O nama",
-      "showroom": "Showroom"
+      "showroom": "Showroom",
+      "levha": "Napravi levhu"
     },
     "tagline": "Pleksiglas, mediapan, pokloni i poslovni natpisi izrađeni u Sarajevu.",
     "searchLabel": "Pretraži proizvode",
@@ -633,5 +635,97 @@
     "customColour": "Odaberite bilo koju boju",
     "hexLabel": "Kod boje (npr. #E8D9C0)",
     "customHint": "Ne vidite svoju boju? Odaberite bilo koju u krugu u bojama ili upišite kod boje."
+  },
+  "levha": {
+    "metaTitle": "Napravi svoju levhu | Drvenija",
+    "eyebrow": "Levha po mjeri",
+    "title": "Napravi svoju levhu",
+    "description": "Odaberite okvir, dimenzije, pozadinu, slova i tekst — i odmah vidite kako levha izgleda na zidu dnevne sobe, u stvarnoj veličini.",
+    "unavailable": "Izrada levhe po mjeri trenutno nije dostupna. Pokušajte ponovo uskoro.",
+    "steps": {
+      "frame": "Okvir",
+      "size": "Dimenzije",
+      "background": "Pozadina",
+      "letters": "Slova",
+      "text": "Tekst",
+      "order": "Cijena i narudžba"
+    },
+    "frames": {
+      "black": "Crni",
+      "wood": "Drveni",
+      "white": "Bijeli"
+    },
+    "materials": {
+      "plywood": "Šperploča",
+      "plexiglass": "Pleksiglas",
+      "mdf": "MDF"
+    },
+    "colours": {
+      "black": "Crna",
+      "white": "Bijela",
+      "wood": "Drvo",
+      "gold": "Zlatno ogledalo",
+      "gray": "Sivo ogledalo",
+      "raw": "Prirodni"
+    },
+    "customSize": "Vlastita dimenzija",
+    "width": "Širina",
+    "height": "Visina",
+    "customSizeHint": "Najmanje {width} × {height} cm. Za vlastitu dimenziju prvo provjeravamo izradu, pa vam javljamo cijenu.",
+    "sameColour": "Ista boja kao pozadina",
+    "locked": "Prvo završite prethodni korak",
+    "chooseText": "Ajet ili natpis",
+    "chooseTextPlaceholder": "Odaberite tekst…",
+    "ownTextOption": "Moj tekst (vlastiti ajet ili natpis)",
+    "ownText": "Vlastiti tekst",
+    "ownTextLabel": "Koji ajet ili tekst želite?",
+    "ownTextPlaceholder": "Npr. Ajetul-kursija, sura Al-Baqara 255, ili upišite tekst na arapskom",
+    "ownPartLabel": "Koji dio teksta? (opcionalno)",
+    "ownPartPlaceholder": "Npr. samo prvi red, ili cijeli ajet",
+    "ownTextNote": "Pregledat ćemo vaš tekst i javiti vam se da li ga možemo izraditi i kako će izgledati.",
+    "customPlaceholderPreview": "بسم الله",
+    "previewAlt": "Dnevna soba s vašom levhom na zidu",
+    "previewEmpty": "Odaberite okvir da počnete",
+    "previewNote": "Levha je prikazana u stvarnoj veličini. Boje i materijali na ekranu su orijentacioni.",
+    "price": "Cijena",
+    "priceOnRequest": "Na upit",
+    "priceNote": "Cijena uključuje okvir, pozadinu i slova. Prije izrade vam šaljemo potvrdu.",
+    "form": {
+      "name": "Ime i prezime",
+      "phone": "Telefon",
+      "notes": "Napomena",
+      "notesPlaceholder": "Rok, posveta, način montaže…",
+      "submit": "Pošalji levhu",
+      "sending": "Slanje…",
+      "error": "Levha nije poslana. Pokušajte ponovo.",
+      "submitRequest": "Pošalji upit"
+    },
+    "doneTitle": "Hvala! Primili smo vašu levhu.",
+    "doneText": "Broj vaše levhe je {number}. Javit ćemo vam se {channel} s potvrdom i rokom izrade.",
+    "backToShop": "Nazad u shop",
+    "subtitle": {
+      "title": "Tekst ispod ajeta",
+      "none": "Bez teksta",
+      "translation": "Prijevod ajeta",
+      "custom": "Vlastiti tekst",
+      "label": "Tekst ispod",
+      "placeholder": "Npr. Porodica Hodžić",
+      "summary": "Tekst ispod"
+    },
+    "requestTitle": "Upit za levhu",
+    "requestNote": "Za vlastitu dimenziju ili vlastiti tekst prvo provjeravamo da li se levha može izraditi. Javit ćemo vam se s cijenom i rokom — ništa ne plaćate dok ne potvrdite.",
+    "doneRequestTitle": "Hvala! Primili smo vaš upit.",
+    "doneRequestText": "Broj upita je {number}. Provjerit ćemo da li se levha može izraditi i javiti vam se {channel} s cijenom.",
+    "contact": {
+      "title": "Kako da vas kontaktiramo?",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "viber": "Viber",
+      "phoneFor": "Broj za {app}",
+      "phoneHint": "S pozivnim brojem, npr. +387 61 234 567",
+      "channelEmail": "emailom",
+      "channelWhatsapp": "na WhatsApp",
+      "channelViber": "na Viber"
+    }
   }
 }

@@ -1,0 +1,47 @@
+# Render Blueprint for the API (free plan). In Render: New → Blueprint → pick this repository.
+# Values marked `sync: false` are asked for when the Blueprint is created (same as apps/api/.env).
+services:
+  - type: web
+    name: drvenija-api
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install -g pnpm@10 && pnpm install --frozen-lockfile && pnpm --filter @drvenija/api build
+    startCommand: node apps/api/dist/server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      # Render sits behind a proxy; rate limits must use the client's IP.
+      - key: TRUST_PROXY
+        value: "true"
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: STOREFRONT_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: BACKBLAZE_ENDPOINT
+        sync: false
+      - key: BACKBLAZE_REGION
+        sync: false
+      - key: BACKBLAZE_KEY_ID
+        sync: false
+      - key: BACKBLAZE_APP_KEY
+        sync: false
+      - key: BACKBLAZE_BUCKET_NAME
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: ORDER_EMAIL_FROM
+        sync: false
+      - key: INQUIRY_NOTIFY_EMAIL
+        sync: false
