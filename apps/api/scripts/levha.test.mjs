@@ -39,6 +39,16 @@ test('configuration: same-colour letters are blocked and exactly one text is req
   assert.equal(levhaConfiguration.safeParse({ ...base, frame: 'gold' }).success, false)
 })
 
+test('text under the ayah: none by default, a translation needs a listed text, own text is limited', () => {
+  assert.deepEqual(levhaConfiguration.parse(base).subtitle, { kind: 'none' })
+  assert.equal(levhaConfiguration.safeParse({ ...base, subtitle: { kind: 'translation' } }).success, true)
+  const own = { ...base, ayahId: null, customAyah: { text: 'Er-Rahman 13' } }
+  assert.equal(levhaConfiguration.safeParse({ ...own, subtitle: { kind: 'translation' } }).success, false)
+  assert.equal(levhaConfiguration.safeParse({ ...own, subtitle: { kind: 'custom', text: 'Pa, koju blagodat Gospodara svoga poričete?' } }).success, true)
+  assert.equal(levhaConfiguration.safeParse({ ...base, subtitle: { kind: 'custom', text: '' } }).success, false)
+  assert.equal(levhaConfiguration.safeParse({ ...base, subtitle: { kind: 'custom', text: 'x'.repeat(151) } }).success, false)
+})
+
 test('price settings validation and request numbers', () => {
   assert.equal(levhaPricingInput.safeParse(pricing).success, true)
   assert.equal(levhaPricingInput.safeParse({ ...pricing, sizes: [...pricing.sizes, pricing.sizes[0]] }).success, false)
@@ -47,10 +57,10 @@ test('price settings validation and request numbers', () => {
 })
 
 test('email summary lists every choice and the custom text', () => {
-  const rows = levhaSummary({ configuration: { ...base, ayahId: null, customAyah: { text: 'Ajetul-kursija', part: 'prvi dio' } }, ayahName: null, price: null }, 'bs')
+  const rows = levhaSummary({ configuration: { ...base, ayahId: null, customAyah: { text: 'Ajetul-kursija', part: 'prvi dio' } }, ayahName: null, subtitleText: 'Moja porodica', price: null }, 'bs')
   assert.deepEqual(rows, [
     ['Okvir', 'Crni'], ['Dimenzije', '80 × 40 cm'], ['Pozadina', 'šperploča, crna'], ['Slova', 'pleksiglas, zlatno ogledalo'],
-    ['Vlastiti tekst', 'Ajetul-kursija'], ['Dio teksta', 'prvi dio'], ['Cijena', 'na upit'],
+    ['Vlastiti tekst', 'Ajetul-kursija'], ['Dio teksta', 'prvi dio'], ['Tekst ispod', 'Moja porodica'], ['Cijena', 'na upit'],
   ])
 })
 
@@ -60,7 +70,7 @@ test('POST /public/levha-requests prices on the server and refuses unknown texts
   const { levhaAyahs, levhaRequests, levhaSettings } = await import('../dist/db/schema.js')
   const app = createApp()
   const original = { select: db.select, insert: db.insert }
-  let ayahs = [{ id: ayahId, active: true, name: { bs: 'Bismillah', en: 'Bismillah' } }]
+  let ayahs = [{ id: ayahId, active: true, name: { bs: 'Bismillah', en: 'Bismillah' }, translation: { bs: 'U ime Allaha, Milostivog, Samilosnog', en: 'In the name of Allah' } }]
   const inserted = []
   db.select = () => ({ from: table => ({ where: () => ({ limit: async () => table === levhaAyahs ? ayahs : table === levhaSettings ? [] : [] }) }) })
   db.insert = table => ({ values: values => ({ onConflictDoNothing: () => ({ returning: async () => { if (table === levhaRequests) inserted.push(values); return [{ id: 'request-id', number: values.number }] } }) }) })
@@ -73,6 +83,13 @@ test('POST /public/levha-requests prices on the server and refuses unknown texts
     assert.equal(ok.json().price, 100)
     assert.equal(inserted[0].price, 100)
     assert.equal(inserted[0].ayahName, 'Bismillah')
+    // The translation is looked up on the server in the request's language.
+    await app.inject({ method: 'POST', url: '/public/levha-requests', payload: { ...body, locale: 'en', configuration: { ...base, subtitle: { kind: 'translation' } } } })
+    assert.equal(inserted.at(-1).subtitleText, 'In the name of Allah')
+    ayahs = [{ ...ayahs[0], translation: null }]
+    assert.equal((await app.inject({ method: 'POST', url: '/public/levha-requests', payload: { ...body, configuration: { ...base, subtitle: { kind: 'translation' } } } })).statusCode, 400)
+    ayahs = [{ ...ayahs[0], translation: { bs: 'U ime Allaha', en: 'In the name of Allah' } }]
+    inserted.length = 1
     const tooSmall = await app.inject({ method: 'POST', url: '/public/levha-requests', payload: { ...body, configuration: { ...base, size: { width: 30, height: 40 } } } })
     assert.equal(tooSmall.statusCode, 400, 'smaller than the 40 × 40 minimum is refused')
     assert.equal(inserted.length, 1)

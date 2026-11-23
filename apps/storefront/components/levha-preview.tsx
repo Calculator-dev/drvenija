@@ -13,7 +13,7 @@ export type PreviewText = { arabic: string; image: { url: string } | null }
  * The levha on the showroom wall at real size, built in layers as the customer chooses:
  * frame → size → background → letters. Nothing chosen yet shows the empty room.
  */
-export function LevhaPreview({ config, wall, frame, size, background, letters, text }: {
+export function LevhaPreview({ config, wall, frame, size, background, letters, text, subtitle = null }: {
   config: ShowroomConfig
   wall: WallColour
   frame: FrameColour | null
@@ -21,6 +21,8 @@ export function LevhaPreview({ config, wall, frame, size, background, letters, t
   background: Background | null
   letters: Letters | null
   text: PreviewText | null
+  /** Line under the ayah (translation or the customer's own), drawn in a script font. */
+  subtitle?: string | null
 }) {
   const t = useTranslations("levha")
   const placement = productPlacement(config, size.width / size.height, { width: size.width, height: size.height })
@@ -45,14 +47,14 @@ export function LevhaPreview({ config, wall, frame, size, background, letters, t
           >
             <div
               className="relative h-full w-full overflow-hidden"
-              style={{ ...(background ? finish("background", background.colour, background.material) : {}), boxShadow: "inset 0 2px 5px rgba(0,0,0,0.45)" }}
+              style={{ ...(background ? finish("background", background.colour, background.material) : {}), boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 2px 5px rgba(0,0,0,0.55)" }}
             >
               {background?.material === "plexiglass" && (
                 // A soft diagonal reflection on glossy plexiglass.
                 <span aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,transparent_30%,rgba(255,255,255,0.14)_42%,transparent_55%)]" />
               )}
               {letters && text && (
-                <div className="absolute inset-[9%]" style={{ filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.55)) drop-shadow(0 3px 3px rgba(0,0,0,0.28))" }}>
+                <div className={subtitle ? "absolute inset-x-[9%] bottom-[30%] top-[9%]" : "absolute inset-[9%]"} style={{ filter: raised }}>
                   {text.image ? (
                     <div
                       className="h-full w-full"
@@ -68,6 +70,11 @@ export function LevhaPreview({ config, wall, frame, size, background, letters, t
                   )}
                 </div>
               )}
+              {letters && subtitle && (
+                <div className="absolute inset-x-[12%] bottom-[9%] h-[15%]" style={{ filter: raised }}>
+                  <FitText text={subtitle} style={finish("letters", letters.colour, letters.material)} script="latin" />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -78,12 +85,20 @@ export function LevhaPreview({ config, wall, frame, size, background, letters, t
   )
 }
 
-/** Arabic text, filled with the letter material, scaled to fill its box (one or two lines). */
-function FitText({ text, style }: { text: string; style: React.CSSProperties }) {
+// Letters stand off the panel: a tight shadow for the edge and a softer one for depth.
+const raised = "drop-shadow(0 1px 1px rgba(0,0,0,0.55)) drop-shadow(0 3px 3px rgba(0,0,0,0.28))"
+
+/**
+ * Text filled with the letter material, scaled to fill its box. Arabic is set right-to-left
+ * in a calligraphic font on one or two lines; the line under the ayah in a script font.
+ */
+function FitText({ text, style, script = "arabic" }: { text: string; style: React.CSSProperties; script?: "arabic" | "latin" }) {
   const box = useRef<HTMLDivElement | null>(null)
   const measure = useRef<HTMLDivElement | null>(null)
   const [fontSize, setFontSize] = useState(0)
-  const lines = splitLines(text)
+  const lines = script === "arabic" ? splitLines(text) : [text.trim()]
+  const font = script === "arabic" ? "font-arabic leading-[1.35]" : "font-script leading-[1.3]"
+  const dir = script === "arabic" ? "rtl" : "ltr"
 
   const fit = () => {
     const outer = box.current
@@ -104,11 +119,11 @@ function FitText({ text, style }: { text: string; style: React.CSSProperties }) 
   const content = lines.map((line, index) => <span key={index} className="block">{line}</span>)
   return (
     <div ref={box} className="relative flex h-full w-full items-center justify-center">
-      <div ref={measure} aria-hidden dir="rtl" className="pointer-events-none invisible absolute whitespace-nowrap font-arabic leading-[1.35]" style={{ fontSize: 100 }}>{content}</div>
+      <div ref={measure} aria-hidden dir={dir} className={`pointer-events-none invisible absolute whitespace-nowrap ${font}`} style={{ fontSize: 100 }}>{content}</div>
       <div
-        dir="rtl"
-        lang="ar"
-        className="whitespace-nowrap text-center font-arabic leading-[1.35] text-transparent"
+        dir={dir}
+        lang={script === "arabic" ? "ar" : undefined}
+        className={`whitespace-nowrap text-center text-transparent ${font}`}
         style={{ ...style, fontSize, WebkitBackgroundClip: "text", backgroundClip: "text" }}
       >
         {content}

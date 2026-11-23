@@ -29,7 +29,7 @@ export async function publicLevha() {
     ayahs: ayahs.map(ayah => {
       const image = images.find(item => item.id === ayah.imageId)
       return {
-        id: ayah.id, name: ayah.name, arabic: ayah.arabic,
+        id: ayah.id, name: ayah.name, arabic: ayah.arabic, translation: ayah.translation,
         image: image ? { id: image.id, url: `/public/media/${image.id}`, width: image.width, height: image.height } : null,
       }
     }),
@@ -52,10 +52,15 @@ export const publicLevhaRoutes: FastifyPluginAsync = async app => {
     const input = levhaRequestInput.parse(request.body)
     const { configuration } = input
     let ayahName: string | null = null
+    let subtitleText: string | null = configuration.subtitle.kind === "custom" ? configuration.subtitle.text : null
     if (configuration.ayahId) {
       const [ayah] = await db.select().from(levhaAyahs).where(eq(levhaAyahs.id, configuration.ayahId)).limit(1)
       if (!ayah || !ayah.active) return reply.code(400).send({ message: "This text is no longer available" })
       ayahName = ayah.name[input.locale] || ayah.name.bs
+      if (configuration.subtitle.kind === "translation") {
+        subtitleText = ayah.translation?.[input.locale] || ayah.translation?.bs || null
+        if (!subtitleText) return reply.code(400).send({ message: "This text has no translation" })
+      }
     }
     // The price is always worked out here, from the saved prices.
     const pricing = await getLevhaPricing()
@@ -65,12 +70,12 @@ export const publicLevhaRoutes: FastifyPluginAsync = async app => {
     let saved: { id: string; number: string } | undefined
     for (let attempt = 0; attempt < 3 && !saved; attempt++) {
       [saved] = await db.insert(levhaRequests).values({
-        number: createLevhaNumber(), locale: input.locale, configuration, ayahName, price,
+        number: createLevhaNumber(), locale: input.locale, configuration, ayahName, subtitleText, price,
         fullName: input.customer.fullName, email: input.customer.email, phone: input.customer.phone, notes: input.notes,
       }).onConflictDoNothing({ target: levhaRequests.number }).returning({ id: levhaRequests.id, number: levhaRequests.number })
     }
     if (!saved) throw new Error("Could not allocate a levha request number")
-    const notification = await sendLevhaRequestEmails({ number: saved.number, locale: input.locale, configuration, ayahName, price, customer: input.customer, notes: input.notes })
+    const notification = await sendLevhaRequestEmails({ number: saved.number, locale: input.locale, configuration, ayahName, subtitleText, price, customer: input.customer, notes: input.notes })
     return reply.code(201).send({ ok: true, number: saved.number, price, notification })
   })
 }
@@ -78,6 +83,8 @@ export const publicLevhaRoutes: FastifyPluginAsync = async app => {
 const ayahInput = z.object({
   name: z.object({ bs: z.string().trim().min(1).max(160), en: z.string().trim().max(160).default("") }).strict(),
   arabic: z.string().trim().min(1).max(5000),
+  // Leave both empty for no translation.
+  translation: z.object({ bs: z.string().trim().max(300), en: z.string().trim().max(300) }).strict().nullable().default(null),
   // A freshly uploaded image (POST /admin/media) or the current one; null removes it.
   imageId: z.string().uuid().nullable(),
   imageAlt: text300.optional(),
@@ -118,7 +125,10 @@ export const adminLevhaRoutes: FastifyPluginAsync = async app => {
       // A replaced image becomes an ordinary unlinked upload, so the media cleanup removes it.
       if (current?.imageId && current.imageId !== input.imageId)
         await tx.update(mediaAssets).set({ kind: "gallery" }).where(eq(mediaAssets.id, current.imageId))
-      const values = { name: { bs: input.name.bs, en: input.name.en || input.name.bs }, arabic: input.arabic, imageId: input.imageId, active: input.active, sortOrder: input.sortOrder, updatedAt: new Date() }
+      const translation = input.translation && (input.translation.bs || input.translation.en)
+        ? { bs: input.translation.bs || input.translation.en, en: input.translation.en || input.translation.bs }
+        : null
+      const values = { name: { bs: input.name.bs, en: input.name.en || input.name.bs }, arabic: input.arabic, translation, imageId: input.imageId, active: input.active, sortOrder: input.sortOrder, updatedAt: new Date() }
       const [saved] = id
         ? await tx.update(levhaAyahs).set(values).where(eq(levhaAyahs.id, id)).returning()
         : await tx.insert(levhaAyahs).values(values).returning()
@@ -130,7 +140,7 @@ export const adminLevhaRoutes: FastifyPluginAsync = async app => {
   app.put("/levha/ayahs/:id", async request => saveAyah(ayahInput.parse(request.body), params.parse(request.params).id))
 
   app.get("/levha/requests", async () => db
-    .select({ id: levhaRequests.id, number: levhaRequests.number, fullName: levhaRequests.fullName, price: levhaRequests.price, status: levhaRequests.status, ayahName: levhaRequests.ayahName, configuration: levhaRequests.configuration, createdAt: levhaRequests.createdAt })
+    .select({ id: levhaRequests.id, number: levhaRequests.number, fullName: levhaRequests.fullName, price: levhaRequests.price, status: levhaRequests.status, ayahName: levhaRequests.ayahName, subtitleText: levhaRequests.subtitleText, configuration: levhaRequests.configuration, createdAt: levhaRequests.createdAt })
     .from(levhaRequests).orderBy(desc(levhaRequests.createdAt)))
 
   app.get("/levha/requests/:id", async (request, reply) => {

@@ -703,6 +703,15 @@
     },
     "doneTitle": "Hvala! Primili smo vašu levhu.",
     "doneText": "Broj vaše levhe je {number}. Poslali smo vam potvrdu emailom i javit ćemo vam se s rokom izrade.",
-    "backToShop": "Nazad u shop"
+    "backToShop": "Nazad u shop",
+    "subtitle": {
+      "title": "Tekst ispod ajeta",
+      "none": "Bez teksta",
+      "translation": "Prijevod ajeta",
+      "custom": "Vlastiti tekst",
+      "label": "Tekst ispod",
+      "placeholder": "Npr. Porodica Hodžić",
+      "summary": "Tekst ispod"
+    }
   }
 }

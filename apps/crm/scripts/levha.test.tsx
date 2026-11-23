@@ -33,6 +33,7 @@ const ayah: AdminLevhaAyah = {
   id: '3c1d1f4e-6a0b-4b8e-9f1a-2d3c4b5a6e7f',
   name: { bs: 'Bismillah', en: 'Basmala' },
   arabic,
+  translation: null,
   imageId: '9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d',
   image: { id: '9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d', url: 'https://example.com/bismillah.png', width: 1200, height: 400 },
   active: true,
@@ -59,6 +60,7 @@ const requests: AdminLevhaRequest[] = [
     price: 100,
     status: 'contacted',
     ayahName: 'Bismillah',
+    subtitleText: 'Porodica Hodžić',
     configuration: { frame: 'black', size: { width: 80, height: 40 }, background: { material: 'plywood', colour: 'black' }, letters: { material: 'plexiglass', colour: 'gold' }, ayahId: ayah.id, customAyah: null },
     createdAt: '2026-11-20T10:00:00.000Z',
   },
@@ -69,6 +71,7 @@ const requests: AdminLevhaRequest[] = [
     price: null,
     status: 'new',
     ayahName: null,
+    subtitleText: null,
     configuration: { frame: 'wood', size: { width: 150, height: 80 }, background: { material: 'plexiglass', colour: 'gray' }, letters: { material: 'mdf', colour: 'raw' }, ayahId: null, customAyah: { text: `${arabic}\nالْحَمْدُ لِلَّهِ`, part: 'Samo prvi red' } },
     createdAt: '2026-11-22T10:00:00.000Z',
   },
@@ -177,15 +180,17 @@ test('obrazac teksta gradi tijelo zahtjeva i provjerava polja', () => {
   assert.equal(draft.nameEn, 'Basmala')
   assert.equal(draft.sortOrder, '2')
   assert.equal(ayahDraft(hiddenAyah).nameEn, '', 'engleski naziv jednak bosanskom se prikazuje prazan')
-  assert.deepEqual(ayahDraft(undefined, 7), { nameBs: '', nameEn: '', arabic: '', image: null, imageAlt: '', sortOrder: '7', active: true })
+  assert.deepEqual(ayahDraft(undefined, 7), { nameBs: '', nameEn: '', arabic: '', translationBs: '', translationEn: '', image: null, imageAlt: '', sortOrder: '7', active: true })
   assert.deepEqual(ayahPayload({ ...draft, nameBs: ' Bismillah ', imageAlt: ' Kaligrafija ' }), {
-    body: { name: { bs: 'Bismillah', en: 'Basmala' }, arabic, imageId: ayah.imageId, imageAlt: 'Kaligrafija', active: true, sortOrder: 2 },
+    body: { name: { bs: 'Bismillah', en: 'Basmala' }, arabic, translation: null, imageId: ayah.imageId, imageAlt: 'Kaligrafija', active: true, sortOrder: 2 },
   })
   assert.equal('imageAlt' in (ayahPayload(draft).body ?? {}), false)
-  assert.deepEqual(ayahPayload({ ...draft, image: null, imageAlt: 'x', sortOrder: '' }).body, { name: { bs: 'Bismillah', en: 'Basmala' }, arabic, imageId: null, active: true, sortOrder: 0 })
+  assert.deepEqual(ayahPayload({ ...draft, image: null, imageAlt: 'x', sortOrder: '' }).body, { name: { bs: 'Bismillah', en: 'Basmala' }, arabic, translation: null, imageId: null, active: true, sortOrder: 0 })
   assert.deepEqual(ayahPayload({ ...draft, nameBs: ' ', arabic: '', sortOrder: '-1' }).errors, ['Unesite naziv na bosanskom.', 'Unesite tekst na arapskom.', 'Redoslijed mora biti cijeli broj, 0 ili više.'])
   assert.deepEqual(ayahPayload({ ...draft, nameBs: 'x'.repeat(161), nameEn: 'y'.repeat(161), arabic: 'ب'.repeat(5001), imageAlt: 'z'.repeat(301), sortOrder: '1.5' }).errors?.length, 5)
-  assert.deepEqual(ayahVisibilityBody(ayah, false), { name: ayah.name, arabic, imageId: ayah.imageId, active: false, sortOrder: 2 })
+  assert.deepEqual(ayahPayload({ ...draft, translationBs: ' U ime Allaha ', translationEn: '' }).body?.translation, { bs: 'U ime Allaha', en: 'U ime Allaha' })
+  assert.deepEqual(ayahPayload({ ...draft, translationBs: 'x'.repeat(151) }).errors, ['Prijevod može imati najviše 150 znakova.'])
+  assert.deepEqual(ayahVisibilityBody(ayah, false), { name: ayah.name, arabic, translation: null, imageId: ayah.imageId, active: false, sortOrder: 2 })
   assert.equal(nextSortOrder([]), 0)
   assert.equal(nextSortOrder([ayah, hiddenAyah]), 3)
   assert.deepEqual(ayahSortOrder([ayah, hiddenAyah]).map(item => item.sortOrder), [1, 2])

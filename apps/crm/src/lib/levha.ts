@@ -45,6 +45,8 @@ export type LevhaConfiguration = {
   letters: { material: LetterMaterial; colour: string }
   ayahId: string | null
   customAyah: { text: string; part?: string } | null
+  /** Line under the ayah. Older requests have none. */
+  subtitle?: { kind: "none" } | { kind: "translation" } | { kind: "custom"; text: string }
 }
 
 export type LevhaRequestStatus = "new" | "contacted" | "accepted" | "declined"
@@ -57,6 +59,8 @@ export type AdminLevhaRequest = {
   price: number | null
   status: LevhaRequestStatus
   ayahName: string | null
+  /** The exact text to cut under the ayah (translation or the customer's own), or null. */
+  subtitleText: string | null
   configuration: LevhaConfiguration
   createdAt: string
 }
@@ -78,6 +82,7 @@ export type AdminLevhaAyah = {
   id: string
   name: { bs: string; en: string }
   arabic: string
+  translation: { bs: string; en: string } | null
   imageId: string | null
   image: LevhaImage | null
   active: boolean
@@ -89,6 +94,7 @@ export type AdminLevhaAyah = {
 export type LevhaAyahInput = {
   name: { bs: string; en: string }
   arabic: string
+  translation: { bs: string; en: string } | null
   imageId: string | null
   imageAlt?: string
   active: boolean
@@ -326,6 +332,8 @@ export type AyahDraft = {
   nameBs: string
   nameEn: string
   arabic: string
+  translationBs: string
+  translationEn: string
   image: LevhaImage | null
   imageAlt: string
   sortOrder: string
@@ -342,6 +350,8 @@ export function ayahDraft(ayah?: AdminLevhaAyah, sortOrder = 0): AyahDraft {
     // The API copies the Bosnian name into an empty English one; show it empty again.
     nameEn: ayah && ayah.name.en !== ayah.name.bs ? ayah.name.en : "",
     arabic: ayah?.arabic ?? "",
+    translationBs: ayah?.translation?.bs ?? "",
+    translationEn: ayah?.translation?.en ?? "",
     image: ayah?.image ?? null,
     imageAlt: "",
     sortOrder: String(ayah?.sortOrder ?? sortOrder),
@@ -356,11 +366,14 @@ export function ayahPayload(draft: AyahDraft): { body: LevhaAyahInput; errors?: 
   const en = draft.nameEn.trim()
   const arabic = draft.arabic.trim()
   const alt = draft.imageAlt.trim()
+  const translationBs = draft.translationBs.trim()
+  const translationEn = draft.translationEn.trim()
   if (!bs) errors.push("Unesite naziv na bosanskom.")
   else if (bs.length > 160) errors.push("Naziv na bosanskom može imati najviše 160 znakova.")
   if (en.length > 160) errors.push("Naziv na engleskom može imati najviše 160 znakova.")
   if (!arabic) errors.push("Unesite tekst na arapskom.")
   else if (arabic.length > 5000) errors.push("Tekst na arapskom može imati najviše 5000 znakova.")
+  if (translationBs.length > 150 || translationEn.length > 150) errors.push("Prijevod može imati najviše 150 znakova.")
   if (alt.length > 300) errors.push("Opis slike može imati najviše 300 znakova.")
   const sortOrder = draft.sortOrder.trim() === "" ? 0 : integer(draft.sortOrder)
   if (!within(sortOrder, 0, 100_000)) errors.push("Redoslijed mora biti cijeli broj, 0 ili više.")
@@ -369,6 +382,8 @@ export function ayahPayload(draft: AyahDraft): { body: LevhaAyahInput; errors?: 
     body: {
       name: { bs, en },
       arabic,
+      // The webshop falls back to Bosnian when there is no English translation.
+      translation: translationBs || translationEn ? { bs: translationBs || translationEn, en: translationEn || translationBs } : null,
       imageId: draft.image?.id ?? null,
       ...(draft.image && alt ? { imageAlt: alt } : {}),
       active: draft.active,
@@ -381,6 +396,7 @@ export function ayahPayload(draft: AyahDraft): { body: LevhaAyahInput; errors?: 
 export const ayahVisibilityBody = (ayah: AdminLevhaAyah, active: boolean): LevhaAyahInput => ({
   name: { bs: ayah.name.bs, en: ayah.name.en },
   arabic: ayah.arabic,
+  translation: ayah.translation,
   imageId: ayah.imageId,
   active,
   sortOrder: ayah.sortOrder,

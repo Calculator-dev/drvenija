@@ -160,6 +160,16 @@ function LevhaRequestDetails({ request, back }: { request: AdminLevhaRequestDeta
           </Card>
 
           <Card className="p-6">
+            <h2 className="font-serif text-2xl">Tekst ispod ajeta</h2>
+            {request.subtitleText
+              ? <>
+                  <p className="mt-2 text-xs text-muted-foreground">{configuration.subtitle?.kind === "translation" ? "Prijevod ajeta" : "Vlastiti tekst kupca"}</p>
+                  <p className="mt-3 whitespace-pre-wrap rounded-lg bg-muted/50 p-4 text-lg leading-7">{request.subtitleText}</p>
+                </>
+              : <p className="mt-4 text-sm text-muted-foreground">Bez teksta ispod.</p>}
+          </Card>
+
+          <Card className="p-6">
             <h2 className="font-serif text-2xl">Napomena kupca</h2>
             {request.notes ? <p className="mt-4 whitespace-pre-wrap text-sm leading-7">{request.notes}</p> : <p className="mt-4 text-sm text-muted-foreground">Kupac nije ostavio napomenu.</p>}
           </Card>

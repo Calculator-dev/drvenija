@@ -180,6 +180,7 @@ type LevhaEmail = {
   locale: "bs" | "en"
   configuration: import("../lib/levha.js").LevhaConfiguration
   ayahName: string | null
+  subtitleText?: string | null
   price: number | null
   customer: { fullName: string; email: string; phone?: string }
   notes?: string
@@ -190,18 +191,18 @@ const levhaLabels = {
     frame: { black: "Crni", wood: "Drveni", white: "Bijeli" },
     material: { plywood: "šperploča", plexiglass: "pleksiglas", mdf: "MDF" },
     colour: { black: "crna", white: "bijela", wood: "drvo", gold: "zlatno ogledalo", gray: "sivo ogledalo", raw: "prirodni" },
-    rows: { frame: "Okvir", size: "Dimenzije", background: "Pozadina", letters: "Slova", text: "Tekst", custom: "Vlastiti tekst", part: "Dio teksta", price: "Cijena", onRequest: "na upit", notes: "Napomena" },
+    rows: { frame: "Okvir", size: "Dimenzije", background: "Pozadina", letters: "Slova", text: "Tekst", custom: "Vlastiti tekst", part: "Dio teksta", subtitle: "Tekst ispod", price: "Cijena", onRequest: "na upit", notes: "Napomena" },
   },
   en: {
     frame: { black: "Black", wood: "Wood", white: "White" },
     material: { plywood: "plywood", plexiglass: "plexiglass", mdf: "MDF" },
     colour: { black: "black", white: "white", wood: "wood", gold: "gold mirror", gray: "gray mirror", raw: "natural" },
-    rows: { frame: "Frame", size: "Size", background: "Background", letters: "Letters", text: "Text", custom: "Own text", part: "Part of the text", price: "Price", onRequest: "on request", notes: "Notes" },
+    rows: { frame: "Frame", size: "Size", background: "Background", letters: "Letters", text: "Text", custom: "Own text", part: "Part of the text", subtitle: "Text below", price: "Price", onRequest: "on request", notes: "Notes" },
   },
 } as const
 
 /** The chosen options as table rows (label, value) in the given language. */
-export function levhaSummary(input: Pick<LevhaEmail, "configuration" | "ayahName" | "price" | "notes">, locale: "bs" | "en") {
+export function levhaSummary(input: Pick<LevhaEmail, "configuration" | "ayahName" | "subtitleText" | "price" | "notes">, locale: "bs" | "en") {
   const l = levhaLabels[locale]
   const { configuration: c } = input
   const rows: Array<[string, string]> = [
@@ -214,6 +215,7 @@ export function levhaSummary(input: Pick<LevhaEmail, "configuration" | "ayahName
     rows.push([l.rows.custom, c.customAyah.text])
     if (c.customAyah.part) rows.push([l.rows.part, c.customAyah.part])
   } else rows.push([l.rows.text, input.ayahName ?? ""])
+  if (input.subtitleText) rows.push([l.rows.subtitle, input.subtitleText])
   rows.push([l.rows.price, input.price === null ? l.rows.onRequest : `${input.price} KM`])
   if (input.notes) rows.push([l.rows.notes, input.notes])
   return rows

@@ -85,6 +85,13 @@
       "when": 1795416709477,
       "tag": "0011_levha",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1795418449514,
+      "tag": "0012_levha_subtitle",
+      "breakpoints": true
     }
   ]
 }

@@ -188,6 +188,12 @@ export function AyahForm({ ayah, sortOrder, onCancel, onSaved }: { ayah?: AdminL
               />
             </Field>
           </div>
+          <Field label="Prijevod na bosanskom" hint="Kupac ga može odabrati kao tekst ispod ajeta. Prazno: bez prijevoda.">
+            <Input value={draft.translationBs} maxLength={150} onChange={event => set({ translationBs: event.target.value })} />
+          </Field>
+          <Field label="Prijevod na engleskom" hint="Prazno: koristi se bosanski prijevod.">
+            <Input value={draft.translationEn} maxLength={150} onChange={event => set({ translationEn: event.target.value })} />
+          </Field>
           <Field label="Redoslijed" hint="Manji broj je prikazan prije u konfiguratoru.">
             <Input type="number" min={0} step={1} value={draft.sortOrder} onChange={event => set({ sortOrder: event.target.value })} />
           </Field>

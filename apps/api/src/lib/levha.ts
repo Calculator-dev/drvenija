@@ -89,6 +89,12 @@ export const levhaConfiguration = z.object({
   letters,
   // A predefined text, or the customer's own text and which part of it they want.
   ayahId: z.string().uuid().nullable(),
+  // Text under the ayah: none, the chosen text's translation, or the customer's own line.
+  subtitle: z.discriminatedUnion("kind", [
+    z.object({ kind: z.literal("none") }).strict(),
+    z.object({ kind: z.literal("translation") }).strict(),
+    z.object({ kind: z.literal("custom"), text: z.string().trim().min(1).max(150) }).strict(),
+  ]).default({ kind: "none" }),
   customAyah: z.object({
     text: z.string().trim().min(2).max(2000),
     part: z.string().trim().max(500).optional().transform(value => value || undefined),
@@ -96,6 +102,7 @@ export const levhaConfiguration = z.object({
 }).strict()
   .refine(value => (value.ayahId === null) !== (value.customAyah === null), { message: "Choose one text or describe your own", path: ["ayahId"] })
   .refine(value => !sameColour(value.background, value.letters), { message: "Letters cannot be the same colour as the background", path: ["letters"] })
+  .refine(value => value.subtitle.kind !== "translation" || value.ayahId !== null, { message: "A translation needs a text from the list", path: ["subtitle"] })
 
 export type LevhaConfiguration = z.infer<typeof levhaConfiguration>
 

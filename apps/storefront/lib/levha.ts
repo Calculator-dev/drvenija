@@ -26,7 +26,7 @@ export type LevhaPricing = {
   maxAutoHeight: number
 }
 
-export type LevhaAyah = { id: string; name: { bs: string; en: string }; arabic: string; image: { id: string; url: string; width: number; height: number } | null }
+export type LevhaAyah = { id: string; name: { bs: string; en: string }; arabic: string; translation: { bs: string; en: string } | null; image: { id: string; url: string; width: number; height: number } | null }
 export type LevhaCatalogue = { pricing: LevhaPricing; ayahs: LevhaAyah[] }
 
 /** Letters may not be the same colour as the background (e.g. black on black). */
@@ -52,7 +52,7 @@ export function levhaPrice(pricing: LevhaPricing, choice: { size: { width: numbe
 }
 
 /** Frame profile width in cm, used to draw the frame at real scale. */
-export const frameWidthCm = 3
+export const frameWidthCm = 2.5
 
 /**
  * How each finish is painted in the preview (CSS background). Wood, plywood and MDF use
@@ -62,11 +62,13 @@ export function finish(kind: "frame" | "background" | "letters", colour: FrameCo
   const texture = (file: string, size = "220px") => ({ backgroundImage: `url(/images/levha/${file}.webp)`, backgroundSize: size })
   if (colour === "wood") return kind === "frame" ? texture("wood-frame", "160px") : texture("plywood-wood", kind === "letters" ? "120px" : "260px")
   if (colour === "raw") return texture("mdf", "160px")
-  if (colour === "gold") return { backgroundImage: "linear-gradient(120deg, #7a5a18 0%, #d9b45a 18%, #fff1c2 30%, #c9a043 44%, #8a6a22 58%, #e6c773 74%, #a8832f 88%, #6e5115 100%)" }
+  // Gold mirror reads pale and bright, as on the real pieces.
+  if (colour === "gold") return { backgroundImage: "linear-gradient(115deg, #a8822e 0%, #f0d58e 18%, #fff7da 30%, #e3c470 44%, #b9913a 58%, #f3dc98 74%, #caa24c 88%, #94701f 100%)" }
   if (colour === "gray") return { backgroundImage: "linear-gradient(120deg, #4b4f55 0%, #b9bec5 18%, #f4f6f8 30%, #9ca2aa 44%, #5d6269 58%, #d3d7dc 74%, #868c94 88%, #44484e 100%)" }
   if (colour === "black") {
     if (material === "plexiglass") return { backgroundImage: "linear-gradient(125deg, #050506 0%, #1d1e22 35%, #3a3b40 42%, #121316 50%, #08080a 100%)" }
-    return kind === "frame" ? { backgroundImage: "linear-gradient(135deg, #2a2826, #151413)" } : texture("plywood-black", "200px")
+    // Black-stained wood frame and matte black plywood (texture from a real panel).
+    return kind === "frame" ? texture("wood-black", "160px") : texture("plywood-black", "260px")
   }
   // white
   return { backgroundImage: kind === "frame" ? "linear-gradient(135deg, #fbfaf7, #e4e1da)" : "linear-gradient(135deg, #f7f5f0, #e9e5dd)" }
@@ -79,6 +81,7 @@ export type LevhaConfiguration = {
   letters: Letters
   ayahId: string | null
   customAyah: { text: string; part?: string } | null
+  subtitle: { kind: "none" } | { kind: "translation" } | { kind: "custom"; text: string }
 }
 
 export async function submitLevhaRequest(input: { locale: Locale; configuration: LevhaConfiguration; customer: { fullName: string; email: string; phone?: string }; notes?: string }) {

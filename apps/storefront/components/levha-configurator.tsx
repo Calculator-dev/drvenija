@@ -8,7 +8,7 @@ import { LevhaPreview, type PreviewText } from "@/components/levha-preview"
 import { WallColourPicker } from "@/components/wall-colour-picker"
 import {
   backgroundOptions, finish, frameColours, letterOptions, levhaPrice, sameColour, submitLevhaRequest,
-  type Background, type BackgroundMaterial, type FrameColour, type LetterMaterial, type Letters, type LevhaCatalogue,
+  type Background, type BackgroundMaterial, type FrameColour, type LetterMaterial, type Letters, type LevhaCatalogue, type LevhaConfiguration,
 } from "@/lib/levha"
 import { buildPath, formatPrice, OrderError, type Locale } from "@/lib/products"
 import type { ShowroomConfig, WallColour } from "@/lib/showroom"
@@ -29,6 +29,8 @@ export function LevhaConfigurator({ locale, levha, showroom }: { locale: Locale;
   const [textChoice, setTextChoice] = useState<string>("")
   const [customText, setCustomText] = useState("")
   const [customPart, setCustomPart] = useState("")
+  const [subtitleKind, setSubtitleKind] = useState<"none" | "translation" | "custom">("none")
+  const [subtitleText, setSubtitleText] = useState("")
 
   if (!levha) {
     return <div className="mx-auto max-w-3xl px-4 py-24 text-center md:px-6"><h1 className="font-serif text-5xl">{t("title")}</h1><p className="mt-5 text-muted-foreground">{t("unavailable")}</p></div>
@@ -65,11 +67,18 @@ export function LevhaConfigurator({ locale, levha, showroom }: { locale: Locale;
     : isCustomText ? { arabic: customText.trim() || t("customPlaceholderPreview"), image: null }
     : ayahs[0] ? { arabic: ayahs[0].arabic, image: ayahs[0].image } : null
 
+  // The translation only exists for texts from the list that have one.
+  const translation = ayah?.translation ? ayah.translation[locale] || ayah.translation.bs : null
+  const subtitle: LevhaConfiguration["subtitle"] = subtitleKind === "translation" && translation ? { kind: "translation" }
+    : subtitleKind === "custom" && subtitleText.trim() ? { kind: "custom", text: subtitleText.trim() }
+    : { kind: "none" }
+  const previewSubtitle = subtitle.kind === "translation" ? translation : subtitle.kind === "custom" ? subtitle.text : null
+
   const steps = { frame: Boolean(frame), size: Boolean(size), background: Boolean(background), letters: Boolean(letters), text: textDone }
   const complete = Object.values(steps).every(Boolean)
   const price = complete && size && background && letters ? levhaPrice(pricing, { size, background, letters }) : null
 
-  const preview = <LevhaPreview config={showroom} wall={wall} frame={frame} size={previewSize} background={steps.size ? background : null} letters={steps.size ? letters : null} text={previewText} />
+  const preview = <LevhaPreview config={showroom} wall={wall} frame={frame} size={previewSize} background={steps.size ? background : null} letters={steps.size ? letters : null} text={previewText} subtitle={steps.letters ? previewSubtitle : null} />
 
   return (
     <div className="mx-auto max-w-375 px-4 pb-20 pt-8 md:px-6 md:pb-28 md:pt-10">
@@ -148,7 +157,7 @@ export function LevhaConfigurator({ locale, levha, showroom }: { locale: Locale;
             />
           </Step>
 
-          <Step number={5} title={t("steps.text")} done={steps.text} locked={!steps.letters} summary={ayah ? ayah.name[locale] || ayah.name.bs : isCustomText && textDone ? t("ownText") : undefined}>
+          <Step number={5} title={t("steps.text")} done={steps.text} locked={!steps.letters} summary={textDone ? `${ayah ? ayah.name[locale] || ayah.name.bs : t("ownText")}${subtitle.kind === "none" ? "" : ` · ${t("subtitle.summary")}`}` : undefined}>
             <label htmlFor="levha-text" className="block text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{t("chooseText")}</label>
             <select
               id="levha-text"
@@ -168,6 +177,23 @@ export function LevhaConfigurator({ locale, levha, showroom }: { locale: Locale;
                 <p className="text-xs leading-5 text-muted-foreground">{t("ownTextNote")}</p>
               </div>
             )}
+            {textDone && (
+              <div className="mt-6 border-t border-border pt-5">
+                <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{t("subtitle.title")}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Chip active={subtitle.kind === "none"} onClick={() => setSubtitleKind("none")}>{t("subtitle.none")}</Chip>
+                  {translation && <Chip active={subtitle.kind === "translation"} onClick={() => setSubtitleKind("translation")}>{t("subtitle.translation")}</Chip>}
+                  <Chip active={subtitleKind === "custom"} onClick={() => setSubtitleKind("custom")}>{t("subtitle.custom")}</Chip>
+                </div>
+                {subtitle.kind === "translation" && translation && <p className="mt-3 font-script text-2xl text-foreground/90">{translation}</p>}
+                {subtitleKind === "custom" && (
+                  <div className="mt-4">
+                    <TextArea id="levha-subtitle" label={t("subtitle.label")} value={subtitleText} onChange={value => setSubtitleText(value.slice(0, 150))} placeholder={t("subtitle.placeholder")} rows={2} />
+                    <p className="mt-1 text-right text-xs text-muted-foreground">{subtitleText.length}/150</p>
+                  </div>
+                )}
+              </div>
+            )}
           </Step>
 
           {complete && size && background && letters && frame && (
@@ -179,6 +205,7 @@ export function LevhaConfigurator({ locale, levha, showroom }: { locale: Locale;
                 frame, size, background, letters,
                 ayahId: ayah ? ayah.id : null,
                 customAyah: isCustomText ? { text: customText.trim(), ...(customPart.trim() ? { part: customPart.trim() } : {}) } : null,
+                subtitle,
               }}
             />
           )}

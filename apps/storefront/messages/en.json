@@ -703,6 +703,15 @@
     },
     "doneTitle": "Thank you! We received your levha.",
     "doneText": "Your levha number is {number}. We emailed you a confirmation and will get back to you with the production time.",
-    "backToShop": "Back to the shop"
+    "backToShop": "Back to the shop",
+    "subtitle": {
+      "title": "Text below the ayah",
+      "none": "No text",
+      "translation": "Ayah translation",
+      "custom": "Your own text",
+      "label": "Text below",
+      "placeholder": "E.g. The Hodžić family",
+      "summary": "Text below"
+    }
   }
 }

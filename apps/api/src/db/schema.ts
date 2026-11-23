@@ -317,6 +317,8 @@ export const levhaAyahs = pgTable("levha_ayahs", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: jsonb("name").$type<{ bs: string; en: string }>().notNull(),
   arabic: text("arabic").notNull(),
+  // Optional translation customers can put under the ayah.
+  translation: jsonb("translation").$type<{ bs: string; en: string }>(),
   // Calligraphy on a transparent background; without it the preview sets the Arabic text.
   imageId: uuid("image_id").references(() => mediaAssets.id, { onDelete: "set null" }),
   active: boolean("active").notNull().default(true),
@@ -348,6 +350,8 @@ export const levhaRequests = pgTable("levha_requests", {
   configuration: jsonb("configuration").$type<import("../lib/levha.js").LevhaConfiguration>().notNull(),
   // Text name at the time of the request, so renaming or removing a text keeps the request readable.
   ayahName: text("ayah_name"),
+  // The text under the ayah as it will be made (translation or the customer's own), if any.
+  subtitleText: text("subtitle_text"),
   // Whole KM shown to the customer; null when the size is priced on request.
   price: integer("price"),
   fullName: varchar("full_name", { length: 160 }).notNull(),
