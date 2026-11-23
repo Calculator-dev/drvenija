@@ -44,7 +44,7 @@ export function levhaPrice(pricing: LevhaPricing, choice: { size: { width: numbe
 }
 
 /** Frame profile width in cm, used to draw the frame at real scale. */
-export const frameWidthCm = 2.5
+export const frameWidthCm = 2
 
 /**
  * How each finish is painted in the preview (CSS background). Wood, plywood and MDF use
@@ -63,7 +63,7 @@ export function finish(kind: "frame" | "background" | "letters", colour: FrameCo
     return kind === "frame" ? frameFinish("black", "h") : texture("plywood-black", "260px")
   }
   // white
-  return { backgroundImage: kind === "frame" ? "linear-gradient(135deg, #fbfaf7, #e4e1da)" : "linear-gradient(135deg, #f7f5f0, #e9e5dd)" }
+  return kind === "frame" ? frameFinish("white", "h") : { backgroundImage: "linear-gradient(135deg, #f7f5f0, #e9e5dd)" }
 }
 
 /**
@@ -71,8 +71,8 @@ export function finish(kind: "frame" | "background" | "letters", colour: FrameCo
  * horizontal texture and the sides a vertical one (both taken from photos of real frames).
  */
 export function frameFinish(colour: FrameColour, direction: "h" | "v"): React.CSSProperties {
-  if (colour === "white") return { backgroundImage: direction === "h" ? "linear-gradient(180deg, #fbfaf7, #e9e6df)" : "linear-gradient(90deg, #fbfaf7, #e9e6df)" }
-  const file = colour === "wood" ? "wood-frame" : "wood-black"
+  // The white frame is the wooden frame sprayed white, so its grain shows faintly.
+  const file = colour === "wood" ? "wood-frame" : colour === "white" ? "wood-white" : "wood-black"
   return { backgroundImage: `url(/images/levha/${file}-${direction}.webp)`, backgroundSize: direction === "h" ? "auto 100%" : "100% auto" }
 }
 
