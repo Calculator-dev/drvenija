@@ -78,6 +78,13 @@
       "when": 1794982132848,
       "tag": "0010_detach_room_photos",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1795416709477,
+      "tag": "0011_levha",
+      "breakpoints": true
     }
   ]
 }

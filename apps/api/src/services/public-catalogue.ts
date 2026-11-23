@@ -4,6 +4,7 @@ import { and, asc, desc, eq, isNotNull } from "drizzle-orm"
 import { shippingPolicy } from "../lib/shipping.js"
 import { giftWrapPrice } from "../lib/pricing.js"
 import { publicShowroom } from "../routes/showroom.js"
+import { publicLevha } from "../routes/levha.js"
 import { publicVariants } from "../lib/variants.js"
 
 function localized(rows: Record<string, Record<string, string>>, field: string) {
@@ -31,6 +32,7 @@ export function catalogueResponse(
   variantRows: (typeof productVariants.$inferSelect)[] = [],
   reviewRows: Array<Pick<typeof reviews.$inferSelect, "id" | "productId" | "authorName" | "rating" | "body" | "locale" | "createdAt">> = [],
   showroom: Awaited<ReturnType<typeof publicShowroom>> = null,
+  levha: Awaited<ReturnType<typeof publicLevha>> | null = null,
 ) {
   const reviewsByProduct = new Map<string, typeof reviewRows>()
   for (const review of reviewRows) {
@@ -48,6 +50,7 @@ export function catalogueResponse(
   return {
     shipping: shippingPolicy,
     showroom,
+    levha,
     checkout: { giftWrapPrice, paymentMethods: ["bank_transfer", "cash_on_delivery"] as const },
     categories: categoryRows.map(row => ({ id: row.id, name: localized(row.translations, "name"), slug: localized(row.translations, "slug"), description: localized(row.translations, "description"), seo: { title: localized(row.seo, "title"), description: localized(row.seo, "description") } })),
     products: productRows.filter(row => row.published !== false).map(row => {
@@ -72,7 +75,7 @@ export function catalogueResponse(
   }
 }
 export async function getPublicCatalogue() {
-  const [categoryRows, productRows, images, variantRows, reviewRows, showroom] = await Promise.all([
+  const [categoryRows, productRows, images, variantRows, reviewRows, showroom, levha] = await Promise.all([
     db.select().from(categories).orderBy(categories.code),
     db.select().from(products).orderBy(desc(products.createdAt)),
     db.select().from(mediaAssets).where(isNotNull(mediaAssets.productId)).orderBy(mediaAssets.createdAt),
@@ -80,6 +83,7 @@ export async function getPublicCatalogue() {
     db.select({ id: reviews.id, productId: reviews.productId, authorName: reviews.authorName, rating: reviews.rating, body: reviews.body, locale: reviews.locale, createdAt: reviews.createdAt })
       .from(reviews).where(and(eq(reviews.status, "approved"))).orderBy(desc(reviews.createdAt)),
     publicShowroom(),
+    publicLevha(),
   ])
-  return catalogueResponse(categoryRows, productRows, images, variantRows, reviewRows, showroom)
+  return catalogueResponse(categoryRows, productRows, images, variantRows, reviewRows, showroom, levha)
 }

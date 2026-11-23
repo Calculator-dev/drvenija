@@ -174,3 +174,73 @@ export async function sendInquiryNotification(input: InquiryNotification): Promi
   </div>`
   return sendEmail({ to: env.INQUIRY_NOTIFY_EMAIL, subject: `Novi upit: ${input.fullName}`, html, replyTo: input.email })
 }
+
+type LevhaEmail = {
+  number: string
+  locale: "bs" | "en"
+  configuration: import("../lib/levha.js").LevhaConfiguration
+  ayahName: string | null
+  price: number | null
+  customer: { fullName: string; email: string; phone?: string }
+  notes?: string
+}
+
+const levhaLabels = {
+  bs: {
+    frame: { black: "Crni", wood: "Drveni", white: "Bijeli" },
+    material: { plywood: "šperploča", plexiglass: "pleksiglas", mdf: "MDF" },
+    colour: { black: "crna", white: "bijela", wood: "drvo", gold: "zlatno ogledalo", gray: "sivo ogledalo", raw: "prirodni" },
+    rows: { frame: "Okvir", size: "Dimenzije", background: "Pozadina", letters: "Slova", text: "Tekst", custom: "Vlastiti tekst", part: "Dio teksta", price: "Cijena", onRequest: "na upit", notes: "Napomena" },
+  },
+  en: {
+    frame: { black: "Black", wood: "Wood", white: "White" },
+    material: { plywood: "plywood", plexiglass: "plexiglass", mdf: "MDF" },
+    colour: { black: "black", white: "white", wood: "wood", gold: "gold mirror", gray: "gray mirror", raw: "natural" },
+    rows: { frame: "Frame", size: "Size", background: "Background", letters: "Letters", text: "Text", custom: "Own text", part: "Part of the text", price: "Price", onRequest: "on request", notes: "Notes" },
+  },
+} as const
+
+/** The chosen options as table rows (label, value) in the given language. */
+export function levhaSummary(input: Pick<LevhaEmail, "configuration" | "ayahName" | "price" | "notes">, locale: "bs" | "en") {
+  const l = levhaLabels[locale]
+  const { configuration: c } = input
+  const rows: Array<[string, string]> = [
+    [l.rows.frame, l.frame[c.frame]],
+    [l.rows.size, `${c.size.width} × ${c.size.height} cm`],
+    [l.rows.background, `${l.material[c.background.material]}, ${l.colour[c.background.colour]}`],
+    [l.rows.letters, `${l.material[c.letters.material]}, ${l.colour[c.letters.colour]}`],
+  ]
+  if (c.customAyah) {
+    rows.push([l.rows.custom, c.customAyah.text])
+    if (c.customAyah.part) rows.push([l.rows.part, c.customAyah.part])
+  } else rows.push([l.rows.text, input.ayahName ?? ""])
+  rows.push([l.rows.price, input.price === null ? l.rows.onRequest : `${input.price} KM`])
+  if (input.notes) rows.push([l.rows.notes, input.notes])
+  return rows
+}
+
+const table = (rows: Array<[string, string]>) => `<table style="border-collapse:collapse;margin:16px 0">${rows.map(([label, value]) => `<tr><td style="padding:6px 16px 6px 0;color:#666;vertical-align:top">${escapeHtml(label)}</td><td style="padding:6px 0;white-space:pre-wrap">${escapeHtml(value)}</td></tr>`).join("")}</table>`
+
+/** Confirmation to the customer and a notification to the shop (INQUIRY_NOTIFY_EMAIL). */
+export async function sendLevhaRequestEmails(input: LevhaEmail) {
+  const bosnian = input.locale === "bs"
+  const customerHtml = `<div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#222">
+    <h1 style="font-size:24px">${bosnian ? "Hvala, primili smo vašu levhu" : "Thank you, we received your levha"}</h1>
+    <p>${escapeHtml(bosnian ? `Poštovani/a ${input.customer.fullName},` : `Dear ${input.customer.fullName},`)}</p>
+    <p>${bosnian ? "Pregledat ćemo vašu levhu i javiti vam se s potvrdom i rokom izrade." : "We will review your levha and get back to you with a confirmation and production time."}</p>
+    <p><strong>${bosnian ? "Broj" : "Number"}:</strong> ${escapeHtml(input.number)}</p>
+    ${table(levhaSummary(input, input.locale))}
+    <p>${bosnian ? "Srdačno," : "Kind regards,"}<br>Drvenija</p>
+  </div>`
+  const customer = await sendEmail({ to: input.customer.email, subject: bosnian ? `Vaša levha ${input.number}` : `Your levha ${input.number}`, html: customerHtml })
+  const shop = env.INQUIRY_NOTIFY_EMAIL
+    ? await sendEmail({
+        to: env.INQUIRY_NOTIFY_EMAIL,
+        subject: `Nova levha ${input.number}: ${input.customer.fullName}`,
+        replyTo: input.customer.email,
+        html: `<div style="font-family:Arial,sans-serif;max-width:620px;color:#222"><h1 style="font-size:22px">Nova levha ${escapeHtml(input.number)}</h1>
+          ${table([["Ime", input.customer.fullName], ["Email", input.customer.email], ...(input.customer.phone ? [["Telefon", input.customer.phone] as [string, string]] : []), ...levhaSummary(input, "bs")])}</div>`,
+      })
+    : ({ sent: false, reason: "not_configured" } as const)
+  return { customer, shop }
+}

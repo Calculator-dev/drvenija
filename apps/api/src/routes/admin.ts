@@ -7,6 +7,7 @@ import { orderReviewRoutes } from "./order-review.js"
 import { adminInquiryRoutes } from "./inquiries.js"
 import { marketingRoutes } from "./marketing.js"
 import { showroomRoutes } from "./showroom.js"
+import { adminLevhaRoutes } from "./levha.js"
 
 export const adminRoutes: FastifyPluginAsync = async (app) => {
   app.decorateRequest("adminUser", null)
@@ -27,4 +28,6 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
   app.register(marketingRoutes)
 
   app.register(showroomRoutes)
+
+  app.register(adminLevhaRoutes)
 }

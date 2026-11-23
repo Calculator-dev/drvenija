@@ -45,8 +45,9 @@ export const discountKindEnum = pgEnum("discount_kind", ["percent", "fixed"]);
  * gallery: product gallery. room: no longer used (room photos were replaced by cutouts).
  * cutout: the product on a transparent background, placed on the showroom wall.
  * showroom: the showroom room photo (not linked to a product).
+ * calligraphy: a levha text's calligraphy on a transparent background (not linked to a product).
  */
-export const mediaKindEnum = pgEnum("media_kind", ["gallery", "room", "cutout", "showroom"]);
+export const mediaKindEnum = pgEnum("media_kind", ["gallery", "room", "cutout", "showroom", "calligraphy"]);
 export const reviewStatusEnum = pgEnum("review_status", [
   "pending",
   "approved",
@@ -302,4 +303,65 @@ export const showroomSettings = pgTable("showroom_settings", {
     .notNull(),
 }, (table) => [
   check("showroom_settings_single_row", sql`${table.id} = 1`),
+]).enableRLS();
+
+export const levhaRequestStatusEnum = pgEnum("levha_request_status", [
+  "new",
+  "contacted",
+  "accepted",
+  "declined",
+]);
+
+/** Texts (ayahs, dhikr, names) customers can choose for a custom levha. */
+export const levhaAyahs = pgTable("levha_ayahs", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: jsonb("name").$type<{ bs: string; en: string }>().notNull(),
+  arabic: text("arabic").notNull(),
+  // Calligraphy on a transparent background; without it the preview sets the Arabic text.
+  imageId: uuid("image_id").references(() => mediaAssets.id, { onDelete: "set null" }),
+  active: boolean("active").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+}).enableRLS();
+
+/** Levha prices (single row, id 1). See LevhaPricing in lib/levha.ts. */
+export const levhaSettings = pgTable("levha_settings", {
+  id: integer("id").primaryKey().default(1),
+  pricing: jsonb("pricing").$type<import("../lib/levha.js").LevhaPricing>().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+}, (table) => [
+  check("levha_settings_single_row", sql`${table.id} = 1`),
+]).enableRLS();
+
+/** A customer's custom levha: the chosen options, the price shown to them and their contact details. */
+export const levhaRequests = pgTable("levha_requests", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  number: varchar("number", { length: 40 }).notNull().unique(),
+  locale: localeEnum("locale").notNull(),
+  configuration: jsonb("configuration").$type<import("../lib/levha.js").LevhaConfiguration>().notNull(),
+  // Text name at the time of the request, so renaming or removing a text keeps the request readable.
+  ayahName: text("ayah_name"),
+  // Whole KM shown to the customer; null when the size is priced on request.
+  price: integer("price"),
+  fullName: varchar("full_name", { length: 160 }).notNull(),
+  email: varchar("email", { length: 190 }).notNull(),
+  phone: varchar("phone", { length: 60 }),
+  notes: text("notes"),
+  status: levhaRequestStatusEnum("status").notNull().default("new"),
+  adminNote: text("admin_note"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+}, (table) => [
+  index("levha_requests_created_idx").on(table.createdAt),
 ]).enableRLS();
